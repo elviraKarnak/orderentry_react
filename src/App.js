@@ -1,25 +1,23 @@
-import logo from './logo.svg';
-import './App.css';
+//Dependencies
+import React from 'react'
+import { Router, BrowserRouter, Route, Routes } from 'react-router-dom';
+
+//css 
+import 'bootstrap/dist/css/bootstrap.css';
+import './assests/css/theme.default.css';
+import './assests/css/custom.css';
+
+//Components
+import Dashboard from './pages/oderentry/Dashboard';
+
+
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+     <Dashboard/>
     </div>
-  );
+  )
 }
 
-export default App;
+export default App
