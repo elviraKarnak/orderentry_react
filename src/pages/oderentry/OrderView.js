@@ -4,16 +4,16 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
+import Grid from '@mui/material/Unstable_Grid2';
 
 
-function Orderview() {
+
+function OrderView() {
   return (
     <div>
       	<div classNameName="data_table-head">
-		  <Row>
-		  	<Col  md="7">
+		  <Grid container spacing={2}>
+		  <Grid md={7}>
 				<div className="order_sum-row">
 					<div><Typography variant="h3" className="title">Orders</Typography></div>
 						<div className="order_sumr_block">
@@ -29,8 +29,8 @@ function Orderview() {
 							</List>
 						</div>
 					</div>
-				</Col>
-				<Col  md="5">
+				</Grid>
+				<Grid md={5}>
 					<div className="btn_parent-auto">
 						<List className="btn_group-block">
 							<ListItem>
@@ -41,12 +41,12 @@ function Orderview() {
 							</ListItem>
 						</List>
 					</div>
-				</Col>
-			<Orderdatatable/>
-		</Row>
+				</Grid>
+			</Grid>
+		<Orderdatatable/>
 		</div>
 	</div>
   )
 }
 
-export default Orderview
+export default OrderView

@@ -1,4 +1,5 @@
-import * as React from 'react';
+import React,{useState } from 'react';
+import { Link } from 'react-router-dom';
 import { styled, useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Drawer from '@mui/material/Drawer';
@@ -14,7 +15,8 @@ import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
-import ListItemText from '@mui/material/ListItemText';
+import GridViewSharpIcon from '@mui/icons-material/GridViewSharp';
+import FormatListBulletedSharpIcon from '@mui/icons-material/FormatListBulletedSharp';
 
 
 const drawerWidth = 240;
@@ -47,7 +49,7 @@ const DrawerHeader = styled('div')(({ theme }) => ({
 
  function Header() {
   const theme = useTheme();
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -74,6 +76,14 @@ const DrawerHeader = styled('div')(({ theme }) => ({
           <Typography variant="h6" noWrap component="div">
             Menu
           </Typography>
+            <GridViewSharpIcon />
+          <Typography variant="h6" noWrap component="div">
+          <Link to="/order-view">Order View</Link>
+          </Typography>
+            <FormatListBulletedSharpIcon />
+          <Typography variant="h6" noWrap component="div">
+          <Link to="/order-list">Order List</Link>
+          </Typography>
         </Toolbar>
       </AppBar>
       <Drawer
@@ -96,10 +106,31 @@ const DrawerHeader = styled('div')(({ theme }) => ({
         </DrawerHeader>
         <Divider />
         <List>
-          {['Dashboard', 'Order Entry', 'Order View', 'Admin','Accounting','Logout'].map((text, index) => (
-            <ListItem key={text} disablePadding>
+          {[{menuName:'Dashboard',
+             path:'/'
+             }, 
+            {menuName:'Order Entry',
+             path:'/order-entry'
+            }, 
+            {menuName:'Order View',
+            path:'/order-view'
+            }, 
+            {menuName:'Order List',
+            path:'/order-list'
+            }, 
+            {menuName:'Staging Inventory',
+            path:'/staging-inventory'
+            }, 
+            {menuName:'Admin',
+            path:'/'}, 
+            {menuName:'Accounting',
+            path:'/'}, 
+            {menuName:'Logout',
+            path:'/'}
+            ].map((item, index) => (
+            <ListItem key={index} disablePadding>
               <ListItemButton>
-                <ListItemText primary={text} />
+              <Link to={item.path}>{item.menuName}</Link>
               </ListItemButton>
             </ListItem>
           ))}
