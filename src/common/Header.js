@@ -61,29 +61,35 @@ const DrawerHeader = styled('div')(({ theme }) => ({
 
   return (
     <Box sx={{ display: 'flex' }}>
-      <CssBaseline />
-      <AppBar  position="relative" color="transparent" open={open}>
+      <AppBar className="fmi_ordersystem_header" position="relative" color="transparent" open={open}>
         <Toolbar>
+          <div className="menue_box">
           <IconButton
-            color="inherit"
-            aria-label="open drawer"
-            onClick={handleDrawerOpen}
-            edge="start"
-            sx={{ mr: 2, ...(open && { display: 'none' }) }}
-          >
-            <MenuIcon />
-          </IconButton>
-          <Typography variant="h6" noWrap component="div">
-            Menu
+              color="inherit"
+              aria-label="open drawer"
+              onClick={handleDrawerOpen}
+              edge="rounded"
+              
+              sx={{ mr: 2, ...(open && { display: 'none' }) }}
+            >
+              <MenuIcon className='menu_icon'/>
+            </IconButton>
+            <Typography variant="h6" noWrap component="div">
+              Menu
+            </Typography>
+          </div>
+          <div className="menuitem">
+            <GridViewSharpIcon className='menu_icon'/>
+            <Typography variant="h6" noWrap component="div">
+            <Link to="/order-view">Order View</Link>
           </Typography>
-            <GridViewSharpIcon />
-          <Typography variant="h6" noWrap component="div">
-          <Link to="/order-view">Order View</Link>
-          </Typography>
-            <FormatListBulletedSharpIcon />
-          <Typography variant="h6" noWrap component="div">
-          <Link to="/order-list">Order List</Link>
-          </Typography>
+          </div>
+          <div className="menuitem">
+            <FormatListBulletedSharpIcon className='menu_icon'/>
+            <Typography variant="h6" noWrap component="div">
+            <Link to="/order-list">Order List</Link>
+            </Typography>
+          </div>
         </Toolbar>
       </AppBar>
       <Drawer
@@ -98,6 +104,7 @@ const DrawerHeader = styled('div')(({ theme }) => ({
         variant="persistent"
         anchor="left"
         open={open}
+        className="fmi_sidebar_menu"
       >
         <DrawerHeader>
           <IconButton onClick={handleDrawerClose}>
@@ -105,7 +112,7 @@ const DrawerHeader = styled('div')(({ theme }) => ({
           </IconButton>
         </DrawerHeader>
         <Divider />
-        <List>
+        <List className='page_navigation'>
           {[{menuName:'Dashboard',
              path:'/'
              }, 

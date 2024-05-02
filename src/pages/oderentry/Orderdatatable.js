@@ -102,6 +102,7 @@ import Header from '../../common/Header';
               <Select
               labelId="demo-simple-select-helper-label"
               id="demo-simple-select-helper"
+              className={'dropdown '+ renderedCellValue.toLowerCase()}
               value={renderedCellValue}
               onChange={e => orderStatusChange(row.original.id, e)}
               >
@@ -111,15 +112,6 @@ import Header from '../../common/Header';
 
               </Select>
             ),
-          },
-          {
-            accessorKey: 'null',
-            header: '',
-            size: 150,
-            Cell: ({ renderedCellValue, row }) => (
-              <span className='btn_start-order'>Start New Order</span>
-            ),
-          
           },
           {
             accessorKey: 'id',
@@ -176,7 +168,7 @@ import Header from '../../common/Header';
         },
       });
 
-    return (<><MaterialReactTable table={table} /></>);
+    return (<div className="view_order_table"><MaterialReactTable  table={table} /></div>);
 };
 
 export default Orderdatatable

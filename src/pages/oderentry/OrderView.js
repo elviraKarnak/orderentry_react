@@ -43,7 +43,9 @@ function OrderView() {
 					</div>
 				</Grid>
 			</Grid>
-		<Orderdatatable/>
+			<div className="container-fluid">
+			<Orderdatatable/>
+			</div>
 		</div>
 	</div>
   )

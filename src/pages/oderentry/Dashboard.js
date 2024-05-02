@@ -5,7 +5,12 @@ import UserLogin from '../auth/UserLogin';
 
 
 function Dashboard() {
-  const [islogin, setIsLogin] = useState(true);
+  var loginVal = sessionStorage.getItem('login');
+  const [islogin, setIsLogin] = useState(loginVal);
+
+  const setLoginSession = (data) => {
+    setIsLogin(data);
+};
 
   // const orderTabChange = (event, newvalue) => {
   //   setselectedOrderTab(newvalue);
@@ -13,7 +18,8 @@ function Dashboard() {
 
   return (
     <>
-    {islogin ?<> <Header/> <OrderView /> </>: <UserLogin />}
+    {islogin ?<> <Header/> <OrderView /> </>: <UserLogin 
+    getLoginResponse={setLoginSession} />}
     </>
     )
 }
