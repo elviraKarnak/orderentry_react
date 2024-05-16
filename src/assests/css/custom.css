@@ -1,22 +1,22 @@
 /* componentbase css */
-.hidden{
+.hidden {
     display: none;
-}
-.visiable{
+  }
+  .visiable {
     display: block;
-}
-/* componentbase css Header */
-.fmi_oder_syetem_main .fmi_order_system_wrap .fmi_ordersystem_header{
-width: 100%;
-position: relative;
-left: 0px;
-top: 0px;
-height: 90px;
-background-color: transparent;
-z-index: 5;
-box-shadow: none;
-}
-.fmi_oder_syetem_main .fmi_order_system_wrap .menue_box{
+  }
+  /* componentbase css Header */
+  .fmi_oder_syetem_main .fmi_order_system_wrap .fmi_ordersystem_header {
+    width: 100%;
+    position: relative;
+    left: 0px;
+    top: 0px;
+    height: 90px;
+    background-color: transparent;
+    z-index: 5;
+    box-shadow: none;
+  }
+  .fmi_oder_syetem_main .fmi_order_system_wrap .menue_box {
     display: flex;
     width: auto;
     justify-content: center;
@@ -24,111 +24,127 @@ box-shadow: none;
     margin-right: 18px;
     background-position: left center;
     cursor: pointer;
-}
-.fmi_oder_syetem_main .fmi_order_system_wrap .menue_box button{
+  }
+  .fmi_oder_syetem_main .fmi_order_system_wrap .menue_box button {
     color: #000;
     padding-right: 0;
     margin-right: 6px;
-}
-.fmi_oder_syetem_main .fmi_order_system_wrap .menue_box .menu_icon {
+  }
+  .fmi_oder_syetem_main .fmi_order_system_wrap .menue_box .menu_icon {
     font-size: 60px;
-}
-.fmi_oder_syetem_main .fmi_order_system_wrap .menu_icon {
+  }
+  .fmi_oder_syetem_main .fmi_order_system_wrap .menu_icon {
     font-size: 50px;
-}
-.fmi_oder_syetem_main .fmi_order_system_wrap .menue_box .MuiTypography-h6{
+  }
+  .fmi_oder_syetem_main .fmi_order_system_wrap .menue_box .MuiTypography-h6 {
     font-size: 23px;
     color: #707070;
-}
-.fmi_ordersystem_header .MuiTypography-h6 a{
+  }
+  .fmi_ordersystem_header .MuiTypography-h6 a {
     font-size: 23px;
     font-weight: 400;
     color: #707070;
     text-decoration: none;
-
-}
-.fmi_oder_syetem_main .fmi_order_system_wrap .menuitem{
+  }
+  .fmi_oder_syetem_main .fmi_order_system_wrap .menuitem {
     display: flex;
     align-items: center;
     justify-content: center;
     padding-right: 25px;
-}
-.fmi_oder_syetem_main .fmi_order_system_wrap .fmi_sidebar_menu .MuiDrawer-paper{
-        width: 260px;
-        position: fixed;
-        background: #F7F7F7;
-        border: 1px solid #707070;
-        border-radius: 6px;
-        left: 15px;
-        overflow: hidden;
-        height: 80%;
-        transition: linear .5s;
-    }
-
-    .fmi_oder_syetem_main .fmi_order_system_wrap button.btn_cro {
-        display: inline-block;
-        padding: 10px 25px;
-        background: #070707;
-        color: #fff;
-        border-radius: 25px;
-    }
-    .fmi_oder_syetem_main .fmi_order_system_wrap button.btn_nc {
-        color: #66B100;
-        font-size: 16px;
-        display: inline-block;
-        background-image: url(../images/add_icon.svg);
-        background-repeat: no-repeat;
-        background-size: 20px;
-        background-position: 4px;
-        padding-left: 29px;
-    }
-    .view_order_table .dropdown {
-        padding: 5px 40px;
-        border-radius: 25px;
-        color: #fff;
-    }
-    .saved{
-        background: #61B7D6;
-        border: 1px solid #707070;
-        color: #fff;
-    }
-    .canceled{
-        background: #D11919;
-        border: 1px solid #707070;
-        color: #fff;
-    }
-    .purchased,
-    .confirmed{
-        background: #A312B1;
-        border: 1px solid #707070;
-        color: #fff;
-    }
-    .printed{
-        background: #66B100;
-        border: 1px solid #707070;
-        color: #fff;
-    }
-    .saved{
-        background: #5936EB;
-        border: 1px solid #707070;
-        color: #fff;
-    }
-    .processing{
-        background: #80D553;
-        border: 1px solid #707070;
-        color: #fff;
-    }
-    
-    .stat_transfer{    
-        background: #EF9A5C;
-        border: 1px solid #707070;
-        color: #fff;
-       
-    }
-    
-    .stat_receive{
-        background: #A54CCB;
-        border: 1px solid #707070;
-        color: #fff;
-        
-    }
+  }
+  .fmi_oder_syetem_main
+    .fmi_order_system_wrap
+    .fmi_sidebar_menu
+    .MuiDrawer-paper {
+    width: 260px;
+    position: fixed;
+    background: #f7f7f7;
+    border: 1px solid #707070;
+    border-radius: 6px;
+    left: 15px;
+    overflow: hidden;
+    height: 80%;
+    transition: linear 0.5s;
+  }
+  
+  .fmi_oder_syetem_main .fmi_order_system_wrap button.btn_cro {
+    display: inline-block;
+    padding: 10px 25px;
+    background: #070707;
+    color: #fff;
+    border-radius: 25px;
+  }
+  .fmi_oder_syetem_main .fmi_order_system_wrap button.btn_nc {
+    color: #66b100;
+    font-size: 16px;
+    display: inline-block;
+    background-image: url(../images/add_icon.svg);
+    background-repeat: no-repeat;
+    background-size: 20px;
+    background-position: 4px;
+    padding-left: 29px;
+  }
+  .view_order_table .dropdown {
+    padding: 5px 40px;
+    border-radius: 25px;
+    color: #fff;
+  }
+  .saved {
+    background: #61b7d6;
+    border: 1px solid #707070;
+    color: #fff;
+  }
+  .canceled {
+    background: #d11919;
+    border: 1px solid #707070;
+    color: #fff;
+  }
+  .purchased,
+  .confirmed {
+    background: #a312b1;
+    border: 1px solid #707070;
+    color: #fff;
+  }
+  .printed {
+    background: #66b100;
+    border: 1px solid #707070;
+    color: #fff;
+  }
+  .saved {
+    background: #5936eb;
+    border: 1px solid #707070;
+    color: #fff;
+  }
+  .processing {
+    background: #80d553;
+    border: 1px solid #707070;
+    color: #fff;
+  }
+  
+  .stat_transfer {
+    background: #ef9a5c;
+    border: 1px solid #707070;
+    color: #fff;
+  }
+  
+  .stat_receive {
+    background: #a54ccb;
+    border: 1px solid #707070;
+    color: #fff;
+  }
+  
+  .received {
+    background: #a54ccb;
+    border: 1px solid #707070;
+    color: #fff;
+  }
+  
+  .shipped {
+    background: #80d553;
+    border: 1px solid #707070;
+    color: #fff;
+  }
+  
+  .requiredError{
+    color: red;
+  }

@@ -1,9 +1,9 @@
 import React,{useState } from 'react';
 import { Link } from 'react-router-dom';
 import { styled, useTheme } from '@mui/material/styles';
+import { useNavigate } from 'react-router-dom';
 import Box from '@mui/material/Box';
 import Drawer from '@mui/material/Drawer';
-import CssBaseline from '@mui/material/CssBaseline';
 import MuiAppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import List from '@mui/material/List';
@@ -58,6 +58,16 @@ const DrawerHeader = styled('div')(({ theme }) => ({
   const handleDrawerClose = () => {
     setOpen(false);
   };
+
+  const navigate = useNavigate();
+
+    const handleLogout = () => {
+        // Clear session storage
+        sessionStorage.clear();
+        // Redirect to the login screen
+        navigate('/');
+        
+    };
 
   return (
     <Box sx={{ display: 'flex' }}>
@@ -131,8 +141,6 @@ const DrawerHeader = styled('div')(({ theme }) => ({
             {menuName:'Admin',
             path:'/'}, 
             {menuName:'Accounting',
-            path:'/'}, 
-            {menuName:'Logout',
             path:'/'}
             ].map((item, index) => (
             <ListItem key={index} disablePadding>
@@ -141,6 +149,11 @@ const DrawerHeader = styled('div')(({ theme }) => ({
               </ListItemButton>
             </ListItem>
           ))}
+          <ListItem disablePadding>
+              <ListItemButton>
+              <Link onClick={handleLogout}>Logout</Link>
+              </ListItemButton>
+            </ListItem>
         </List>
       </Drawer>
     </Box>

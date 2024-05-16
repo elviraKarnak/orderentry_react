@@ -4,13 +4,12 @@ import { useMemo, useState } from 'react';
 import {MaterialReactTable,useMaterialReactTable} from 'material-react-table';
   
 import {Table,TableBody,TableCell,TableContainer,TableHead,TableRow,Paper} from '@mui/material';
-import { AccountCircle, Send } from '@mui/icons-material';
-import orderArray from '../oderview/orderArray';
+import Typography from '@mui/material/Typography';
+import orderArray from './orderArray';
 
 import Header from '../../common/Header';
-import Typography from '@mui/material/Typography';
 
-function SatagingInventory() {
+function OrderList() {
   
     const [data, setOrderDetails] = useState(orderArray);
     const columns = useMemo(
@@ -79,49 +78,46 @@ function SatagingInventory() {
           shape: 'rounded',
           variant: 'outlined',
         },
-        renderDetailPanel: ({ row }) => (
-        <TableContainer component={Paper}>
-            <Table aria-label="simple table">
-                <TableHead>
-                    <TableRow>
-                        <TableCell>Id</TableCell>
-                        <TableCell>Name</TableCell>
-                        <TableCell>Is Preorder</TableCell>
-                        <TableCell>Source</TableCell>
-                        <TableCell>Margin</TableCell>
-                        <TableCell>Unit Cost</TableCell>
-                    </TableRow>
-                </TableHead>
-                <TableBody>
-                {row.original.products.map((row) => (
-                    <TableRow
-                    key={row.id}
-                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                    >
-                    <TableCell component="th" scope="row">
-                        {row.id}
-                    </TableCell>
-                    <TableCell>{row.title}</TableCell>
-                    <TableCell>{row.preorder}</TableCell>
-                    <TableCell>{row.source}</TableCell>
-                    <TableCell>{row.margin}</TableCell>
-                    <TableCell>{row.unitCost}</TableCell>
-                    </TableRow>
-                ))}
-                </TableBody>
-            </Table>   
-        </TableContainer>
-        )
+        // renderDetailPanel: ({ row }) => (
+        // <TableContainer component={Paper}>
+        //     <Table aria-label="simple table">
+        //         <TableHead>
+        //             <TableRow>
+        //                 <TableCell>Id</TableCell>
+        //                 <TableCell>Name</TableCell>
+        //                 <TableCell>Is Preorder</TableCell>
+        //                 <TableCell>Source</TableCell>
+        //                 <TableCell>Margin</TableCell>
+        //                 <TableCell>Unit Cost</TableCell>
+        //             </TableRow>
+        //         </TableHead>
+        //         <TableBody>
+        //         {row.original.products.map((row) => (
+        //             <TableRow
+        //             key={row.id}
+        //             sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+        //             >
+        //             <TableCell component="th" scope="row">
+        //                 {row.id}
+        //             </TableCell>
+        //             <TableCell>{row.title}</TableCell>
+        //             <TableCell>{row.preorder}</TableCell>
+        //             <TableCell>{row.source}</TableCell>
+        //             <TableCell>{row.margin}</TableCell>
+        //             <TableCell>{row.unitCost}</TableCell>
+        //             </TableRow>
+        //         ))}
+        //         </TableBody>
+        //     </Table>   
+        // </TableContainer>
+        // )
       });
 
     return (<> 
     <Header/>
-    <div><Typography variant="h3" className="title">Staging Inventory</Typography></div>
+    <div><Typography variant="h3" className="title">Order List</Typography></div>
     <MaterialReactTable table={orderListTable} /></>);
   
 }
 
-export default SatagingInventory
-
-
-
+export default OrderList
