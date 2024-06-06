@@ -11,7 +11,7 @@ import Grid from '@mui/material/Unstable_Grid2';
 function OrderView() {
   return (
     <div>
-      	<div classNameName="data_table-head">
+      	<div className="data_table-head">
 		  <Grid container spacing={2}>
 		  <Grid md={7}>
 				<div className="order_sum-row">

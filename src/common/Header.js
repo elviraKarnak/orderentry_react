@@ -65,7 +65,8 @@ const DrawerHeader = styled('div')(({ theme }) => ({
         // Clear session storage
         sessionStorage.clear();
         // Redirect to the login screen
-        navigate('/');
+        // navigate('/');
+        window.location.replace('/');
         
     };
 
@@ -122,7 +123,7 @@ const DrawerHeader = styled('div')(({ theme }) => ({
           </IconButton>
         </DrawerHeader>
         <Divider />
-        <List className='page_navigation'>
+        <List className='page_navigation sidebar-scroll'>
           {[{menuName:'Dashboard',
              path:'/'
              }, 
@@ -138,6 +139,9 @@ const DrawerHeader = styled('div')(({ theme }) => ({
             {menuName:'Staging Inventory',
             path:'/staging-inventory'
             }, 
+            {menuName:'Product Entry',
+            path:'/product-entry'
+            },
             {menuName:'Admin',
             path:'/'}, 
             {menuName:'Accounting',

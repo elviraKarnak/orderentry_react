@@ -1,5 +1,5 @@
 import { Message } from "@mui/icons-material";
-const REACT_APP_API_SERVICE_URL = process.env.REACT_APP_API_SERVICE_URL;
+const REACT_APP_API_SERVICE_URL = process.env.REACT_APP_API_SERVICE_URL_2;
 
     //Login POST API
     export async function  fmiOrderSystemAppAppLogin(userEmail,UserPasswoard) {
@@ -335,3 +335,36 @@ export async function fmiOrderSystemAppProductSearch(payload) {
     }
 }
 
+
+
+// Order Add API
+export async function fmiOrderSystemAppOrderAdd(payload) {
+    const myHeaders = new Headers();
+    myHeaders.append("x-api-key", "b1d1I0p7A2Er2n0eD2b0As8c0kT8p2M9");
+    myHeaders.append("token", window.sessionStorage.getItem("access-token"));
+    myHeaders.append("Content-Type", "application/json");
+
+    try {
+        const fmiOrderSystemAppResponse = await fetch(REACT_APP_API_SERVICE_URL + '/api/v1/admin/order/post', {
+            method: 'POST',
+            headers: myHeaders,
+            body: JSON.stringify(payload),
+        });
+
+        if (fmiOrderSystemAppResponse.ok) {
+            const fmiOrderSystemAppResult = await fmiOrderSystemAppResponse.json();
+            // Success
+            return { status: true, result: fmiOrderSystemAppResult };
+        } else {
+            // Server-side error
+            console.log("Server error:", fmiOrderSystemAppResponse.status);
+            const errorData = await fmiOrderSystemAppResponse.json();
+            console.log("Server errorData ",errorData)
+            return { status: false, error: errorData };
+        }
+    } catch (error) {
+        // Network error
+        console.log("Network error:", error);
+        return { status: "error", error: "Network error" };
+    }
+}

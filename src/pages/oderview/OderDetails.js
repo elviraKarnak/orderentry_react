@@ -31,11 +31,14 @@ function OderDetails() {
 		pageSize: 10,
 	});
 
-	const orderDefaultStatus = ['Saved', 'Processing', 'Purchased', 'Confirmed', 'Printed', 'Canceled']
+	const orderDefaultStatus = ['New order', 'Processing', 'Purchased', 'Confirmed', 'Printed', 'Canceled']
 	// const orderDefaultStatus = [
-	// 	{ label: "Saved", value: "1" },
-	// 	{ label: "Received", value: "2" },
-	// 	{ label: "Shipped", value: "3" },
+	// 	{ label: "New order", value: "1" },
+	// 	{ label: "Processing", value: "2" },
+	// 	{ label: "Purchased", value: "3" },
+	// 	{ label: "Confirmed", value: "4" },
+	// 	{ label: "Printed", value: "5" },
+	// 	{ label: "Canceled", value: "6" },
 	// ]
 
 	const orderStatusChange = (id, e) => {
@@ -126,7 +129,7 @@ function OderDetails() {
 						<Select
 							labelId="demo-simple-select-helper-label"
 							id="demo-simple-select-helper"
-							className={'dropdown ' + renderedCellValue.toLowerCase()}
+							className={'dropdown ' + (renderedCellValue.toLowerCase()).replace(/\s/g, '')}
 							value={renderedCellValue}
 							onChange={e => orderStatusChange(row.original.id, e)}
 						>
@@ -204,8 +207,8 @@ function OderDetails() {
 			"farm_name": "",
 			"customer_name": "",
 			"search_status": "",
-			"order_from_date": "2024-04-20",
-			"order_to_date": "2024-05-20",
+			"order_from_date": "",
+			"order_to_date": "",
 			"page": (pagination.pageIndex + 1),
 			"limit": pagination.pageSize
 		};
@@ -254,7 +257,7 @@ function OderDetails() {
 		<>
 			<Header />
 			<div><Typography variant="h3" className="title">Order Details</Typography></div>
-			<div classNameName="data_table-head">
+			<div className="data_table-head">
 				<div className="container-fluid">
 					<div className="view_order_table"><MaterialReactTable table={table} /></div>
 				</div>

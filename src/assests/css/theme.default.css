@@ -444,6 +444,8 @@ ul.date_cate-tab li input[type="radio"] {
 
 .order_sumr_block ul li {
     padding: 0px 45px;
+    flex-direction: column;
+    align-items: center;
 }
 .order_sumr_block ul li .title {
     font-size: 14px;
@@ -460,6 +462,7 @@ ul.date_cate-tab li input[type="radio"] {
     font-size: 18px;
     color: var(--fontDark);
     font-weight: 700;
+    text-wrap: nowrap;
 
 }
 .btn_parent-auto {

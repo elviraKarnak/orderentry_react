@@ -122,6 +122,3 @@ function SatagingInventory() {
 }
 
 export default SatagingInventory
-
-
-

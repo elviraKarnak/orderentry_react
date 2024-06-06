@@ -199,12 +199,6 @@ function Orderdatatable() {
       shape: 'rounded',
       variant: 'outlined',
     },
-    onPaginationChange: setPagination,
-    rowCount,
-    state: {
-      pagination,
-      isLoading
-    },
   });
 
 
@@ -215,18 +209,7 @@ function Orderdatatable() {
 
     setIsLoading(true);
 
-    console.log("pagination.pageIndex ", pagination.pageIndex)
-    console.log("pagination.pageSize ", pagination.pageSize)
-
-    const payload = {
-      "customer_name": "",
-      "search_status": "",
-      "order_from_date": FromDate !== null ? moment(FromDate, 'ddd MMM DD YYYY HH:mm:ss [GMT]ZZ (zz)').format('YYYY-MM-DD') : "",
-      "order_to_date": ToDate !== null ? moment(ToDate, 'ddd MMM DD YYYY HH:mm:ss [GMT]ZZ (zz)').format('YYYY-MM-DD') : "",
-      "orderId": "",
-      "page": (pagination.pageIndex + 1),
-      "limit": pagination.pageSize
-    };
+    const payload = {};
 
     var response = await fmiOrderSystemAppOrderList(payload);
 
@@ -268,24 +251,9 @@ function Orderdatatable() {
   useEffect(() => {
     getOrderList();
     // console.log(orderData)
-  }, [pagination.pageIndex, pagination.pageSize, FromDate, ToDate]);
+  }, []);
 
   return (<div className="view_order_table">
-    {/* from date */}
-    <DatePicker
-      selected={FromDate}
-      onChange={handleFromDateChange}
-      startDate={FromDate}
-      placeholderText='Date From'
-    />
-    {/* to date */}
-    <DatePicker
-      selected={ToDate}
-      onChange={handleToDateChange}
-      startDate={ToDate}
-      placeholderText='Date To'
-    />
-
     <MaterialReactTable table={table} />
   </div>);
 };
