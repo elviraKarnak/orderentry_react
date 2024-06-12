@@ -47,6 +47,7 @@ function NewOrder() {
     const [loader, setLoader] = useState(false);
     const [imageShowModal, setImageShowModal] = useState(false);
     const [ImageURL, setImageURL] = useState("");
+    //const [DeliveryDate, setImageURL] = useState("");
     const navigate = useNavigate();
 
 
@@ -547,77 +548,6 @@ function NewOrder() {
             return;
         }
 
-        // ===================== old api =================///
-        // var tempItem = []
-
-        // for (var item of userState.OrderItemsData) {
-        //     var temp = {
-        //         product_id: item.product_details.id,
-        //         quantity: item.quantity,
-        //         sale_price: (SelectCustomerData.ship_addr.ship_method === "fob" ? item.product_details.fob_price : item.product_details.landed_price),
-        //         cost_price: 0,
-        //         p_cat: (item.product_details.catslug.split(",")[0] == "" ? null : item.product_details.catslug.split(",")[0]),
-        //         p_color: (item.product_details.colorslug.split(",")[0] == "" ? null : item.product_details.colorslug.split(",")[0]),
-        //         // cost_price: item.product_details.fob_price
-        //     }
-
-        //     tempItem.push(temp)
-        // }
-
-
-        // var payload;
-
-        // if (OrderId != null) {
-        //     payload.order_id = OrderId;
-        // }
-
-        // return;
-
-        // payload = {
-        //     customer_id: SelectCustomerData.id,
-        //     sales_rep_id: userState.id,
-        //     delivary_date: DeliveryDate,
-        //     order_items: tempItem,
-        //     ship_method: (SelectCustomerData.ship_addr.ship_method === "fob" ? "fob" : "fedex"),
-        //     order_status: "saved"
-        // }
-
-
-
-
-
-
-        // var responce = await orderService.newOrderAdd(new_payload);
-
-        // console.log(responce.data)
-        // if (responce.data.status) {
-        //     var OID = responce.data.order_id;
-        //     console.log(OID)
-
-        //     // alert("order_id",responce.data.order_id)
-        //     // setOrderId(OID);
-
-        //     toast.success("Order Save");
-
-        //     // === order_data_reset ====
-        //     dispatch({ type: "order_data_reset" });
-
-        //     setAddItem((pre) => pre ? false : true)
-
-        //     Swal.fire(
-        //         'Saved!',
-        //         'Your order has been saved.',
-        //         'success'
-        //     );
-
-        //     navigate("/order-view");
-
-        // } else {
-        //     toast.error(responce.data.msg);
-        // }
-        // ================== end order api ================================== //
-
-
         // ============= new ============== //
         var tempItem = []
 
@@ -627,7 +557,13 @@ function NewOrder() {
                 item_id: item.product_details.id,
                 item_details: item.product_details.name,
                 item_price: (SelectCustomerData.ship_addr.ship_method === "fob" ? item.product_details.fob_price : item.product_details.landed_price),
-                item_quantity: item.quantity
+                item_quantity: item.quantity,
+                item_color: item.product_details.color,
+                item_cat:item.product_details.cat,
+                item_uom:item.product_details.unit,
+                item_farm:item.product_details.source,
+                item_margin:item.margin, 
+                item_company:SelectCustomerData.company_name
             }
 
             tempItem.push(temp)
@@ -644,6 +580,7 @@ function NewOrder() {
             payment_amount: userState.TotalPM.total,
             payment_approval_code: "075618",
             items_details: tempItem,
+            ship_date:DeliveryDate,
             order_address_details: {
                 ship_to: SelectCustomerData.company_name,
                 address: SelectCustomerData.ship_addr.ship_addr_1 + " " + SelectCustomerData.ship_addr.ship_addr_2,
@@ -801,12 +738,6 @@ function NewOrder() {
 
 
     }, [])
-
-
-
-
-
-
 
 
     // console.log("userState.ProductData ",userState.ProductData)

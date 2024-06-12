@@ -88,6 +88,9 @@ html {
   color: #fff;
   border-radius: 25px;
 }
+.fmi_oder_syetem_main .fmi_order_system_wrap button.btn_cro a{
+  color: #fff;
+}
 
 .fmi_oder_syetem_main .fmi_order_system_wrap button.btn_nc {
   color: #66b100;
@@ -108,32 +111,34 @@ html {
   outline: 0;
 }
 
-.saved {
-  background: #61b7d6;
+.new_order,
+.processing {
+  background: #5936EB;
   border: 1px solid #707070;
   color: #fff;
 }
 
 .canceled {
-  background: #d11919;
+  background: #D11919;
   border: 1px solid #707070;
   color: #fff;
+  pointer-events: none;
 }
 
 .purchased,
 .confirmed {
-  background: #a312b1;
+  background: #A54CCB;
   border: 1px solid #707070;
   color: #fff;
 }
 
 .printed {
-  background: #66b100;
+  background: #80D553;
   border: 1px solid #707070;
   color: #fff;
 }
 
-.saved {
+/* .saved {
   background: #5936eb;
   border: 1px solid #707070;
   color: #fff;
@@ -143,16 +148,16 @@ html {
   background: #5936eb;
   border: 1px solid #707070;
   color: #fff;
-}
+} */
 
-.processing {
+/* .processing {
   background: #80d553;
   border: 1px solid #707070;
   color: #fff;
-}
+} */
 
 .stat_transfer {
-  background: #ef9a5c;
+  background: #EB9E36;
   border: 1px solid #707070;
   color: #fff;
 }

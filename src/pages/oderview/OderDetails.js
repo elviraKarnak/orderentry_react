@@ -31,25 +31,56 @@ function OderDetails() {
 		pageSize: 10,
 	});
 
-	const orderDefaultStatus = ['New order', 'Processing', 'Purchased', 'Confirmed', 'Printed', 'Canceled']
-	// const orderDefaultStatus = [
-	// 	{ label: "New order", value: "1" },
-	// 	{ label: "Processing", value: "2" },
-	// 	{ label: "Purchased", value: "3" },
-	// 	{ label: "Confirmed", value: "4" },
-	// 	{ label: "Printed", value: "5" },
-	// 	{ label: "Canceled", value: "6" },
-	// ]
+	// const orderDefaultStatus = ['New order', 'Processing', 'Purchased', 'Confirmed', 'Printed', 'Canceled']
+	const orderDefaultStatus = [
+		{ label: "New Order", value: "new_order" },
+		{ label: "Purchased", value: "purchased" },
+		{ label: "Canceled", value: "canceled" },
+	]
 
 	const orderStatusChange = (id, e) => {
 		// console.log(id, e.target.value);
-
-		const newData = data.map(item =>
-			item.id === id ? { ...item, status: e.target.value } : item
-		);
-		setorderData(newData);
-
-	};
+	
+		// const newData = data.map(item =>
+		//   item.id === id ? { ...item, status: e.target.value } : item
+		// );
+		// setorderData(newData);
+	
+		Swal.fire({
+		  title: "Are you sure?",
+		  text: "You wan't to change order status!",
+		  icon: "warning",
+		  showCancelButton: true,
+		  confirmButtonColor: "#5936eb",
+		  cancelButtonColor: "#d33",
+		  confirmButtonText: "Yes"
+		}).then(async (result) => {
+	
+		  if (result.isConfirmed) {
+			// var status_selected_obj = orderDefaultStatus.filter((item) => item.label === e.target.value);
+			// status_selected_obj = status_selected_obj[0];
+			console.log(e.target.value);
+		  
+			const payload = {
+			  "orderId": id,
+			  "wp_order": "no",
+			  "status_val": e.target.value
+			};
+	
+			var response = await fmiOrderSystemAppOrderStatusChange(payload);
+	
+			Swal.fire({
+			  text: "Order status change successfully.",
+			  icon: "success"
+			});
+	
+			getOrderList();
+	
+		  }
+	
+		});
+	
+	  };
 
 	const columns = useMemo(
 		() => [
@@ -134,7 +165,7 @@ function OderDetails() {
 							onChange={e => orderStatusChange(row.original.id, e)}
 						>
 							{orderDefaultStatus.map((v, i) => (
-								<MenuItem key={i} value={v}>{v}</MenuItem>
+								<MenuItem key={i} value={v.value}>{v.label}</MenuItem>
 							))}
 
 						</Select>
@@ -144,10 +175,6 @@ function OderDetails() {
 			
 		],
 		[],);
-
-
-
-
 
 
 	const table = useMaterialReactTable({

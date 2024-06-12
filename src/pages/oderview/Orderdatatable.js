@@ -39,11 +39,14 @@ function Orderdatatable() {
     pageSize: 10,
   });
 
-  // const orderDefaultStatus = ['Saved', 'Processing', 'Purchased', 'Confirmed', 'Printed', 'Canceled']
+  // const orderDefaultStatus = ['New Order', 'Processing', 'Purchased', 'Confirmed', 'Printed', 'Canceled']
   const orderDefaultStatus = [
-    { label: "Saved", value: "1" },
-    { label: "Received", value: "2" },
-    { label: "Shipped", value: "3" },
+    { label: "New Order", value: "new_order" },
+    { label: "Processing", value: "processing" },
+    { label: "Purchased", value: "purchased" },
+    { label: "Confirmed", value: "confirmed" },
+    { label: "Printed", value: "printed" },
+    { label: "Canceled", value: "canceled" },
   ]
 
   const orderStatusChange = (id, e) => {
@@ -65,15 +68,14 @@ function Orderdatatable() {
     }).then(async (result) => {
 
       if (result.isConfirmed) {
-        var status_selected_obj = orderDefaultStatus.filter((item) => item.label === e.target.value);
-        status_selected_obj = status_selected_obj[0];
-        console.log(status_selected_obj);
-
-
+        // var status_selected_obj = orderDefaultStatus.filter((item) => item.label === e.target.value);
+        // status_selected_obj = status_selected_obj[0];
+        console.log(e.target.value);
+      
         const payload = {
           "orderId": id,
           "wp_order": "no",
-          "status_val": status_selected_obj.value
+          "status_val": e.target.value
         };
 
         var response = await fmiOrderSystemAppOrderStatusChange(payload);
@@ -131,7 +133,7 @@ function Orderdatatable() {
               onChange={e => orderStatusChange(row.original.id, e)}
             >
               {orderDefaultStatus.map((v, i) => (
-                <MenuItem key={i} value={v.label}>{v.label}</MenuItem>
+                <MenuItem key={i} value={v.value}>{v.label}</MenuItem>
               ))}
 
             </Select>
@@ -245,8 +247,6 @@ function Orderdatatable() {
     setToDate(dates);
     console.log("dates ", dates)
   };
-
-
 
   useEffect(() => {
     getOrderList();

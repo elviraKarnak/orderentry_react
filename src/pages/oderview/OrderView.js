@@ -5,6 +5,7 @@ import Typography from '@mui/material/Typography';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import Grid from '@mui/material/Unstable_Grid2';
+import { Link } from 'react-router-dom';
 
 
 
@@ -34,7 +35,7 @@ function OrderView() {
 					<div className="btn_parent-auto">
 						<List className="btn_group-block">
 							<ListItem>
-								<Button className="btn_cro">Create new order</Button>
+								<Button className="btn_cro"><Link to="/order-entry">Create new order</Link></Button>
 							</ListItem>
 							<ListItem>
 								<Button className="btn_nc">Create new customer</Button>

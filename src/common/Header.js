@@ -1,5 +1,5 @@
 import React,{useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { styled, useTheme } from '@mui/material/styles';
 import { useNavigate } from 'react-router-dom';
 import Box from '@mui/material/Box';
@@ -17,6 +17,8 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import GridViewSharpIcon from '@mui/icons-material/GridViewSharp';
 import FormatListBulletedSharpIcon from '@mui/icons-material/FormatListBulletedSharp';
+
+import { menueDataAdmin } from '../utils/Constant';
 
 
 const drawerWidth = 240;
@@ -70,6 +72,8 @@ const DrawerHeader = styled('div')(({ theme }) => ({
         
     };
 
+    const location = useLocation();
+
   return (
     <Box sx={{ display: 'flex' }}>
       <AppBar className="fmi_ordersystem_header" position="relative" color="transparent" open={open}>
@@ -89,18 +93,31 @@ const DrawerHeader = styled('div')(({ theme }) => ({
               Menu
             </Typography>
           </div>
-          <div className="menuitem">
-            <GridViewSharpIcon className='menu_icon'/>
-            <Typography variant="h6" noWrap component="div">
-            <Link to="/order-view">Order View</Link>
-          </Typography>
-          </div>
-          <div className="menuitem">
-            <FormatListBulletedSharpIcon className='menu_icon'/>
-            <Typography variant="h6" noWrap component="div">
-            <Link to="/order-list">Order List</Link>
-            </Typography>
-          </div>
+          {(location.pathname === '/' ||
+           location.pathname === '/order-entry'||
+           location.pathname === '/order-list' ||
+           location.pathname === '/order-view' ||
+           location.pathname === '/buyer-dashbord'||
+          location.pathname === '/order-details'
+           
+            )&& (
+            <>
+              <div className="menuitem">
+                <GridViewSharpIcon className='menu_icon'/>
+                <Typography variant="h6" noWrap component="div">
+                <Link to="/order-view">Order View</Link>
+                 </Typography>
+              </div>
+              <div className="menuitem">
+              <FormatListBulletedSharpIcon className='menu_icon'/>
+              <Typography variant="h6" noWrap component="div">
+              <Link to="/order-list">Order List</Link>
+              </Typography>
+            </div>
+            </>
+          )}
+       
+          
         </Toolbar>
       </AppBar>
       <Drawer
@@ -124,29 +141,7 @@ const DrawerHeader = styled('div')(({ theme }) => ({
         </DrawerHeader>
         <Divider />
         <List className='page_navigation sidebar-scroll'>
-          {[{menuName:'Dashboard',
-             path:'/'
-             }, 
-            {menuName:'Order Entry',
-             path:'/order-entry'
-            }, 
-            {menuName:'Order View',
-            path:'/order-view'
-            }, 
-            {menuName:'Order List',
-            path:'/order-list'
-            }, 
-            {menuName:'Staging Inventory',
-            path:'/staging-inventory'
-            }, 
-            {menuName:'Product Entry',
-            path:'/product-entry'
-            },
-            {menuName:'Admin',
-            path:'/'}, 
-            {menuName:'Accounting',
-            path:'/'}
-            ].map((item, index) => (
+          {menueDataAdmin.map((item, index) => (
             <ListItem key={index} disablePadding>
               <ListItemButton>
               <Link to={item.path}>{item.menuName}</Link>

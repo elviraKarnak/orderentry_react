@@ -2,7 +2,7 @@ import React, { useState, useEffect  } from 'react';
 import Header from "../../common/Header";
 import OrderView from './OrderView';
 import UserLogin from '../auth/UserLogin';
-import { BuyerOrderList } from '../buyer/BuyerOrderList';
+import BuyerOrderList  from '../buyer/BuyerOrderList';
 import {MemoryRouter, Route, Routes } from 'react-router-dom';
 
 

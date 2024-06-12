@@ -1,5 +1,7 @@
 import { Message } from "@mui/icons-material";
+import axios from "axios";
 const REACT_APP_API_SERVICE_URL = process.env.REACT_APP_API_SERVICE_URL_2;
+const REACT_APP_WORDPRESS_API_SERVICE_URL = process.env.REACT_APP_WORDPRESS_API_SERVICE_URL;
 
     //Login POST API
     export async function  fmiOrderSystemAppAppLogin(userEmail,UserPasswoard) {
@@ -368,3 +370,27 @@ export async function fmiOrderSystemAppOrderAdd(payload) {
         return { status: "error", error: "Network error" };
     }
 }
+
+
+
+
+  export const fetchProducts = async () => {
+    try {
+    const getWpProducts = await axios.get(REACT_APP_WORDPRESS_API_SERVICE_URL+'/getproducts/v1/product_listing?model=landed&date_text=06/19/2024&page_no=1&pact=&pcolor&psource&isbybunch&searchquery&filter_opt');
+    //console.log(getWpProducts);   
+    if(getWpProducts.status == "200"){
+        const products = getWpProducts.data;
+        //console.log(products.items);
+        return products.items;
+       }else{
+        console.log("Server error:", getWpProducts.status);
+        const errorData = await getWpProducts.json();
+        console.log("Server errorData ",errorData)
+        return { status: false, error: errorData };
+       }
+    } catch (error) {
+        // Network error
+        console.log("Network error:", error);
+        return { status: "error", error: "Network error" };
+    }
+  };

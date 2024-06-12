@@ -1,6 +1,8 @@
 import React from 'react'
 import DatePicker from 'react-datepicker';
 
+import Header from '../../common/Header';
+
 
 import { Link, useEffect, useMemo, useState } from 'react';
 import { MaterialReactTable, useMaterialReactTable, } from 'material-react-table';
@@ -15,7 +17,7 @@ import moment from "moment";
 
 
 
-export function BuyerOrderList() {
+function BuyerOrderList() {
 
    // const { userData } = useSelector(state => state.Auth);
 
@@ -38,12 +40,9 @@ export function BuyerOrderList() {
     // const orderDefaultStatus = ['Saved', 'Processing', 'Purchased', 'Confirmed', 'Printed', 'Canceled']
     // eslint-disable-next-line react-hooks/exhaustive-deps
     const orderDefaultStatus = [
-        { label: "New order", value: "1" },
-        { label: "Processing", value: "2" },
-        { label: "Purchased", value: "3" },
-        { label: "Confirmed", value: "4" },
-        { label: "Printed", value: "5" },
-        { label: "Canceled", value: "6" },
+        { label: "New order", value: "new_order" },
+        { label: "Purchased", value: "purchased" },
+        { label: "Canceled", value: "canceled" },
     ]
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -308,20 +307,21 @@ export function BuyerOrderList() {
 
     return (
         <div>
+          <Header/>
             {/* from date */}
-            <DatePicker
+            {/* <DatePicker
                 selected={FromDate}
                 onChange={handleFromDateChange}
                 startDate={FromDate}
                 placeholderText='Date From'
             />
             {/* to date */}
-            <DatePicker
+            {/* <DatePicker
                 selected={ToDate}
                 onChange={handleToDateChange}
                 startDate={ToDate}
                 placeholderText='Date To'
-            />
+            /> */} 
 
             <div classNameName="data_table-head">
                 <div className="container-fluid">
@@ -333,3 +333,6 @@ export function BuyerOrderList() {
         </div>
     )
 }
+
+
+export default BuyerOrderList
