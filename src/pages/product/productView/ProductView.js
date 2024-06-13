@@ -9,7 +9,7 @@ function ProductView() {
  
   return (
     <>
-        <Header/>
+        <Header title='Product Table'/>
         <ProductTable/>
     </>
   )

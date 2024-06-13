@@ -17,10 +17,7 @@ import './assests/css/custom.css';
 import './assests/css/style_old.css';
 
 //Components
-import Header from './common/Header';
 import Dashboard from './pages/oderview/Dashboard';
-import OrderList from './pages/oderview/OrderList';
-import OrderView from './pages/oderview/OrderView';
 import SatagingInventory from './pages/staginginvemntoty/SatagingInventory';
 
 //Temp component
@@ -48,7 +45,6 @@ function App() {
             <BrowserRouter>
               <Routes>
                 <Route path='/' element={<Dashboard />} />
-                <Route path='/order-list' element={<OrderList />} />
                 <Route path='/order-view' element={<Dashboard />} />
                 <Route path='/order-entry' element={<SimpleSearch />} />
                 <Route path='/order-details' element={<OderDetails />} />
@@ -67,7 +63,3 @@ function App() {
 }
 
 export default App
-
-{/* >
-            <ProductTable/>
-         */}

@@ -137,7 +137,7 @@ const columns = useMemo(
   } = UsefetchProducts();
 
 
-console.log(fetchedproducts);
+//console.log(fetchedproducts);
 
 
 //   call CREATE hook
@@ -176,13 +176,6 @@ console.log(fetchedproducts);
     table.setEditingRow(null); //exit editing mode
   };
 
-  //DELETE action
-  const openDeleteConfirmModal = (row) => {
-    if (window.confirm('Are you sure you want to delete this user?')) {
-      deleteUser(row.original.id);
-    }
-  };
-
   const table = useMaterialReactTable({
     columns,
     data: fetchedproducts,
@@ -212,11 +205,6 @@ console.log(fetchedproducts);
             <EditIcon />
           </IconButton>
         </Tooltip>
-        {/* <Tooltip title="Delete">
-          <IconButton color="error" onClick={() => openDeleteConfirmModal(row)}>
-            <DeleteIcon />
-          </IconButton>
-        </Tooltip> */}
       </Box>
     ),
     renderTopToolbarCustomActions: ({ table }) => (

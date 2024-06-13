@@ -5,13 +5,13 @@ import {MaterialReactTable,useMaterialReactTable} from 'material-react-table';
   
 import {Table,TableBody,TableCell,TableContainer,TableHead,TableRow,Paper} from '@mui/material';
 import Typography from '@mui/material/Typography';
-import orderArray from './orderArray';
+//import orderArray from './orderArray';
 
 import Header from '../../common/Header';
 
 function OrderList() {
   
-    const [data, setOrderDetails] = useState(orderArray);
+    const [data, setOrderDetails] = useState();
     const columns = useMemo(
         () => [
             {
@@ -50,7 +50,7 @@ function OrderList() {
      
       const orderListTable = useMaterialReactTable({
         columns,
-        data, 
+        data:[], 
         enableColumnFilterModes: true,
         enableColumnOrdering: true,
         enableGrouping: true,
@@ -114,7 +114,7 @@ function OrderList() {
       });
 
     return (<> 
-    <Header/>
+    <Header title='Order List'/>
     <div><Typography variant="h3" className="title">Order List</Typography></div>
     <MaterialReactTable table={orderListTable} /></>);
   

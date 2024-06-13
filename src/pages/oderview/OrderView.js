@@ -6,11 +6,13 @@ import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import Grid from '@mui/material/Unstable_Grid2';
 import { Link } from 'react-router-dom';
-
+import Header from '../../common/Header';
 
 
 function OrderView() {
   return (
+	<>
+	<Header title='Order View'/>
     <div>
       	<div className="data_table-head">
 		  <Grid container spacing={2}>
@@ -49,6 +51,7 @@ function OrderView() {
 			</div>
 		</div>
 	</div>
+	</>
   )
 }
 

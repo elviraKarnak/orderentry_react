@@ -3,7 +3,6 @@ import DatePicker from 'react-datepicker';
 
 import Header from '../../common/Header';
 
-
 import { Link, useEffect, useMemo, useState } from 'react';
 import { MaterialReactTable, useMaterialReactTable, } from 'material-react-table';
 import MenuItem from '@mui/material/MenuItem';
@@ -37,23 +36,14 @@ function BuyerOrderList() {
         pageSize: 10,
     });
 
-    // const orderDefaultStatus = ['Saved', 'Processing', 'Purchased', 'Confirmed', 'Printed', 'Canceled']
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+
     const orderDefaultStatus = [
-        { label: "New order", value: "new_order" },
+        { label: "New Order", value: "new_order" },
         { label: "Purchased", value: "purchased" },
         { label: "Canceled", value: "canceled" },
     ]
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     const orderStatusChange = (id, e) => {
-        // console.log(id, e.target.value);
-
-        // const newData = data.map(item =>
-        //   item.id === id ? { ...item, status: e.target.value } : item
-        // );
-        // setorderData(newData);
-
         Swal.fire({
             title: "Are you sure?",
             text: "You wan't to change order status!",
@@ -68,7 +58,6 @@ function BuyerOrderList() {
                 var status_selected_obj = orderDefaultStatus.filter((item) => item.label === e.target.value);
                 status_selected_obj = status_selected_obj[0];
                 console.log(status_selected_obj);
-
 
                 const payload = {
                     "Id": id,
@@ -85,11 +74,7 @@ function BuyerOrderList() {
                 getOrderList();
 
             }
-
         });
-
-
-
     };
 
     const columns = useMemo(
@@ -162,18 +147,13 @@ function BuyerOrderList() {
                             onChange={e => orderStatusChange(row.original.item_tbl_id, e)}
                         >
                             {orderDefaultStatus.map((v, i) => (
-                                <MenuItem key={i} value={v.label}>{v.label}</MenuItem>
+                                <MenuItem key={i} value={v.value}>{v.label}</MenuItem>
                             ))}
                         </Select>
                     </>
                 ),
             },
         ], [orderDefaultStatus, orderStatusChange]);
-
-
-
-
-
 
     const table = useMaterialReactTable({
         columns,
@@ -189,10 +169,6 @@ function BuyerOrderList() {
         initialState: {
             showColumnFilters: true,
             showGlobalFilter: true,
-            //   columnPinning: {
-            //     left: ['mrt-row-expand', 'mrt-row-select'],
-            //     right: ['mrt-row-actions'],
-            //   },
         },
         paginationDisplayMode: 'pages',
         positionToolbarAlertBanner: 'bottom',
@@ -210,13 +186,10 @@ function BuyerOrderList() {
         rowCount,
         state: {
             pagination,
-            isLoading
+            isLoading,
+            showProgressBars: isLoading,
         },
     });
-
-
-
-
 
     const getOrderList = async () => {
 
@@ -237,67 +210,13 @@ function BuyerOrderList() {
         };
 
         var response = await fmiOrderSystemAppCustomerOrderList(payload);
-
-        // var newData = response.results.map((item) => ({
-        //     id: item.order_id,
-        //     orderDate: item.order_date,
-        //     orderNumber: `#${item.order_number}`,
-
-        //     customerName: item.customer_name,
-        //     price: `$${item.amount}`,
-        //     status: item.order_status
-        // }))
-
-        console.log(response)
+        //console.log(response)
 
         setorderData(response.result.results);
         setRowCount(response.result.totalRecord);
-        // setPagination({ ...pagination, pageIndex: pagination.pageIndex })
-
-        // console.log("first ",response)
         setIsLoading(false);
 
     }
-
-
-    const handleFromDateChange = (dates) => {
-        // const [start, end] = dates;
-        // setStartDate(start);
-        // setEndDate(end);
-
-        setFromDate(dates);
-
-        console.log("dates ", dates)
-
-        // // Filter data based on selected date range
-        // const filteredData = tableData.filter(item => {
-        //   const itemDate = new Date(item.date); // Assuming 'date' is the date field in your data
-        //   return (!start || itemDate >= start) && (!end || itemDate <= end);
-        // });
-
-        // // Update table with filtered data
-        // setTableData(filteredData);
-    };
-
-
-    const handleToDateChange = (dates) => {
-        // const [start, end] = dates;
-        // setStartDate(start);
-        // setEndDate(end);
-
-        setToDate(dates);
-
-        console.log("dates ", dates)
-
-        // // Filter data based on selected date range
-        // const filteredData = tableData.filter(item => {
-        //   const itemDate = new Date(item.date); // Assuming 'date' is the date field in your data
-        //   return (!start || itemDate >= start) && (!end || itemDate <= end);
-        // });
-
-        // // Update table with filtered data
-        // setTableData(filteredData);
-    };
 
     useEffect(() => {
         getOrderList();
@@ -307,22 +226,8 @@ function BuyerOrderList() {
 
     return (
         <div>
-          <Header/>
-            {/* from date */}
-            {/* <DatePicker
-                selected={FromDate}
-                onChange={handleFromDateChange}
-                startDate={FromDate}
-                placeholderText='Date From'
-            />
-            {/* to date */}
-            {/* <DatePicker
-                selected={ToDate}
-                onChange={handleToDateChange}
-                startDate={ToDate}
-                placeholderText='Date To'
-            /> */} 
-
+          <Header title="Order List"/>
+    
             <div classNameName="data_table-head">
                 <div className="container-fluid">
                     <div className="view_order_table">
@@ -333,6 +238,5 @@ function BuyerOrderList() {
         </div>
     )
 }
-
 
 export default BuyerOrderList

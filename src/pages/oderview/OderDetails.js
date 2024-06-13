@@ -212,7 +212,8 @@ function OderDetails() {
 		rowCount,
 		state: {
 			pagination,
-			isLoading
+			isLoading,
+			showProgressBars: isLoading,
 		},
 	});
 
@@ -282,7 +283,7 @@ function OderDetails() {
 
 	return (
 		<>
-			<Header />
+			<Header title='Order Details'/>
 			<div><Typography variant="h3" className="title">Order Details</Typography></div>
 			<div className="data_table-head">
 				<div className="container-fluid">

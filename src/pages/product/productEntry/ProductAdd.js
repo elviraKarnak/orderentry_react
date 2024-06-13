@@ -16,6 +16,7 @@ import OutlinedInput from '@mui/material/OutlinedInput';
 import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
 
+import Header from '../../../common/Header'
 
 // packages
 import { useForm } from "react-hook-form"
@@ -134,8 +135,9 @@ export default function ProductAdd() {
 
 
     return (<>
+    
         <Container maxWidth="ex">
-
+        <Header title='Add Product'/>
             <Grid container
                 spacing={0}
                 alignItems="center"

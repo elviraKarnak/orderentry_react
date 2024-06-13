@@ -141,36 +141,7 @@ function NewOrder() {
 
     const newOrderSaveAndContinueChk = async () => {
 
-        // Swal.fire({
-        //     title: 'Are you sure?',
-        //     text: "You want to check out this order!",
-        //     icon: 'warning',
-        //     showCancelButton: true,
-        //     confirmButtonColor: '#3085d6',
-        //     cancelButtonColor: '#d33',
-        //     confirmButtonText: 'Yes',
-        //     cancelButtonText: "Save"
-        // }).then(async (result) => {
-
-        //     if (result.isConfirmed) {
-
-        //         if (userState.OrderItemsData.length === 0) {
-        //             toast.warning("Item Not select!");
-        //         } else {
-        //             //  =========== modal open ========
-        //             setCheckOutModal(true);
-        //         }
-
-        //     } else {
-
-        //         //  ============= order save ===========
-        //         await NewOrderSave();
-        //     }
-
-
-        // })
-
-
+    
         Swal.fire({
             title: 'Are you sure?',
             text: "You want to save this order!",

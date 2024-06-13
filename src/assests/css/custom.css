@@ -13,6 +13,11 @@ html {
 }
 
 /* componentbase css Header */
+.fmi_farms_pagetitle{
+  color:#525253;
+  font-size: 34px !important;
+ margin-top: -47px !important;
+}
 .fmi_oder_syetem_main .fmi_order_system_wrap .fmi_ordersystem_header {
   width: 100%;
   position: relative;
@@ -160,6 +165,7 @@ html {
   background: #EB9E36;
   border: 1px solid #707070;
   color: #fff;
+  
 }
 
 .stat_receive {
@@ -172,6 +178,12 @@ html {
   background: #a54ccb;
   border: 1px solid #707070;
   color: #fff;
+  pointer-events: none;
+}
+.pending {
+  background: #62BDDE;
+  border: 1px solid #707070;
+  color: #fff;
 }
 
 .shipped {
@@ -182,6 +194,34 @@ html {
 
 .requiredError {
   color: red;
+}
+.staginginventory_wrap .header_button_wrap{
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+  align-items: center;
+  margin-bottom: 25px;
+
+}
+.staginginventory_wrap .sihb_button{
+  border: 2px solid #707070;
+  border-radius: 30px;
+  color: #fff;
+  margin-right: 15px;
+  padding: 5px 27px;
+  width: auto;
+  text-transform: capitalize;
+  font-weight: 400;
+  font-size: 16px;
+}
+.staginginventory_wrap .sihb_add{
+  background-color: #80D553;
+}
+.staginginventory_wrap .sihb_transfer{
+  background-color: #EF9A5C;
+}
+.staginginventory_wrap .sihb_received{
+  background-color: #A54CCB;
 }
 
 /* 06-06-2024 */

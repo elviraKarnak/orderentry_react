@@ -16,14 +16,11 @@ export const CustomerSchama = yup.object({
     // password: yup.string().min(8).required(),
     // confirm_password: yup.string().trim().min(8,"confirm password lengt must be 8 characters").required().oneOf([yup.ref("password")], "confirm password not match"),
 
-
-
     bill_addr_1: yup.string().trim().required("address 1 required"),
     bill_country_id: yup.string().trim().required("country required"),
     bill_state_id: yup.string().trim().required("state required"),
     bill_city_name: yup.string().trim().required("city required"),
     bill_zip_code: yup.string().trim().required("zip code required"),
-
 
     ship_contact_name: yup.string().trim().required("contact name required"),
     ship_phone: yup.string().trim().required("phone required"),

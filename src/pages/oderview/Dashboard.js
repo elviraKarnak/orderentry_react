@@ -27,7 +27,6 @@ function Dashboard() {
     <>
         {getUserType ? (
             <>
-            <Header />
             {console.log(getUserType)}
                 {getUserType === '1' && <OrderView/>}
                 {getUserType === '3' && <BuyerOrderList/>}
@@ -39,9 +38,6 @@ function Dashboard() {
 ) : (
     <UserLogin getLoginResponse={setLoginSession} />
 )}
-
-
-
     </>
     )
 }

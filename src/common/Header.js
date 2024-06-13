@@ -49,7 +49,7 @@ const DrawerHeader = styled('div')(({ theme }) => ({
   justifyContent: 'flex-end',
 }));
 
- function Header() {
+ function Header({title}) {
   const theme = useTheme();
   const [open, setOpen] = useState(false);
 
@@ -111,15 +111,19 @@ const DrawerHeader = styled('div')(({ theme }) => ({
               <div className="menuitem">
               <FormatListBulletedSharpIcon className='menu_icon'/>
               <Typography variant="h6" noWrap component="div">
-              <Link to="/order-list">Order List</Link>
+              <Link to="/buyer-dashbord">Order List</Link>
               </Typography>
             </div>
             </>
           )}
-       
-          
+  
         </Toolbar>
+        <div className="d-flex justify-content-center w-100">
+        <Typography className="fmi_farms_pagetitle title" variant="h3" noWrap component="div">{title}</Typography>
+       </div>
+       
       </AppBar>
+      
       <Drawer
         sx={{
           width: drawerWidth,

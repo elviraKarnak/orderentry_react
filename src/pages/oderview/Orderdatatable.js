@@ -165,11 +165,6 @@ function Orderdatatable() {
     [],
   );
 
-
-
-
-
-
   const table = useMaterialReactTable({
     columns,
     data,
@@ -201,6 +196,11 @@ function Orderdatatable() {
       shape: 'rounded',
       variant: 'outlined',
     },
+    state: {
+			pagination,
+			isLoading:isLoading,
+      showProgressBars: isLoading,
+		},
   });
 
 
