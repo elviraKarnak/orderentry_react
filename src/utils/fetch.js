@@ -78,8 +78,6 @@ export async function fmiOrderSystemAppOrderList(payload) {
 //Order Status Change API
 export async function fmiOrderSystemAppOrderStatusChange(payload) {
 
-
-
     const myHeaders = new Headers();
     myHeaders.append("x-api-key", "b1d1I0p7A2Er2n0eD2b0As8c0kT8p2M9");
     myHeaders.append("token", window.sessionStorage.getItem("access-token"));

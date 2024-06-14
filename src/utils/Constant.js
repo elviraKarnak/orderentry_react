@@ -14,9 +14,9 @@ export const menueDataAdmin = [
    {menuName:'Staging Inventory',
    path:'/staging-inventory'
    }, 
-   {menuName:'Product Entry',
-   path:'/product-entry'
-   },
+//    {menuName:'Product Entry',
+//    path:'/product-entry'
+//    },
    {menuName:'Product View',
      path:'/product-view'
    },
