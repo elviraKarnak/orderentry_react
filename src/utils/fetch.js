@@ -407,7 +407,7 @@ export async function fmiOrderSystemAppOrderAdd(payload) {
 
   export const fetchProducts = async () => {
     try {
-    const getWpProducts = await axios.get(REACT_APP_WORDPRESS_API_SERVICE_URL+'/getproducts/v1/product_listing?model=landed&date_text=06/20/2024&page_no=1&pact=&pcolor&psource&isbybunch&searchquery&filter_opt');
+    const getWpProducts = await axios.get(REACT_APP_WORDPRESS_API_SERVICE_URL+'/getproducts/v1/product_listing?model=landed&date_text=06/20/2023&page_no=1&pact=&pcolor&psource&isbybunch&searchquery&filter_opt');
     //console.log(getWpProducts);   
     if(getWpProducts.status == "200"){
         const products = getWpProducts.data;
