@@ -7,7 +7,7 @@ import { Link, useEffect, useMemo, useState } from 'react';
 import { MaterialReactTable, useMaterialReactTable, } from 'material-react-table';
 import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
-import { fmiOrderSystemAppCustomerOrderList, fmiOrderSystemAppCustomerOrderStatusChange } from '../../utils/fetch';
+import { fmiOrderSystemAppCustomerOrderList, fmiOrderSystemAppCustomerOrderStatusChange, fmiOrderSystemAppOrderItemStatusChange } from '../../utils/fetch';
 
 import Swal from 'sweetalert2'
 import { useNavigate } from 'react-router-dom';
@@ -18,7 +18,7 @@ import moment from "moment";
 
 function BuyerOrderList() {
 
-   // const { userData } = useSelector(state => state.Auth);
+    // const { userData } = useSelector(state => state.Auth);
 
     const navigate = useNavigate();
 
@@ -55,19 +55,19 @@ function BuyerOrderList() {
         }).then(async (result) => {
 
             if (result.isConfirmed) {
-                var status_selected_obj = orderDefaultStatus.filter((item) => item.label === e.target.value);
-                status_selected_obj = status_selected_obj[0];
-                console.log(status_selected_obj);
+                // var status_selected_obj = orderDefaultStatus.filter((item) => item.label === e.target.value);
+                // status_selected_obj = status_selected_obj[0];
+                console.log(e.target.value);
 
                 const payload = {
-                    "Id": id,
-                    "status_val": status_selected_obj.value
+                    "orderItemId": id,
+                    "status_val": e.target.value
                 };
 
-                var response = await fmiOrderSystemAppCustomerOrderStatusChange(payload);
+                var response = await fmiOrderSystemAppOrderItemStatusChange(payload);
 
                 Swal.fire({
-                    text: "Order status change successfully.",
+                    text: "Order item status change successfully.",
                     icon: "success"
                 });
 
@@ -84,7 +84,7 @@ function BuyerOrderList() {
                 header: 'Shipping Date',
             },
             {
-                accessorKey: 'so',
+                accessorKey: 'order_number',
                 header: 'SO#',
             },
             {
@@ -132,7 +132,7 @@ function BuyerOrderList() {
                 header: 'Margin',
             },
             {
-                accessorKey: 'order_status',
+                accessorKey: 'order_item_status',
                 header: 'Status',
                 size: 150,
                 Cell: ({ renderedCellValue, row }) => (
@@ -142,7 +142,7 @@ function BuyerOrderList() {
                         <Select
                             labelId="demo-simple-select-helper-label"
                             id="demo-simple-select-helper"
-                            className={`dropdown  ${renderedCellValue === "New order" ? "saved" : renderedCellValue.toLowerCase()}`}
+                            className={`dropdown  ${(renderedCellValue.toLowerCase()).replace(/\s/g, '')} ${renderedCellValue !== "new_order" && "prevent_click"}`}
                             value={renderedCellValue}
                             onChange={e => orderStatusChange(row.original.item_tbl_id, e)}
                         >
@@ -153,7 +153,7 @@ function BuyerOrderList() {
                     </>
                 ),
             },
-        ], [orderDefaultStatus, orderStatusChange]);
+        ], []);
 
     const table = useMaterialReactTable({
         columns,
@@ -165,7 +165,7 @@ function BuyerOrderList() {
         enableFacetedValues: true,
         enableRowActions: false,
         enableRowSelection: true,
-        manualPagination: true,
+        manualPagination: false,
         initialState: {
             showColumnFilters: true,
             showGlobalFilter: true,
@@ -182,10 +182,7 @@ function BuyerOrderList() {
             shape: 'rounded',
             variant: 'outlined',
         },
-        onPaginationChange: setPagination,
-        rowCount,
         state: {
-            pagination,
             isLoading,
             showProgressBars: isLoading,
         },
@@ -199,14 +196,12 @@ function BuyerOrderList() {
         console.log("pagination.pageSize ", pagination.pageSize)
 
         const payload = {
-            "customer_name": "",
+            "customerId": "",
             "search_status": "",
-            "order_from_date": FromDate !== null ? moment(FromDate, 'ddd MMM DD YYYY HH:mm:ss [GMT]ZZ (zz)').format('YYYY-MM-DD') : "",
-            "order_to_date": ToDate !== null ? moment(ToDate, 'ddd MMM DD YYYY HH:mm:ss [GMT]ZZ (zz)').format('YYYY-MM-DD') : "",
-            "orderId": "",
-            "customerId": 2,
-            "page": (pagination.pageIndex + 1),
-            "limit": pagination.pageSize
+            "order_from_date": "",
+            "order_to_date": "",
+            "page": "",
+            "limit": "",
         };
 
         var response = await fmiOrderSystemAppCustomerOrderList(payload);
@@ -221,13 +216,13 @@ function BuyerOrderList() {
     useEffect(() => {
         getOrderList();
         // console.log(orderData)
-    }, [pagination.pageIndex, pagination.pageSize, FromDate, ToDate]);
+    }, []);
 
 
     return (
         <div>
-          <Header title="Order List"/>
-    
+            <Header title="Order List" />
+
             <div classNameName="data_table-head">
                 <div className="container-fluid">
                     <div className="view_order_table">

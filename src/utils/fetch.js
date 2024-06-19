@@ -107,6 +107,39 @@ export async function fmiOrderSystemAppOrderStatusChange(payload) {
 };
 
 
+
+//Order Item Status Change API
+export async function fmiOrderSystemAppOrderItemStatusChange(payload) {
+
+    const myHeaders = new Headers();
+    myHeaders.append("x-api-key", "b1d1I0p7A2Er2n0eD2b0As8c0kT8p2M9");
+    myHeaders.append("token", window.sessionStorage.getItem("access-token"));
+    myHeaders.append("Content-Type", "application/json");
+
+
+    const fmiOrderSystemAppResponse = await fetch(REACT_APP_API_SERVICE_URL + '/api/v1/admin/order/item/status-change', {
+        method: 'POST',
+        headers: myHeaders,
+        body: JSON.stringify(payload),
+    });
+
+    const fmiOrderSystemAppResult = await fmiOrderSystemAppResponse.json();
+    console.log("order status", fmiOrderSystemAppResult);
+    // return;
+
+    if (fmiOrderSystemAppResponse.ok) {
+
+        // return { result: [] };
+        return fmiOrderSystemAppResult;
+
+    } else {
+        const error = new Error();
+        // error.message = healthAppLoginResponseResult.message || 'Something went wrong.';
+    }
+
+};
+
+
 //Order Details List API
 export async function fmiOrderSystemAppOrderDetailsList(payload) {
 

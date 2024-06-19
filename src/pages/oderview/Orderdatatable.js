@@ -175,7 +175,7 @@ function Orderdatatable() {
     enableFacetedValues: true,
     enableRowActions: false,
     enableRowSelection: true,
-    manualPagination: true,
+    manualPagination: false,
     initialState: {
       showColumnFilters: true,
       showGlobalFilter: true,
@@ -197,7 +197,6 @@ function Orderdatatable() {
       variant: 'outlined',
     },
     state: {
-			pagination,
 			isLoading:isLoading,
       showProgressBars: isLoading,
 		},

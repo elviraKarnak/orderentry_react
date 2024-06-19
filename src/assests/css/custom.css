@@ -12,6 +12,11 @@ html {
   display: block;
 }
 
+.prevent_click{
+  pointer-events: none;
+}
+
+
 /* componentbase css Header */
 .fmi_farms_pagetitle{
   color:#525253;

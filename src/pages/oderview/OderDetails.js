@@ -7,7 +7,7 @@ import Select from '@mui/material/Select';
 
 
 import Header from '../../common/Header';
-import { fmiOrderSystemAppOrderDetailsList, fmiOrderSystemAppOrderList, fmiOrderSystemAppOrderStatusChange } from '../../utils/fetch';
+import { fmiOrderSystemAppOrderDetailsList, fmiOrderSystemAppOrderItemStatusChange, fmiOrderSystemAppOrderList, fmiOrderSystemAppOrderStatusChange } from '../../utils/fetch';
 
 import { useLocation, useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2'
@@ -62,15 +62,17 @@ function OderDetails() {
 			console.log(e.target.value);
 		  
 			const payload = {
-			  "orderId": id,
-			  "wp_order": "no",
+			  "orderItemId": id,
 			  "status_val": e.target.value
 			};
+
+			// console.log(payload);
+			// return;
 	
-			var response = await fmiOrderSystemAppOrderStatusChange(payload);
+			var response = await fmiOrderSystemAppOrderItemStatusChange(payload);
 	
 			Swal.fire({
-			  text: "Order status change successfully.",
+			  text: "Order item status change successfully.",
 			  icon: "success"
 			});
 	
@@ -156,13 +158,12 @@ function OderDetails() {
 				Cell: ({ renderedCellValue, row }) => (
 
 					<>
-						{console.log(row.original.id, renderedCellValue)}
 						<Select
 							labelId="demo-simple-select-helper-label"
 							id="demo-simple-select-helper"
-							className={'dropdown ' + (renderedCellValue.toLowerCase()).replace(/\s/g, '')}
+							className={`dropdown ${renderedCellValue !== "new_order" && "prevent_click"} ` + (renderedCellValue.toLowerCase()).replace(/\s/g, '') }
 							value={renderedCellValue}
-							onChange={e => orderStatusChange(row.original.id, e)}
+							onChange={e => orderStatusChange(row.original.item_tbl_id, e)}
 						>
 							{orderDefaultStatus.map((v, i) => (
 								<MenuItem key={i} value={v.value}>{v.label}</MenuItem>
@@ -187,7 +188,7 @@ function OderDetails() {
 		enableFacetedValues: true,
 		enableRowActions: false,
 		enableRowSelection: true,
-		manualPagination: true,
+		manualPagination: false,
 		initialState: {
 			showColumnFilters: true,
 			showGlobalFilter: true,
@@ -208,11 +209,8 @@ function OderDetails() {
 			shape: 'rounded',
 			variant: 'outlined',
 		},
-		onPaginationChange: setPagination,
-		rowCount,
 		state: {
-			pagination,
-			isLoading,
+			isLoading:isLoading,
 			showProgressBars: isLoading,
 		},
 	});
@@ -237,8 +235,8 @@ function OderDetails() {
 			"search_status": "",
 			"order_from_date": "",
 			"order_to_date": "",
-			"page": (pagination.pageIndex + 1),
-			"limit": pagination.pageSize
+			"page": "",
+			"limit": ""
 		};
 
 		var response = await fmiOrderSystemAppOrderDetailsList(payload);
@@ -277,7 +275,7 @@ function OderDetails() {
 	useEffect(() => {
 		getOrderList();
 		// console.log(orderData)
-	}, [pagination.pageIndex, pagination.pageSize]);
+	}, []);
 
 
 
