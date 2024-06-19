@@ -30,3 +30,4 @@ jobs:
           password: ${{ secrets.PASSWORD }}
           protocol: ftp
           local-dir: ./build/
+          
