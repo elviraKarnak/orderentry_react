@@ -425,3 +425,37 @@ export async function fmiOrderSystemAppOrderAdd(payload) {
         return { status: "error", error: "Network error" };
     }
   };
+
+
+
+  /// get category list
+  export async function categoryList(payload={}) {
+    const myHeaders = new Headers();
+    myHeaders.append("x-api-key", "b1d1I0p7A2Er2n0eD2b0As8c0kT8p2M9");
+    myHeaders.append("token", window.sessionStorage.getItem("access-token"));
+    myHeaders.append("Content-Type", "application/json");
+
+    try {
+        const fmiOrderSystemAppResponse = await fetch(REACT_APP_API_SERVICE_URL + '/api/v1/admin/category/list', {
+            method: 'POST',
+            headers: myHeaders,
+            // body: JSON.stringify(payload),
+        });
+
+        if (fmiOrderSystemAppResponse.ok) {
+            const fmiOrderSystemAppResult = await fmiOrderSystemAppResponse.json();
+            // Success
+            return { status: true, result: fmiOrderSystemAppResult };
+        } else {
+            // Server-side error
+            console.log("Server error:", fmiOrderSystemAppResponse.status);
+            const errorData = await fmiOrderSystemAppResponse.json();
+            console.log("Server errorData ",errorData)
+            return { status: false, error: errorData };
+        }
+    } catch (error) {
+        // Network error
+        console.log("Network error:", error);
+        return { status: "error", error: "Network error" };
+    }
+}
