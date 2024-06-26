@@ -611,7 +611,7 @@ export async function fetchProducts_2 (payload = {}) {
 }
 
 
-// Product Edit API
+// Product delete API
 export async function ProductDelete (payload) {
   try {
     let config = {
@@ -621,7 +621,7 @@ export async function ProductDelete (payload) {
       headers: {
         'x-api-key': 'b1d1I0p7A2Er2n0eD2b0As8c0kT8p2M9',
         token: window.sessionStorage.getItem ('access-token'),
-        'Content-Type': 'multipart/form-data',
+        'Content-Type': 'application/json',
       },
       data: payload,
     };

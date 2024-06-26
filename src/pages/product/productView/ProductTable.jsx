@@ -39,6 +39,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import ImageIcon from "@mui/icons-material/Image";
 import {
   ProductAdd,
+  ProductDelete,
   ProductEdit,
   categoryList,
   colorList,
@@ -717,6 +718,8 @@ function ProductTable() {
     // console.log("handleProductAdd ", responce);
 
     setValidationErrors({});
+    setImagePreview(null);
+    setSelectedImage(null);
     // await createUser(values);
     table.setEditingRow(null); //exit editing mode
     productRefetch();
@@ -724,7 +727,7 @@ function ProductTable() {
 
 
   // DELETE action
-  const handleProductDelete=(rowData)=>{
+  const handleProductDelete = (rowData) => {
     Swal.fire({
       title: "Are you sure?",
       text: "delete this product!",
@@ -733,13 +736,24 @@ function ProductTable() {
       confirmButtonColor: "#3085d6",
       cancelButtonColor: "#d33",
       confirmButtonText: "Yes, delete it!"
-    }).then(async(result) => {
+    }).then(async (result) => {
       if (result.isConfirmed) {
-        Swal.fire({
-          title: "Deleted!",
-          text: "Your file has been deleted.",
-          icon: "success"
+
+        var responce = await ProductDelete({
+          product_id: rowData.id
         });
+
+        if (responce.status) {
+
+          Swal.fire({
+            title: "Deleted!",
+            text: "Your product has been deleted.",
+            icon: "success"
+          });
+
+          productRefetch();
+        }
+
       }
     });
   }
@@ -748,6 +762,16 @@ function ProductTable() {
   const table = useMaterialReactTable({
     columns,
     data: fetchedproducts,
+    
+    enableColumnFilterModes: true,
+    enableColumnOrdering: true,
+    manualPagination: false,
+    initialState: {
+      showColumnFilters: true,
+      showGlobalFilter: true,
+    },
+
+
     createDisplayMode: "modal", // ('modal', and 'custom' are also available)
     editDisplayMode: "modal", // ('modal', 'cell', 'table', and 'custom' are also available)
     enableEditing: true,
