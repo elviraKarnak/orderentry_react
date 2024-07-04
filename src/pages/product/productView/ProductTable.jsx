@@ -51,6 +51,8 @@ import placeholderImage from "../../../assests/images/placeholder.png";
 import Swal from "sweetalert2";
 import CustomInput from "./CustomInput";
 
+
+
 function ProductTable() {
   //const placeholderImgPath = '../../../assests/images/placeholder.png';
 
@@ -61,8 +63,26 @@ function ProductTable() {
   const [CategoryList, setCategoryList] = useState([]);
   const [ColorList, setColorList] = useState([]);
 
+  const [AddProduct, setAddProduct] = useState(false);
+
   const [DisableRows, setDisableRows] = useState({
+    awb: false,
+    vendor_name: false,
+
     product_name: false,
+    farm_invoice: false,
+    po: false,
+    received_date: false,
+    boxes: false,
+    boxtype: false,
+    box_unit: false,
+    bunch_unit: false,
+    cost_unit: false,
+    sale_price: false,
+    so: false,
+    margin: false,
+
+
     sku: false,
     real_stock: false,
     real_price: false,
@@ -74,12 +94,29 @@ function ProductTable() {
     cat_id: false,
     product_color: false,
     uom: false,
-    feature_status: false
+    feature_status: false,
+
   });
 
 
   const [newRowData, setNewRowData] = useState({
+    awb: "",
+    vendor_name: "",
+
     product_name: "",
+    farm_invoice: "",
+    po: "",
+    received_date: null,
+    boxes: "",
+    boxtype: "",
+    box_unit: "",
+    bunch_unit: "",
+    cost_unit: "",
+    sale_price: "",
+    so: "",
+    margin: "",
+
+
     sku: "",
     real_stock: "",
     real_price: "",
@@ -91,8 +128,45 @@ function ProductTable() {
     cat_id: [],
     product_color: "",
     uom: "",
-    feature_status: ""
+    feature_status: "",
+
   });
+
+
+  const inputFields = [
+    { label: 'AWB', name: 'awb', type: 'text' },
+    { label: 'Vendor Name', name: 'vendor_name', type: 'text' },
+    { label: 'Product Name', name: 'product_name', type: 'text' },
+    { label: 'Farm Invoice#', name: 'farm_invoice', type: 'number' },
+    { label: 'PO#', name: 'po', type: 'number' },
+    { label: 'Date Received', name: 'received_date', type: 'date' },
+
+    { label: 'BOXES', name: 'boxes', type: 'number' },
+    { label: 'Box Type', name: 'boxtype', type: 'text' },
+    { label: 'Units/Box', name: 'box_unit', type: 'number' },
+    { label: 'Units/Bunch', name: 'bunch_unit', type: 'number' },
+    { label: 'Units/Cost', name: 'cost_unit', type: 'number' },
+    { label: 'Sale Price', name: 'sale_price', type: 'number' },
+    { label: 'SO#', name: 'so', type: 'number' },
+    { label: 'Margin %', name: 'margin', type: 'number' },
+
+    { label: 'SKU', name: 'sku', type: 'number' },
+    { label: 'Stock', name: 'real_stock', type: 'number' },
+    { label: 'Price', name: 'real_price', type: 'number' },
+    { label: 'Cost Price', name: 'cost_price', type: 'text' },
+    { label: 'Qty', name: 'minqty', type: 'number' },
+
+    { label: 'Source', name: 'source', type: 'text' },
+
+    { label: 'Category', name: 'cat_id', type: 'multiple_select' },
+    { label: 'Color', name: 'product_color', type: 'select' },
+
+    { label: 'UOM', name: 'uom', type: 'select' },
+    { label: 'Feature', name: 'feature_status', type: 'select' },
+
+
+    { label: 'Tags', name: 'product_tags', type: 'autocomplete' },
+  ];
 
   const handleImageChange = (event) => {
     const file = event.target.files[0];
@@ -110,6 +184,10 @@ function ProductTable() {
     setNewRowData((prevData) => ({ ...prevData, [name]: value }));
   };
 
+  const handleDateChange = (name, value) => {
+    setNewRowData((prevData) => ({ ...prevData, [name]: value }));
+  };
+
   const handleTagChange = (event, value) => {
     setNewRowData((prevData) => ({
       ...prevData,
@@ -117,7 +195,7 @@ function ProductTable() {
     }));
   };
 
-  const handleSelectChange = (name) => (event) => {
+  const handleMultipleSelectChange = (name) => (event) => {
     const { value } = event.target;
     setNewRowData((prevData) => ({ ...prevData, [name]: value }));
   };
@@ -326,7 +404,7 @@ function ProductTable() {
             <CustomInput
               disabled={DisableRows.feature_status}
               type="select"
-              label="Feature Status"
+              label="Feature"
               name="feature_status"
               value={newRowData.feature_status}
               onChange={handleInputChange}
@@ -369,14 +447,13 @@ function ProductTable() {
           <>
             <CustomInput
               disabled={DisableRows.cat_id}
-              type="select"
+              type="multiple_select"
               label="Category"
               name="cat_id"
               value={newRowData.cat_id}
-              onChange={handleSelectChange('cat_id')}
+              onChange={handleMultipleSelectChange('cat_id')}
               options={CategoryList}
               error={validationErrors?.cat_id}
-              multiple
             />
           </>
         ),
@@ -395,7 +472,7 @@ function ProductTable() {
               label="Color"
               name="product_color"
               value={newRowData.product_color}
-              onChange={handleSelectChange('product_color')}
+              onChange={handleInputChange}
               options={ColorList}
               error={validationErrors?.product_color}
             />
@@ -451,6 +528,9 @@ function ProductTable() {
 
   // edit product data set
   const editProductDataSet = (table, row) => {
+
+    AddFromClear();
+    setAddProduct(false);
 
     let rowData = row.original;
     let temp_data = newRowData;
@@ -517,6 +597,58 @@ function ProductTable() {
   const validate = (data) => {
     const errors = {};
 
+    if (!data.awb.trim()) {
+      errors.awb = "awb is required";
+    }
+
+    if (!data.vendor_name.trim()) {
+      errors.vendor_name = "vendor name is required";
+    }
+
+    if (!data.farm_invoice.trim()) {
+      errors.farm_invoice = "farm invoice is required";
+    }
+
+    if (!data.po.trim()) {
+      errors.po = "po# is required";
+    }
+
+    if (data.received_date === null) {
+      errors.received_date = "received date is required";
+    }
+
+    if (!data.boxes.trim()) {
+      errors.boxes = "boxes is required";
+    }
+
+    if (!data.boxtype.trim()) {
+      errors.boxtype = "boxtype is required";
+    }
+
+    if (!data.box_unit.trim()) {
+      errors.box_unit = "box unit is required";
+    }
+
+    if (!data.bunch_unit.trim()) {
+      errors.bunch_unit = "bunch unit is required";
+    }
+
+    if (!data.cost_unit.trim()) {
+      errors.cost_unit = "cost unit is required";
+    }
+
+    if (!data.sale_price.trim()) {
+      errors.sale_price = "sale price is required";
+    }
+
+    if (!data.so.trim()) {
+      errors.so = "so is required";
+    }
+
+    if (!data.margin.trim()) {
+      errors.margin = "margin is required";
+    }
+
     if (!data.product_name.trim()) {
       errors.product_name = "Product name is required";
     }
@@ -542,7 +674,7 @@ function ProductTable() {
     }
 
     if (!Array.isArray(data.product_tags)) {
-      errors.product_tags = "Product tags must be an array";
+      errors.product_tags = "Product tags is required";
     }
 
     if (!data.source.trim()) {
@@ -550,7 +682,11 @@ function ProductTable() {
     }
 
     if (!Array.isArray(data.cat_id)) {
-      errors.cat_id = "Category ID must be an array";
+      errors.cat_id = "Category is required";
+    } else {
+      if (data.cat_id.length === 0) {
+        errors.cat_id = "Category is required";
+      }
     }
 
     if (!data.product_color) {
@@ -569,9 +705,9 @@ function ProductTable() {
   };
 
   //CREATE action
-  const handleProductAdd = async ({ values, table }) => {
+  const handleProductAdd = async () => {
     // console.log("handleProductAdd ", values);
-    // console.log("newRowData ", newRowData);
+    console.log("newRowData ", newRowData);
     // console.log("selectedImage ", selectedImage);
 
     // return;
@@ -605,6 +741,10 @@ function ProductTable() {
       temp_data.product_tags = "";
     }
 
+    if (temp_data.received_date !== null) {
+      temp_data.received_date = temp_data.received_date.format('YYYY-MM-DD');
+    }
+
     let formData = new FormData();
 
     for (let key in temp_data) {
@@ -621,29 +761,11 @@ function ProductTable() {
         icon: "success",
       });
 
-      setNewRowData({
-        product_name: "",
-        sku: "",
-        real_stock: "",
-        real_price: "",
-        cost_price: "",
-        minqty: "",
-        product_tags: [],
-        source: "",
-        postpublishdate: "",
-        pre_order: "",
-        cat_id: [],
-        product_color: "",
-        uom: "",
-        feature_status: ""
-      });
+      AddFromClear();
     }
 
-    // console.log("handleProductAdd ", responce);
+    // console.log("handleProductAddApi ", responce);
 
-    setValidationErrors({});
-    // await createUser(values);
-    table.setCreatingRow(null); //exit creating mode
     productRefetch();
   };
 
@@ -715,11 +837,9 @@ function ProductTable() {
       });
     }
 
-    // console.log("handleProductAdd ", responce);
+    // console.log("handleProductEdit ", responce);
 
-    setValidationErrors({});
-    setImagePreview(null);
-    setSelectedImage(null);
+    AddFromClear();
     // await createUser(values);
     table.setEditingRow(null); //exit editing mode
     productRefetch();
@@ -762,20 +882,19 @@ function ProductTable() {
   const table = useMaterialReactTable({
     columns,
     data: fetchedproducts,
-    
+
     enableColumnFilterModes: true,
     enableColumnOrdering: true,
     manualPagination: false,
     initialState: {
-      showColumnFilters: true,
+      showColumnFilters: false,
       showGlobalFilter: true,
     },
 
-
-    createDisplayMode: "modal", // ('modal', and 'custom' are also available)
     editDisplayMode: "modal", // ('modal', 'cell', 'table', and 'custom' are also available)
     enableEditing: true,
     getRowId: (row) => row.id,
+
     muiToolbarAlertBannerProps: {
       color: "error",
       children: "Error loading data",
@@ -786,40 +905,22 @@ function ProductTable() {
         minHeight: "500px",
       },
     },
+
     muiEditRowDialogProps: {
       style: {
         width: "100%"
-      }
+      },
+      maxWidth: 'md',
+      fullWidth: true,
     },
 
-    onCreatingRowCancel: () => {
-      setImagePreview(null);
-      setSelectedImage(null);
-      setValidationErrors({});
-    },
-    onCreatingRowSave: handleProductAdd,
 
     onEditingRowCancel: () => {
-      setImagePreview(null);
-      setSelectedImage(null);
-      setValidationErrors({});
+      AddFromClear();
+      setAddProduct(false);
     },
-    onEditingRowSave: handleProductEdit,
 
-    //optionally customize modal content
-    renderCreateRowDialogContent: ({ table, row, internalEditComponents }) => (
-      <>
-        <DialogTitle variant="h3">Product Add</DialogTitle>
-        <DialogContent
-          sx={{ display: "flex", flexDirection: "column", gap: "1rem" }}
-        >
-          {internalEditComponents}
-        </DialogContent>
-        <DialogActions>
-          <MRT_EditActionButtons variant="text" table={table} row={row} />
-        </DialogActions>
-      </>
-    ),
+    onEditingRowSave: handleProductEdit,
 
     //optionally customize modal content
     renderEditRowDialogContent: ({ table, row, internalEditComponents }) => (
@@ -851,16 +952,7 @@ function ProductTable() {
       </Box>
     ),
 
-    renderTopToolbarCustomActions: ({ table }) => (
-      <Button
-        variant="contained"
-        onClick={() => {
-          table.setCreatingRow(true);
-        }}
-      >
-        Create New Product
-      </Button>
-    ),
+
     state: {
       isLoading: isLoadingUsers,
       isSaving: isCreatingUser || isUpdatingUser || isDeletingUser,
@@ -868,6 +960,7 @@ function ProductTable() {
       showProgressBars: isFetchingUsers,
     },
   });
+
 
   const getCategoryList = async () => {
     let responce = await categoryList();
@@ -889,6 +982,80 @@ function ProductTable() {
     }
   };
 
+
+  const AddFromClear = () => {
+
+    setNewRowData({
+      awb: "",
+      vendor_name: "",
+
+      product_name: "",
+      farm_invoice: "",
+      po: "",
+      received_date: null,
+      boxes: "",
+      boxtype: "",
+      box_unit: "",
+      bunch_unit: "",
+      cost_unit: "",
+      sale_price: "",
+      so: "",
+      margin: "",
+
+
+      sku: "",
+      real_stock: "",
+      real_price: "",
+      cost_price: "",
+      minqty: "",
+      product_tags: [],
+      source: "",
+      pre_order: "",
+      cat_id: [],
+      product_color: "",
+      uom: "",
+      feature_status: "",
+
+    });
+
+    setDisableRows({
+      awb: false,
+      vendor_name: false,
+
+      product_name: false,
+      farm_invoice: false,
+      po: false,
+      received_date: false,
+      boxes: false,
+      boxtype: false,
+      box_unit: false,
+      bunch_unit: false,
+      cost_unit: false,
+      sale_price: false,
+      so: false,
+      margin: false,
+
+
+      sku: false,
+      real_stock: false,
+      real_price: false,
+      cost_price: false,
+      minqty: false,
+      product_tags: false,
+      source: false,
+      pre_order: false,
+      cat_id: false,
+      product_color: false,
+      uom: false,
+      feature_status: false,
+
+    });
+
+    setImagePreview(null);
+    setSelectedImage(null);
+    setValidationErrors({});
+  }
+
   useEffect(() => {
     getCategoryList();
     getColorList();
@@ -896,6 +1063,171 @@ function ProductTable() {
 
   return (
     <>
+
+      {/* ////////// product add from /////////////// */}
+      <div>
+
+
+        <div>
+          {!AddProduct &&
+            <Button type="button" sx={{ m: 2 }} variant="contained" onClick={() => setAddProduct(true)}>Add Product</Button>}
+
+          <Button type="button" sx={{
+            m: 2,
+            backgroundColor: '#ff8c1a',
+            '&:hover': {
+              backgroundColor: '#e67600',
+            },
+          }} variant="contained" >Uplaod</Button>
+
+          <Button type="button" sx={{
+            m: 2,
+            backgroundColor: '#cc3399',
+            '&:hover': {
+              backgroundColor: '#aa2874',
+            },
+          }} variant="contained">Export</Button>
+        </div>
+
+        {AddProduct && <>
+          <div>
+            {imagePreview && (
+              <img
+                src={imagePreview}
+                alt="Preview"
+                style={{ width: '70px', height: '70px', marginTop: '10px' }}
+              />
+            )}
+            <CustomInput
+              type="file"
+              label="Thumb"
+              name="image"
+              variant="outlined"
+              onChange={handleImageChange}
+            />
+          </div>
+
+          {inputFields?.map((field) => (
+            <>
+
+              {(field.type === "text" || field.type === "number") && <CustomInput
+                key={field.name}
+                disabled={DisableRows[field.name]}
+                type={field.type}
+                label={field.label}
+                name={field.name}
+                value={newRowData[field.name]}
+                onChange={handleInputChange}
+                error={validationErrors?.[field.name]}
+                sx={{ marginTop: 1 }}
+                variant="outlined"
+              />}
+
+              {field.type === "autocomplete" && <CustomInput
+                key={field.name}
+                disabled={DisableRows[field.name]}
+                type={field.type}
+                label={field.label}
+                name={field.name}
+                value={newRowData[field.name]}
+                onChange={handleTagChange}
+                error={validationErrors?.[field.name]}
+                sx={{ marginTop: 1 }}
+                variant="outlined"
+              />}
+
+              {field.type === "date" && <CustomInput
+                key={field.name}
+                disabled={DisableRows[field.name]}
+                type={field.type}
+                label={field.label}
+                name={field.name}
+                value={newRowData[field.name]}
+                onChange={(value) => handleDateChange(field.name, value)}
+                error={validationErrors?.[field.name]}
+                sx={{ marginTop: 1 }}
+                variant="outlined"
+              />}
+
+              {field.type === "select" && field.name === "product_color" && <CustomInput
+                key={field.name}
+                disabled={DisableRows[field.name]}
+                type={field.type}
+                label={field.label}
+                name={field.name}
+                value={newRowData[field.name]}
+                onChange={handleInputChange}
+                error={validationErrors?.[field.name]}
+                sx={{ marginTop: 1 }}
+                variant="outlined"
+                options={ColorList}
+              />}
+
+              {field.type === "select" && field.name === "uom" && <CustomInput
+                key={field.name}
+                disabled={DisableRows[field.name]}
+                type={field.type}
+                label={field.label}
+                name={field.name}
+                value={newRowData[field.name]}
+                onChange={handleInputChange}
+                error={validationErrors?.[field.name]}
+                sx={{ marginTop: 1 }}
+                variant="outlined"
+                options={[{ id: "ST", name: "ST" }]}
+              />}
+
+
+              {field.type === "select" && field.name === "feature_status" && <CustomInput
+                key={field.name}
+                disabled={DisableRows[field.name]}
+                type={field.type}
+                label={field.label}
+                name={field.name}
+                value={newRowData[field.name]}
+                onChange={handleInputChange}
+                error={validationErrors?.[field.name]}
+                sx={{ marginTop: 1 }}
+                variant="outlined"
+                options={[{ id: "1", name: "Yes" }, { id: "0", name: "No" }]}
+              />}
+
+              {field.type === "multiple_select" && field.name === "cat_id" && <CustomInput
+                key={field.name}
+                disabled={DisableRows[field.name]}
+                type={field.type}
+                label={field.label}
+                name={field.name}
+                value={newRowData[field.name]}
+                onChange={handleMultipleSelectChange(field.name)}
+                error={validationErrors?.[field.name]}
+                sx={{ marginTop: 1 }}
+                variant="outlined"
+                options={CategoryList}
+              />}
+
+            </>
+          ))}
+
+
+          <div>
+            <Button type="button" sx={{ m: 2 }} variant="contained" onClick={handleProductAdd}>Submit</Button>
+
+            <Button sx={{
+              m: 2,
+              backgroundColor: '#8585ad',
+              '&:hover': { backgroundColor: '#6b6b92' }
+            }} variant="contained" onClick={AddFromClear}>Clear</Button>
+
+            <Button type="button" sx={{ m: 2 }} variant="contained" onClick={() => { setAddProduct(false); AddFromClear(); }} color="error">Close</Button>
+          </div>
+        </>}
+
+      </div>
+
+
+      {/* {console.log(newRowData?.received_date?.format('YYYY-MM-DD'))} */}
+
       <MaterialReactTable table={table} />
     </>
   );
