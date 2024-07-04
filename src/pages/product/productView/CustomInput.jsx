@@ -26,6 +26,7 @@ const CustomInput = ({
   multiple = false,
   freeSolo = false,
   onChange,
+  imagePreview,
   error,
   ...props
 }) => {
@@ -139,7 +140,8 @@ const CustomInput = ({
     case 'file':
       return (
         <>
-          <FormControl sx={{ m: 1, minWidth: 150 }} margin="normal">
+          <FormControl sx={{ m: 1, minWidth: 150 }} margin="normal" className="upload-file">
+          <img src={imagePreview} alt="icon" />
             <TextField
               disabled={disabled}
               type={type}
