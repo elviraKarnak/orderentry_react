@@ -12,6 +12,7 @@ import {
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 
 
 
@@ -160,6 +161,18 @@ const CustomInput = ({
         <FormControl sx={{ m: 1, minWidth: 150 }} margin="normal">
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <DatePicker
+              value={value}
+              onChange={onChange}
+              label={label}
+            />
+          </LocalizationProvider>
+          {error && <p style={{ color: 'red' }}>{error}</p>}
+        </FormControl>);
+    case 'dateTime':
+      return (
+        <FormControl sx={{ m: 1, minWidth: 150 }} margin="normal">
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <DateTimePicker 
               value={value}
               onChange={onChange}
               label={label}
