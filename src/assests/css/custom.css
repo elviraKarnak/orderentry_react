@@ -281,3 +281,16 @@ ul.sidebar-scroll {
   outline: 0;
 }
 
+
+
+/* 04-07-2024 */
+.MuiContainer-root .product-viw-margin_top{
+  margin-top: 0;
+}
+.product_view-wrap{
+  display: flex;
+  flex-wrap: wrap;
+}
+.product_view-wrap .full_w-btn{
+
+}

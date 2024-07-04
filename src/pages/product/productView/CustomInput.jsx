@@ -100,7 +100,7 @@ const CustomInput = ({
       );
     case 'autocomplete':
       return (
-        <FormControl sx={{ m: 1, minWidth: 400 }} margin="normal">
+        <FormControl sx={{ m: 1, minWidth: 400 }}  margin="normal">
           <Autocomplete
             disabled={disabled}
             multiple={true}
@@ -119,6 +119,7 @@ const CustomInput = ({
             renderInput={params => (
               <TextField
                 {...params}
+                className="product-viw-margin_top"
                 variant="outlined"
                 label={label}
                 placeholder={`Add ${label.toLowerCase()}`}

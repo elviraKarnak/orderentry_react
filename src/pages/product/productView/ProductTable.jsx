@@ -1065,10 +1065,10 @@ function ProductTable() {
     <>
 
       {/* ////////// product add from /////////////// */}
-      <div>
+      <div className="product_view-wrap">
 
 
-        <div>
+        <div className="full_w-btn">
           {!AddProduct &&
             <Button type="button" sx={{ m: 2 }} variant="contained" onClick={() => setAddProduct(true)}>Add Product</Button>}
 
