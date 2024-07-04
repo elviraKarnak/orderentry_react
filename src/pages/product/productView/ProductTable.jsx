@@ -21,6 +21,8 @@ import {
   Chip,
 } from "@mui/material";
 
+import moment from 'moment';
+
 import CancelSharpIcon from "@mui/icons-material/CancelSharp";
 import CheckSharpIcon from "@mui/icons-material/CheckSharp";
 
@@ -95,6 +97,7 @@ function ProductTable() {
     product_color: false,
     uom: false,
     feature_status: false,
+    publish_date: false
 
   });
 
@@ -116,6 +119,7 @@ function ProductTable() {
     so: "",
     margin: "",
 
+    publish_date: null,
 
     sku: "",
     real_stock: "",
@@ -129,6 +133,7 @@ function ProductTable() {
     product_color: "",
     uom: "",
     feature_status: "",
+
 
   });
 
@@ -149,6 +154,8 @@ function ProductTable() {
     { label: 'Sale Price', name: 'sale_price', type: 'number' },
     { label: 'SO#', name: 'so', type: 'number' },
     { label: 'Margin %', name: 'margin', type: 'number' },
+
+    { label: 'Publish Date', name: 'publish_date', type: 'dateTime' },
 
     { label: 'SKU', name: 'sku', type: 'number' },
     { label: 'Stock', name: 'real_stock', type: 'number' },
@@ -420,11 +427,16 @@ function ProductTable() {
         ),
       },
       {
-        accessorKey: 'created_at',
+        accessorKey: 'publish_date',
         header: 'Publish Date',
         size: 30,
         enableEditing: false,
         Edit: ({ cell }) => null,
+        Cell: ({ renderedCellValue }) => (
+          <>
+            {renderedCellValue && moment.unix(renderedCellValue).format('YYYY-MM-DD h:mm:ss A') }
+          </>
+        ),
       },
       {
         accessorKey: 'pre_order',
@@ -589,7 +601,8 @@ function ProductTable() {
       cat_id: false,
       product_color: false,
       uom: false,
-      feature_status: false
+      feature_status: false,
+      publish_date:true,
     });
     table.setEditingRow(row);
   }
@@ -745,6 +758,10 @@ function ProductTable() {
       temp_data.received_date = temp_data.received_date.format('YYYY-MM-DD');
     }
 
+    if (temp_data.publish_date !== null) {
+      temp_data.publish_date = temp_data.publish_date.unix();
+    }
+
     let formData = new FormData();
 
     for (let key in temp_data) {
@@ -819,22 +836,6 @@ function ProductTable() {
         icon: "success",
       });
 
-      setNewRowData({
-        product_name: "",
-        sku: "",
-        real_stock: "",
-        real_price: "",
-        cost_price: "",
-        minqty: "",
-        product_tags: [],
-        source: "",
-        postpublishdate: "",
-        pre_order: "",
-        cat_id: [],
-        product_color: "",
-        uom: "",
-        feature_status: ""
-      });
     }
 
     // console.log("handleProductEdit ", responce);
@@ -1149,6 +1150,19 @@ function ProductTable() {
                 variant="outlined"
               />}
 
+              {field.type === "dateTime" && <CustomInput
+                key={field.name}
+                disabled={DisableRows[field.name]}
+                type={field.type}
+                label={field.label}
+                name={field.name}
+                value={newRowData[field.name]}
+                onChange={(value) => handleDateChange(field.name, value)}
+                error={validationErrors?.[field.name]}
+                sx={{ marginTop: 1 }}
+                variant="outlined"
+              />}
+
               {field.type === "select" && field.name === "product_color" && <CustomInput
                 key={field.name}
                 disabled={DisableRows[field.name]}
@@ -1226,7 +1240,7 @@ function ProductTable() {
       </div>
 
 
-      {/* {console.log(newRowData?.received_date?.format('YYYY-MM-DD'))} */}
+      {/* {console.log(newRowData?.publish_date?.unix())} */}
 
       <MaterialReactTable table={table} />
     </>
