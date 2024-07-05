@@ -287,10 +287,60 @@ ul.sidebar-scroll {
 .MuiContainer-root .product-viw-margin_top{
   margin-top: 0;
 }
+.product_view-wrap .full_w-btn button {
+  margin: 0;
+}
 .product_view-wrap{
   display: flex;
   flex-wrap: wrap;
+  margin: 0 -10px;
+  gap: 10px 0;
+
 }
 .product_view-wrap .full_w-btn{
-
+  width: 100%;
+  display: flex;
+  gap: 0 20px;
+  margin-bottom: 10px;
+}
+.product_view-wrap > div{
+  width: 33.3333%;
+  margin: 0;
+  padding: 0 10px;
+}
+.product_view-wrap > div:last-child{
+  width: 100%;
+}
+.product_view-wrap > div > div{
+  margin: 0;
+  width: 100%;
+}
+.product_view-wrap .upload-file{
+  position: relative;
+  max-width: 400px;
+  display: block;
+  margin: auto;
+}
+.product_view-wrap .upload-file img{
+  max-width: 48px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -18%);
+}
+.product_view-wrap .upload-file input[type=file]{
+text-indent: -999px;
+height: 100%;
+}
+.product_view-wrap .file_upload-bx {
+  width: 100%;
+}
+.product_view-wrap .upload-file  fieldset{
+  border: 1px dashed #000;
+}
+.product_view-wrap .upload-file > div > div{
+  height: 140px;
+}
+.product_view-wrap .upload-file > div{
+  width: 100%;
 }
