@@ -141,7 +141,7 @@ function NewOrder() {
 
     const newOrderSaveAndContinueChk = async () => {
 
-
+    
         Swal.fire({
             title: 'Are you sure?',
             text: "You want to save this order!",
@@ -158,7 +158,7 @@ function NewOrder() {
                 //  ============= order save ===========
                 await NewOrderSave();
 
-            }
+            } 
 
         })
 
@@ -192,7 +192,7 @@ function NewOrder() {
 
 
             // var responce = await productService.productSearch(payload);
-            let responce = await fmiOrderSystemAppProductOrderEntrySearch(payload)
+            let responce=await fmiOrderSystemAppProductOrderEntrySearch(payload)
 
 
 
@@ -426,7 +426,8 @@ function NewOrder() {
 
                 var newOrderItemData = userState.OrderItemsData.map((item) => (item.product_details.id === updatedData.product_details.id ? updatedData : item))
 
-                console.log('newOrderItemData ', newOrderItemData);
+                console.log('newOrderItemData ', newOrderItemData)
+
 
                 // === replace_OrderItemsData ====
                 dispatch({ type: "replace_OrderItemsData", value: newOrderItemData });
@@ -436,8 +437,10 @@ function NewOrder() {
                 // ===== new_AddProductArr =======
                 dispatch({ type: "new_AddProductArr", value: updatedData.product_details.id });
 
+
                 // === new_OrderItemsData ====
                 dispatch({ type: "new_OrderItemsData", value: updatedData });
+
 
             }
 
@@ -460,9 +463,9 @@ function NewOrder() {
             // updatedData[indexToUpdate] = { ...updatedData[indexToUpdate], product_details: {landed_price:change_price} };
 
             if (SelectCustomerData.ship_addr.ship_method === "fob") {
-                updatedData[indexToUpdate].product_details.productMeta.sale_price = change_price;
+                updatedData[indexToUpdate].product_details.fob_price = change_price;
             } else {
-                updatedData[indexToUpdate].product_details.productMeta.sale_price = change_price;
+                updatedData[indexToUpdate].product_details.landed_price = change_price;
             }
 
             // ------- total -------
@@ -529,15 +532,15 @@ function NewOrder() {
 
             var temp = {
                 item_id: item.product_details.id,
-                item_details: item.product_details.product_name,
-                item_price: (SelectCustomerData.ship_addr.ship_method === "fob" ? item.product_details.productMeta.sale_price : item.product_details.productMeta.sale_price),
+                item_details: item.product_details.name,
+                item_price: (SelectCustomerData.ship_addr.ship_method === "fob" ? item.product_details.fob_price : item.product_details.landed_price),
                 item_quantity: item.quantity,
-                item_color: item.product_details.color_string,
-                item_cat: item.product_details.category_string,
-                item_uom: item.product_details.uom,
-                item_farm: item.product_details.source,
-                item_margin: item.product_details.productMeta.margin,
-                item_company: SelectCustomerData.company_name
+                item_color: item.product_details.color,
+                item_cat:item.product_details.cat,
+                item_uom:item.product_details.unit,
+                item_farm:item.product_details.source,
+                item_margin:item.margin, 
+                item_company:SelectCustomerData.company_name
             }
 
             tempItem.push(temp)
@@ -554,7 +557,7 @@ function NewOrder() {
             payment_amount: userState.TotalPM.total,
             payment_approval_code: "075618",
             items_details: tempItem,
-            ship_date: DeliveryDate,
+            ship_date:DeliveryDate,
             order_address_details: {
                 ship_to: SelectCustomerData.company_name,
                 address: SelectCustomerData.ship_addr.ship_addr_1 + " " + SelectCustomerData.ship_addr.ship_addr_2,
@@ -570,7 +573,7 @@ function NewOrder() {
 
         var responce = await fmiOrderSystemAppOrderAdd(new_payload);
 
-        console.log("responce000 ", responce)
+        console.log("responce000 ",responce)
 
         if (responce.status) {
 
@@ -927,16 +930,16 @@ function NewOrder() {
                             <tbody>
                                 {userState.OrderItemsData.map((item, index) => (<>
                                     <tr key={index}>
-                                        <td>{parse(item.product_details.product_name)}</td>
+                                        <td>{parse(item.product_details.name)}</td>
                                         <td>
-                                            <img src={item.product_details.image_url} alt="" />
+                                            <img src={item.product_details.image} alt="" />
                                         </td>
-                                        <td>{item.product_details.sku}</td>
-                                        <td>{item.product_details.category_string}</td>
-                                        <td>{item.product_details.color_string}</td>
-                                        <td>{(SelectCustomerData.ship_addr.ship_method === "fob" ? item.product_details.productMeta.sale_price : item.product_details.productMeta.sale_price)}</td>
+                                        <td></td>
+                                        <td>{item.product_details.cat}</td>
+                                        <td>{item.product_details.color}</td>
+                                        <td>{(SelectCustomerData.ship_addr.ship_method === "fob" ? item.product_details.fob_price : item.product_details.landed_price)}</td>
                                         <td>{item.quantity}</td>
-                                        <td>{item.product_details.uom}</td>
+                                        <td>{item.product_details.unit}</td>
                                         <td>{item.total}</td>
                                         {/* <td><Button variant="success">Edit</Button></td> */}
                                         <td><Button onClick={() => OrderItemDelete(index, item.product_details.id)} variant="danger" >Delete</Button></td>
@@ -992,29 +995,42 @@ function NewOrder() {
                                                 <td>{item.product_details.category_string}</td>
                                                 <td>{item.product_details.color_string}</td>
                                                 <td>{item.product_details.source}</td>
-
                                                 <td>
-                                                    <Form.Select onChange={(e) => quantityListValueset(index, e.target.value, item.product_details.productMeta.sale_price, item.product_details.productMeta.sale_price)}>
+                                                    <Form.Select onChange={(e) => quantityListValueset(index, e.target.value, item.product_details.landed_price, item.product_details.fob_price)}>
                                                         {/* {quantityList(item.product_details.min_stock, item.product_details.stock)} */}
                                                         <option value="" >select</option>
 
-                                                        <option value={item.product_details.minqty} >{item.product_details.minqty}</option>
+                                                        {/* ///// fob stock //// */}
+                                                        {SelectCustomerData.ship_addr.ship_method === "fob" && <>
+                                                            {item.product_details.prices_data[0].stock_range_f.map((f_item, f_index) => (
+                                                                <option value={f_item} >{f_item}</option>
+                                                            ))}
+                                                        </>}
+
+                                                        {/* ///// fedex stock //// */}
+                                                        {SelectCustomerData.ship_addr.ship_method !== "fob" && <>
+                                                            {item.product_details.prices_data[0].stock_range_l.map((f_item, f_index) => (
+                                                                <option value={f_item} >{f_item}</option>
+                                                            ))}
+                                                        </>}
 
                                                     </Form.Select>
                                                 </td>
-                                                {/*  <td>{item.product_details.fob_price}</td> */}
-
+                                                {/* <td>{item.product_details.unit_price}</td>
+                                                    <td>{item.product_details.cost_price}</td> */}
                                                 <td>
-                                                    {/* {item.product_details.productMeta.sale_price} */}
-
-                                                <input type="number"
-                                                        value={item.product_details.productMeta.sale_price}
-                                                        onChange={(e) => salePriceSet(e.target.value, item.product_details.productMeta.sale_price, item.product_details.id, index, item.quantity)} />
+                                                    <input type="number"
+                                                        value={(SelectCustomerData.ship_addr.ship_method === "fob" ? item.product_details.fob_price : item.product_details.landed_price)}
+                                                        onChange={(e) => salePriceSet(e.target.value, (SelectCustomerData.ship_addr.ship_method === "fob" ? item.product_details.fob_price : item.product_details.landed_price), item.product_details.id, index, item.quantity)} />
                                                 </td>
 
-                                                <td>{item.product_details.cost_price}</td>
+                                                <td></td>
+                                                {/*  <td>{item.product_details.fob_price}</td> */}
+
                                                 <td>{item.total}</td>
-                                                <td>{item.product_details.productMeta.margin}</td>
+
+                                                <td></td>
+                                                {/* <td>{item.margin}</td> */}
 
                                                 <td>
                                                     {userState.AddProductArr.includes(item.product_details.id) ? <>
