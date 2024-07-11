@@ -150,7 +150,7 @@ function NewOrder() {
             confirmButtonColor: '#3085d6',
             cancelButtonColor: '#d33',
             confirmButtonText: 'Yes',
-            cancelButtonText: "Cancle"
+            cancelButtonText: "Cancel"
         }).then(async (result) => {
 
             if (result.isConfirmed) {
@@ -219,7 +219,7 @@ function NewOrder() {
                     if (!pIdArr.includes(i.id)) {
                         var temp = {
                             product_details: i,
-                            quantity: "",
+                            quantity: i.minqty,
                             total: 0.00,
                             margin: 0
                         }
@@ -996,9 +996,12 @@ function NewOrder() {
                                                 <td>
                                                     <Form.Select onChange={(e) => quantityListValueset(index, e.target.value, item.product_details.productMeta.sale_price, item.product_details.productMeta.sale_price)}>
                                                         {/* {quantityList(item.product_details.min_stock, item.product_details.stock)} */}
-                                                        <option value="" >select</option>
-
-                                                        <option value={item.product_details.minqty} >{item.product_details.minqty}</option>
+                                                    
+                                                        <option 
+                                                        value={item.product_details.minqty} 
+                                                        selected={item.product_details.minqty===item.quantity?true:false} >
+                                                            {item.product_details.minqty}
+                                                        </option>
 
                                                     </Form.Select>
                                                 </td>
