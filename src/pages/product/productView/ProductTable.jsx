@@ -138,6 +138,7 @@ function ProductTable() {
     { label: "Farm Invoice#", name: "farm_invoice", type: "number" },
     { label: "PO#", name: "po", type: "number" },
     { label: "Date Received", name: "received_date", type: "date" },
+    { label: "SKU", name: "sku", type: "number" },
 
     { label: "BOXES", name: "boxes", type: "number" },
     { label: "Box Type", name: "boxtype", type: "text" },
@@ -146,25 +147,24 @@ function ProductTable() {
     { label: "Units/Cost", name: "cost_unit", type: "number" },
     { label: "Sale Price", name: "sale_price", type: "number" },
     { label: "SO#", name: "so", type: "number" },
-    { label: "Margin %", name: "margin", type: "number" },
 
-    { label: "Publish Date", name: "publish_date", type: "dateTime" },
+    // { label: "Margin %", name: "margin", type: "number" },
+    // { label: "Publish Date", name: "publish_date", type: "dateTime" },
 
-    { label: "SKU", name: "sku", type: "number" },
-    { label: "Stock", name: "real_stock", type: "number" },
-    { label: "Price", name: "real_price", type: "number" },
-    { label: "Cost Price", name: "cost_price", type: "text" },
-    { label: "Qty", name: "minqty", type: "number" },
+    // { label: "Stock", name: "real_stock", type: "number" },
+    // { label: "Price", name: "real_price", type: "number" },
+    // { label: "Cost Price", name: "cost_price", type: "text" },
+    // { label: "Qty", name: "minqty", type: "number" },
 
-    { label: "Source", name: "source", type: "text" },
+    // { label: "Source", name: "source", type: "text" },
 
-    { label: "Category", name: "cat_id", type: "multiple_select" },
-    { label: "Color", name: "product_color", type: "select" },
+    // { label: "Category", name: "cat_id", type: "multiple_select" },
+    // { label: "Color", name: "product_color", type: "select" },
 
-    { label: "UOM", name: "uom", type: "select" },
-    { label: "Feature", name: "feature_status", type: "select" },
+    // { label: "UOM", name: "uom", type: "select" },
+    // { label: "Feature", name: "feature_status", type: "select" },
 
-    { label: "Tags", name: "product_tags", type: "autocomplete" },
+    // { label: "Tags", name: "product_tags", type: "autocomplete" },
   ];
 
   const handleImageChange = (event) => {
@@ -641,6 +641,10 @@ function ProductTable() {
       errors.received_date = "received date is required";
     }
 
+    if (!data.sku.trim()) {
+      errors.sku = "SKU is required";
+    }
+
     if (!data.boxes.trim()) {
       errors.boxes = "boxes is required";
     }
@@ -669,61 +673,59 @@ function ProductTable() {
       errors.so = "so is required";
     }
 
-    if (!data.margin.trim()) {
-      errors.margin = "margin is required";
-    }
+    // if (!data.margin.trim()) {
+    //   errors.margin = "margin is required";
+    // }
 
-    if (!data.product_name.trim()) {
-      errors.product_name = "Product name is required";
-    }
+    // if (!data.product_name.trim()) {
+    //   errors.product_name = "Product name is required";
+    // }
 
-    if (!data.sku.trim()) {
-      errors.sku = "SKU is required";
-    }
+    
 
-    if (isNaN(data.real_stock) || data.real_stock === "") {
-      errors.real_stock = "Real stock must be a number";
-    }
+    // if (isNaN(data.real_stock) || data.real_stock === "") {
+    //   errors.real_stock = "Real stock must be a number";
+    // }
 
-    if (isNaN(data.real_price) || data.real_price === "") {
-      errors.real_price = "Real price must be a number";
-    }
+    // if (isNaN(data.real_price) || data.real_price === "") {
+    //   errors.real_price = "Real price must be a number";
+    // }
 
-    if (isNaN(data.cost_price) || data.cost_price === "") {
-      errors.cost_price = "Cost price must be a number";
-    }
+    // if (isNaN(data.cost_price) || data.cost_price === "") {
+    //   errors.cost_price = "Cost price must be a number";
+    // }
 
-    if (isNaN(data.minqty) || data.minqty === "") {
-      errors.minqty = "Minimum quantity must be a number";
-    }
+    // if (isNaN(data.minqty) || data.minqty === "") {
+    //   errors.minqty = "Minimum quantity must be a number";
+    // }
 
-    if (!Array.isArray(data.product_tags)) {
-      errors.product_tags = "Product tags is required";
-    }
+    // if (!Array.isArray(data.product_tags)) {
+    //   errors.product_tags = "Product tags is required";
+    // }
 
-    if (!data.source.trim()) {
-      errors.source = "Source is required";
-    }
+    // if (!data.source.trim()) {
+    //   errors.source = "Source is required";
+    // }
 
-    if (!Array.isArray(data.cat_id)) {
-      errors.cat_id = "Category is required";
-    } else {
-      if (data.cat_id.length === 0) {
-        errors.cat_id = "Category is required";
-      }
-    }
+    // if (!Array.isArray(data.cat_id)) {
+    //   errors.cat_id = "Category is required";
+    // } else {
+    //   if (data.cat_id.length === 0) {
+    //     errors.cat_id = "Category is required";
+    //   }
+    // }
 
-    if (!data.product_color) {
-      errors.product_color = "Product color is required";
-    }
+    // if (!data.product_color) {
+    //   errors.product_color = "Product color is required";
+    // }
 
-    if (!data.uom.trim()) {
-      errors.uom = "Unit of measure is required";
-    }
+    // if (!data.uom.trim()) {
+    //   errors.uom = "Unit of measure is required";
+    // }
 
-    if (!data.feature_status.trim()) {
-      errors.feature_status = "Feature status is required";
-    }
+    // if (!data.feature_status.trim()) {
+    //   errors.feature_status = "Feature status is required";
+    // }
 
     return errors;
   };
@@ -1105,14 +1107,7 @@ function ProductTable() {
 
         {AddProduct && (
           <>
-            <div className="file_upload-bx">
-              {/* {imagePreview && (
-                <img
-                  src={imagePreview}
-                  alt="Preview"
-                  style={{ width: "70px", height: "70px", marginTop: "10px" }}
-                />
-              )} */}
+            {/* <div className="file_upload-bx">
               <CustomInput
                 type="file"
                 label="Upload Product Image"
@@ -1122,7 +1117,7 @@ function ProductTable() {
                 imagePreview={imagePreview}
 
               />
-            </div>
+            </div> */}
 
             {inputFields?.map((field) => (
               <>
