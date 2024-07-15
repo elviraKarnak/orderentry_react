@@ -27,6 +27,7 @@ const CustomInput = ({
   freeSolo = false,
   onChange,
   imagePreview,
+  sx,
   error,
   ...props
 }) => {
@@ -34,7 +35,7 @@ const CustomInput = ({
     case 'text':
     case 'number':
       return (
-        <FormControl sx={{ m: 1, minWidth: 150 }} margin="normal">
+        <FormControl sx={sx} margin="normal">
           <TextField
             disabled={disabled}
             type={type}
@@ -52,7 +53,7 @@ const CustomInput = ({
     case 'select':
       return (
         <>
-          <FormControl sx={{ m: 1, minWidth: 150 }} margin="normal">
+          <FormControl sx={sx} margin="normal">
             <InputLabel>{label}</InputLabel>
             <Select
               disabled={disabled}
@@ -77,7 +78,7 @@ const CustomInput = ({
     case 'multiple_select':
       return (
         <>
-          <FormControl sx={{ m: 1, minWidth: 150 }} margin="normal">
+          <FormControl sx={sx} margin="normal">
             <InputLabel>{label}</InputLabel>
             <Select
               disabled={disabled}
@@ -102,7 +103,7 @@ const CustomInput = ({
       );
     case 'autocomplete':
       return (
-        <FormControl sx={{ m: 1, minWidth: 400 }}  margin="normal">
+        <FormControl sx={sx}  margin="normal">
           <Autocomplete
             disabled={disabled}
             multiple={true}
@@ -140,7 +141,7 @@ const CustomInput = ({
     case 'file':
       return (
         <>
-          <FormControl sx={{ m: 1, minWidth: 150 }} margin="normal" className="upload-file">
+          <FormControl sx={sx} margin="normal" className="upload-file">
           <img src={imagePreview} alt="icon" />
             <TextField
               disabled={disabled}
@@ -160,7 +161,7 @@ const CustomInput = ({
       );
     case 'date':
       return (
-        <FormControl sx={{ m: 1, minWidth: 150 }} margin="normal">
+        <FormControl sx={sx} margin="normal">
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <DatePicker
               value={value}
@@ -172,7 +173,7 @@ const CustomInput = ({
         </FormControl>);
     case 'dateTime':
       return (
-        <FormControl sx={{ m: 1, minWidth: 150 }} margin="normal">
+        <FormControl sx={sx} margin="normal">
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <DateTimePicker 
               value={value}
