@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
 import {
-  MRT_EditActionButtons,
   MaterialReactTable,
   useMaterialReactTable,
 } from "material-react-table";
@@ -12,14 +11,8 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
-  Select,
-  TextField,
-  MenuItem,
-  InputLabel,
-  FormControl,
-  Autocomplete,
-  Chip,
   Dialog,
+  Drawer,
 } from "@mui/material";
 
 import moment from "moment";
@@ -31,11 +24,7 @@ import StarOutlineRoundedIcon from "@mui/icons-material/StarOutlineRounded";
 import StarRateRoundedIcon from "@mui/icons-material/StarRateRounded";
 
 import {
-  QueryClient,
-  QueryClientProvider,
-  useMutation,
   useQuery,
-  useQueryClient,
 } from "@tanstack/react-query";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -46,7 +35,6 @@ import {
   ProductEdit,
   categoryList,
   colorList,
-  fetchProducts,
   fetchProducts_2,
 } from "../../../utils/fetch";
 import placeholderImage from "../../../assests/images/placeholder.png";
@@ -57,8 +45,11 @@ import Uploadfile from "../../../assests/images/file-upload.png";
 
 import dayjs from "dayjs";
 
+import { inputFields,EditFields, newRowData, disableRows } from "./Constant";
+
+
+
 function ProductTable() {
-  //const placeholderImgPath = '../../../assests/images/placeholder.png';
 
   const [validationErrors, setValidationErrors] = useState({});
 
@@ -70,211 +61,27 @@ function ProductTable() {
   const [AddProduct, setAddProduct] = useState(false);
   const [EditDialog, setEditDialog] = useState(false);
 
-  const [DisableRows, setDisableRows] = useState({
-    awb: false,
-    vendor_name: false,
+  const [DisableRows, setDisableRows] = useState(disableRows);
 
-    product_name: false,
-    farm_invoice: false,
-    po: false,
-    received_date: false,
-    boxes: false,
-    boxtype: false,
-    box_unit: false,
-    bunch_unit: false,
-    cost_unit: false,
-    sale_price: false,
-    so: false,
-    margin: false,
+  const [NewRowData, setNewRowData] = useState(newRowData);
 
-    sku: false,
-    real_stock: false,
-    real_price: false,
-    cost_price: false,
-    minqty: false,
-    product_tags: false,
-    source: false,
-    pre_order: false,
-    cat_id: false,
-    product_color: false,
-    uom: false,
-    feature_status: false,
-    publish_date: false,
-  });
-
-  const [newRowData, setNewRowData] = useState({
-    awb: "",
-    vendor_name: "",
-
-    product_name: "",
-    farm_invoice: "",
-    po: "",
-    received_date: null,
-    boxes: "",
-    boxtype: "",
-    box_unit: "",
-    bunch_unit: "",
-    cost_unit: "",
-    sale_price: "",
-    so: "",
-    margin: "",
-
-    publish_date: null,
-
-    sku: "",
-    real_stock: "",
-    real_price: "",
-    cost_price: "",
-    minqty: "",
-    product_tags: [],
-    source: "",
-    pre_order: "",
-    cat_id: [],
-    product_color: "",
-    uom: "",
-    feature_status: "",
-  });
-
-  const inputFields = [
-    { label: "AWB", name: "awb", type: "text" },
-    { label: "Vendor Name", name: "vendor_name", type: "text" },
-    { label: "Product Name", name: "product_name", type: "text" },
-    { label: "Farm Invoice#", name: "farm_invoice", type: "number" },
-    { label: "PO#", name: "po", type: "number" },
-    { label: "Date Received", name: "received_date", type: "date" },
-    { label: "SKU", name: "sku", type: "number" },
-
-    { label: "BOXES", name: "boxes", type: "number" },
-    { label: "Box Type", name: "boxtype", type: "text" },
-    { label: "Units/Box", name: "box_unit", type: "number" },
-    { label: "Units/Bunch", name: "bunch_unit", type: "number" },
-    { label: "Units/Cost", name: "cost_unit", type: "number" },
-    { label: "Sale Price", name: "sale_price", type: "number" },
-    { label: "SO#", name: "so", type: "number" },
-
-    // { label: "Margin %", name: "margin", type: "number" },
-    // { label: "Publish Date", name: "publish_date", type: "dateTime" },
-
-    // { label: "Stock", name: "real_stock", type: "number" },
-    // { label: "Price", name: "real_price", type: "number" },
-    // { label: "Cost Price", name: "cost_price", type: "text" },
-    // { label: "Qty", name: "minqty", type: "number" },
-
-    // { label: "Source", name: "source", type: "text" },
-
-    // { label: "Category", name: "cat_id", type: "multiple_select" },
-    // { label: "Color", name: "product_color", type: "select" },
-
-    // { label: "UOM", name: "uom", type: "select" },
-    // { label: "Feature", name: "feature_status", type: "select" },
-
-    // { label: "Tags", name: "product_tags", type: "autocomplete" },
-  ];
-
-  const EditFields = [
-    { label: "AWB", name: "awb", type: "text" },
-    { label: "Vendor Name", name: "vendor_name", type: "text" },
-    { label: "Product Name", name: "product_name", type: "text" },
-    { label: "Farm Invoice#", name: "farm_invoice", type: "number" },
-    { label: "PO#", name: "po", type: "number" },
-    { label: "Date Received", name: "received_date", type: "date" },
-    { label: "SKU", name: "sku", type: "number" },
-
-    { label: "BOXES", name: "boxes", type: "number" },
-    { label: "Box Type", name: "boxtype", type: "text" },
-    { label: "Units/Box", name: "box_unit", type: "number" },
-    { label: "Units/Bunch", name: "bunch_unit", type: "number" },
-    { label: "Units/Cost", name: "cost_unit", type: "number" },
-    { label: "Sale Price", name: "sale_price", type: "number" },
-    { label: "SO#", name: "so", type: "number" },
-
-    { label: "Margin %", name: "margin", type: "number" },
-    { label: "Publish Date", name: "publish_date", type: "dateTime" },
-
-    { label: "Stock", name: "real_stock", type: "number" },
-    { label: "Price", name: "real_price", type: "number" },
-    { label: "Cost Price", name: "cost_price", type: "text" },
-    { label: "Qty", name: "minqty", type: "number" },
-
-    { label: "Source", name: "source", type: "text" },
-
-    { label: "Category", name: "cat_id", type: "multiple_select" },
-    { label: "Color", name: "product_color", type: "select" },
-
-    { label: "UOM", name: "uom", type: "select" },
-    { label: "Feature", name: "feature_status", type: "select" },
-
-    { label: "Tags", name: "product_tags", type: "autocomplete" },
-  ];
-
-  const handleClickOpen = () => {
-    setEditDialog(true);
-  };
+  
 
   const handleDialogClose = () => {
     setEditDialog(false);
-    setNewRowData({
-      awb: "",
-      vendor_name: "",
+    setNewRowData(newRowData);
 
-      product_name: "",
-      farm_invoice: "",
-      po: "",
-      received_date: null,
-      publish_date: null,
-      boxes: "",
-      boxtype: "",
-      box_unit: "",
-      bunch_unit: "",
-      cost_unit: "",
-      sale_price: "",
-      so: "",
-      margin: "",
+    setDisableRows(disableRows);
 
-      sku: "",
-      real_stock: "",
-      real_price: "",
-      cost_price: "",
-      minqty: "",
-      product_tags: [],
-      source: "",
-      pre_order: "",
-      cat_id: [],
-      product_color: "",
-      uom: "",
-      feature_status: "",
-    });
+    setImagePreview(Uploadfile);
+    setSelectedImage(null);
+    setValidationErrors({});
+  };
 
-    setDisableRows({
-      awb: false,
-      vendor_name: false,
+  const AddFromClear = () => {
+    setNewRowData(newRowData);
 
-      product_name: false,
-      farm_invoice: false,
-      po: false,
-      received_date: false,
-      boxes: false,
-      boxtype: false,
-      box_unit: false,
-      bunch_unit: false,
-      cost_unit: false,
-      sale_price: false,
-      so: false,
-      margin: false,
-
-      sku: false,
-      real_stock: false,
-      real_price: false,
-      cost_price: false,
-      minqty: false,
-      product_tags: false,
-      source: false,
-      pre_order: false,
-      cat_id: false,
-      product_color: false,
-      uom: false,
-      feature_status: false,
-    });
+    setDisableRows(disableRows);
 
     setImagePreview(Uploadfile);
     setSelectedImage(null);
@@ -313,6 +120,7 @@ function ProductTable() {
     setNewRowData((prevData) => ({ ...prevData, [name]: value }));
   };
 
+  // table column
   const columns = useMemo(
     () => [
       {
@@ -323,7 +131,7 @@ function ProductTable() {
             <ImageIcon />
           </i>
         ),
-        enableEditing: true,
+        enableEditing: false,
         type: "file",
         size: 30,
         Cell: ({ renderedCellValue }) => (
@@ -335,216 +143,61 @@ function ProductTable() {
             style={{ width: "70px", height: "70px" }}
           />
         ),
-        Edit: () => (
-          <>
-            {/* <CustomInput
-              type="file"
-              label="Thumb"
-              name="image"
-              onChange={handleImageChange}
-            />
-            {imagePreview && (
-              <img
-                src={imagePreview}
-                alt="Preview"
-                style={{ width: "70px", height: "70px", marginTop: "10px" }}
-              />
-            )} */}
-
-            <div className="file_upload-bx">
-              {/* {imagePreview && (
-                <img
-                  src={imagePreview}
-                  alt="Preview"
-                  style={{ width: "70px", height: "70px", marginTop: "10px" }}
-                />
-              )} */}
-              <CustomInput
-                type="file"
-                label="Upload Product Image"
-                name="image"
-                variant="outlined"
-                onChange={handleImageChange}
-                imagePreview={imagePreview}
-              />
-            </div>
-          </>
-        ),
       },
       {
         accessorKey: "product_name",
         header: "Name",
-        enableEditing: true,
+        enableEditing: false,
         size: 200,
-        Edit: ({ cell }) => (
-          <>
-            <CustomInput
-              disabled={DisableRows.product_name}
-              label="Name"
-              name="product_name"
-              value={newRowData.product_name}
-              onChange={handleInputChange}
-              error={validationErrors?.product_name}
-            />
-          </>
-        ),
       },
       {
         accessorKey: "sku",
         header: "SKU",
-        enableEditing: true,
+        enableEditing: false,
         size: 30,
-        Edit: ({ cell }) => (
-          <>
-            <CustomInput
-              disabled={DisableRows.sku}
-              label="SKU"
-              name="sku"
-              value={newRowData.sku}
-              onChange={handleInputChange}
-              error={validationErrors?.sku}
-            />
-          </>
-        ),
       },
       {
-        accessorKey: "real_stock",
+        accessorKey: "stock",
         header: "Stock",
-        enableEditing: true,
+        enableEditing: false,
         size: 10,
-        Edit: ({ cell }) => (
-          <>
-            <CustomInput
-              disabled={DisableRows.real_stock}
-              type="number"
-              label="Stock"
-              name="real_stock"
-              value={newRowData.real_stock}
-              onChange={handleInputChange}
-              error={validationErrors?.real_stock}
-            />
-          </>
-        ),
       },
       {
         accessorKey: "real_price",
         header: "Price",
-        enableEditing: true,
+        enableEditing: false,
         size: 1,
-        Edit: ({ cell }) => (
-          <>
-            <CustomInput
-              disabled={DisableRows.real_price}
-              type="number"
-              label="Price"
-              name="real_price"
-              value={newRowData.real_price}
-              onChange={handleInputChange}
-              error={validationErrors?.real_price}
-            />
-          </>
-        ),
       },
       {
         accessorKey: "cost_price",
         header: "Cost Price",
-        enableEditing: true,
+        enableEditing: false,
         size: 1,
-        Edit: ({ cell }) => (
-          <>
-            <CustomInput
-              disabled={DisableRows.cost_price}
-              type="number"
-              label="Cost Price"
-              name="cost_price"
-              value={newRowData.cost_price}
-              onChange={handleInputChange}
-              error={validationErrors?.cost_price}
-            />
-          </>
-        ),
       },
       {
         accessorKey: "minqty",
         header: "Qty",
-        enableEditing: true,
+        enableEditing: false,
         size: 1,
-        Edit: ({ cell }) => (
-          <>
-            <CustomInput
-              disabled={DisableRows.minqty}
-              type="number"
-              label="Qty"
-              name="minqty"
-              value={newRowData.minqty}
-              onChange={handleInputChange}
-              error={validationErrors?.minqty}
-            />
-          </>
-        ),
       },
       {
         accessorKey: "product_tags",
         header: "Tags",
-        enableEditing: true,
+        enableEditing: false,
         size: 80,
         Cell: ({ renderedCellValue }) => <>{renderedCellValue}</>,
-        Edit: ({ cell }) => (
-          <>
-            <CustomInput
-              disabled={DisableRows.product_tags}
-              type="autocomplete"
-              label="Tags"
-              name="product_tags"
-              value={newRowData.product_tags}
-              onChange={handleTagChange}
-              error={validationErrors?.product_tags}
-              multiple
-              freeSolo
-            />
-          </>
-        ),
       },
       {
         accessorKey: "source",
         header: "Source Inventory",
-        enableEditing: true,
+        enableEditing: false,
         size: 10,
-        Edit: ({ cell }) => (
-          <>
-            <CustomInput
-              disabled={DisableRows.source}
-              label="Source Inventory"
-              name="source"
-              value={newRowData.source}
-              onChange={handleInputChange}
-              error={validationErrors?.source}
-            />
-          </>
-        ),
       },
       {
         accessorKey: "feature_status",
         header: "Feature Status", //<StarRateRoundedIcon style={{ color: "blue" }} />,
-        enableEditing: true,
+        enableEditing: false,
         size: 5,
-        Edit: ({ cell }) => (
-          <>
-            <CustomInput
-              disabled={DisableRows.feature_status}
-              type="select"
-              label="Feature"
-              name="feature_status"
-              value={newRowData.feature_status}
-              onChange={handleInputChange}
-              options={[
-                { id: "1", name: "Yes" },
-                { id: "0", name: "No" },
-              ]}
-              error={validationErrors?.feature_status}
-            />
-          </>
-        ),
         Cell: ({ renderedCellValue }) => (
           <>
             {renderedCellValue === "1" ? (
@@ -559,27 +212,12 @@ function ProductTable() {
         accessorKey: "publish_date",
         header: "Publish Date",
         size: 30,
-        enableEditing: true,
+        enableEditing: false,
         Cell: ({ renderedCellValue }) => (
           <>
             {renderedCellValue !== "null" &&
               renderedCellValue !== null &&
               moment.unix(renderedCellValue).format("YYYY-MM-DD h:mm:ss A")}
-          </>
-        ),
-        Edit: ({ cell }) => (
-          <>
-            <CustomInput
-              disabled={DisableRows.publish_date}
-              type={"dateTime"}
-              label={"Publish Date"}
-              name={"publish_date"}
-              value={newRowData.publish_date}
-              onChange={(value) => handleDateChange("publish_date", value)}
-              error={validationErrors?.publish_date}
-              sx={{ marginTop: 1 }}
-              variant="outlined"
-            />
           </>
         ),
       },
@@ -588,7 +226,6 @@ function ProductTable() {
         header: "Pre-Order",
         enableEditing: false,
         size: 30,
-        Edit: ({ cell }) => null,
         Cell: ({ renderedCellValue }) => (
           <>
             {renderedCellValue === "yes" ? (
@@ -602,65 +239,23 @@ function ProductTable() {
       {
         accessorKey: "category_string",
         header: "Category",
-        enableEditing: true,
+        enableEditing: false,
         size: 10,
-        Edit: ({ cell }) => (
-          <>
-            <CustomInput
-              disabled={DisableRows.cat_id}
-              type="multiple_select"
-              label="Category"
-              name="cat_id"
-              value={newRowData.cat_id}
-              onChange={handleMultipleSelectChange("cat_id")}
-              options={CategoryList}
-              error={validationErrors?.cat_id}
-            />
-          </>
-        ),
       },
       {
         accessorKey: "color_string",
         header: "Color",
-        enableEditing: true,
+        enableEditing: false,
         size: 5,
-        Edit: ({ cell }) => (
-          <>
-            <CustomInput
-              disabled={DisableRows.product_color}
-              type="select"
-              label="Color"
-              name="product_color"
-              value={newRowData.product_color}
-              onChange={handleInputChange}
-              options={ColorList}
-              error={validationErrors?.product_color}
-            />
-          </>
-        ),
       },
       {
         accessorKey: "uom",
         header: "UOM",
-        enableEditing: true,
+        enableEditing: false,
         size: 5,
-        Edit: ({ cell }) => (
-          <>
-            <CustomInput
-              disabled={DisableRows.uom}
-              type="select"
-              label="UOM"
-              name="uom"
-              value={newRowData.uom}
-              onChange={handleInputChange}
-              options={[{ id: "ST", name: "ST" }]}
-              error={validationErrors?.uom}
-            />
-          </>
-        ),
       },
     ],
-    [validationErrors, imagePreview, CategoryList, newRowData, ColorList]
+    [validationErrors, imagePreview, CategoryList, NewRowData, ColorList]
   );
 
   const {
@@ -673,20 +268,6 @@ function ProductTable() {
 
   //console.log(fetchedproducts);
 
-  //   call CREATE hook
-  const { mutateAsync: createUser, isPending: isCreatingUser } =
-    useCreateUser();
-
-  //   call READ hook
-  //   const getProducts = useGetProducts();
-
-  //call UPDATE hook
-  const { mutateAsync: updateUser, isPending: isUpdatingUser } =
-    useUpdateUser();
-
-  //call DELETE hook
-  const { mutateAsync: deleteUser, isPending: isDeletingUser } =
-    useDeleteUser();
 
   // edit product data set
   const editProductDataSet = (table, row) => {
@@ -694,7 +275,7 @@ function ProductTable() {
     setAddProduct(false);
 
     let rowData = row.original;
-    let temp_data = newRowData;
+    let temp_data = NewRowData;
 
     // product table
     for (let key in temp_data) {
@@ -738,7 +319,21 @@ function ProductTable() {
         }
 
         temp_data[key] = tempColor;
-      } else {
+      }
+      else if(['fob_t_1_m','landed_t_1_m','fob_t_2_m','fob_t_2_qty','landed_t_2_m','landed_t_2_qty','fob_t_3_m','fob_t_3_qty','landed_t_3_m','landed_t_3_qty'].includes(key)){
+
+        if(rowData['margin_data']){
+          var data=Number(rowData["productMargin"][key]);
+
+          if(data===0){
+            temp_data[key] = "";
+          }else{
+            temp_data[key] = data;
+          }
+        }
+
+      }
+      else {
         if (`${key}` in rowData["productMeta"]) {
           temp_data[key] = rowData["productMeta"][key];
         } else {
@@ -747,7 +342,7 @@ function ProductTable() {
       }
     }
 
-    console.log("temp_data ", temp_data);
+    // console.log("temp_data ", temp_data);
     // return;
 
     temp_data.product_id = rowData.id;
@@ -902,12 +497,12 @@ function ProductTable() {
   //CREATE action
   const handleProductAdd = async () => {
     // console.log("handleProductAdd ", values);
-    console.log("newRowData ", newRowData);
+    // console.log("NewRowData ", NewRowData);
     // console.log("selectedImage ", selectedImage);
 
     // return;
 
-    let temp_data = newRowData;
+    let temp_data = NewRowData;
 
     // validation check
     const errors = validate(temp_data);
@@ -971,10 +566,10 @@ function ProductTable() {
     event.preventDefault();
 
     // console.log("handleProductEdit ", values);
-    console.log("newRowData ", newRowData);
+    // console.log("NewRowData ", NewRowData);
     // return;
 
-    let temp_data = newRowData;
+    let temp_data = NewRowData;
 
     if (selectedImage) {
       temp_data.product_image = selectedImage;
@@ -1068,7 +663,7 @@ function ProductTable() {
     });
   };
 
-  // product table setting
+  // product table setting //
   const table = useMaterialReactTable({
     columns,
     data: fetchedproducts,
@@ -1081,7 +676,6 @@ function ProductTable() {
       showGlobalFilter: true,
     },
 
-    editDisplayMode: "modal", // ('modal', 'cell', 'table', and 'custom' are also available)
     enableEditing: true,
     getRowId: (row) => row.id,
 
@@ -1124,7 +718,6 @@ function ProductTable() {
 
     state: {
       isLoading: isLoadingUsers,
-      isSaving: isCreatingUser || isUpdatingUser || isDeletingUser,
       showAlertBanner: isLoadingUsersError,
       showProgressBars: isFetchingUsers,
     },
@@ -1150,74 +743,7 @@ function ProductTable() {
     }
   };
 
-  const AddFromClear = () => {
-    setNewRowData({
-      awb: "",
-      vendor_name: "",
-
-      product_name: "",
-      farm_invoice: "",
-      po: "",
-      received_date: null,
-      publish_date: null,
-      boxes: "",
-      boxtype: "",
-      box_unit: "",
-      bunch_unit: "",
-      cost_unit: "",
-      sale_price: "",
-      so: "",
-      margin: "",
-
-      sku: "",
-      real_stock: "",
-      real_price: "",
-      cost_price: "",
-      minqty: "",
-      product_tags: [],
-      source: "",
-      pre_order: "",
-      cat_id: [],
-      product_color: "",
-      uom: "",
-      feature_status: "",
-    });
-
-    setDisableRows({
-      awb: false,
-      vendor_name: false,
-
-      product_name: false,
-      farm_invoice: false,
-      po: false,
-      received_date: false,
-      boxes: false,
-      boxtype: false,
-      box_unit: false,
-      bunch_unit: false,
-      cost_unit: false,
-      sale_price: false,
-      so: false,
-      margin: false,
-
-      sku: false,
-      real_stock: false,
-      real_price: false,
-      cost_price: false,
-      minqty: false,
-      product_tags: false,
-      source: false,
-      pre_order: false,
-      cat_id: false,
-      product_color: false,
-      uom: false,
-      feature_status: false,
-    });
-
-    setImagePreview(Uploadfile);
-    setSelectedImage(null);
-    setValidationErrors({});
-  };
+ 
 
   useEffect(() => {
     getCategoryList();
@@ -1292,7 +818,7 @@ function ProductTable() {
                     type={field.type}
                     label={field.label}
                     name={field.name}
-                    value={newRowData[field.name]}
+                    value={NewRowData[field.name]}
                     onChange={handleInputChange}
                     error={validationErrors?.[field.name]}
                     sx={{ m: 1, minWidth: 150 }}
@@ -1307,7 +833,7 @@ function ProductTable() {
                     type={field.type}
                     label={field.label}
                     name={field.name}
-                    value={newRowData[field.name]}
+                    value={NewRowData[field.name]}
                     onChange={handleTagChange}
                     error={validationErrors?.[field.name]}
                     sx={{ m: 1, minWidth: 400 }}
@@ -1322,7 +848,7 @@ function ProductTable() {
                     type={field.type}
                     label={field.label}
                     name={field.name}
-                    value={newRowData[field.name]}
+                    value={NewRowData[field.name]}
                     onChange={(value) => handleDateChange(field.name, value)}
                     error={validationErrors?.[field.name]}
                     sx={{ m: 1, minWidth: 150 }}
@@ -1337,7 +863,7 @@ function ProductTable() {
                     type={field.type}
                     label={field.label}
                     name={field.name}
-                    value={newRowData[field.name]}
+                    value={NewRowData[field.name]}
                     onChange={(value) => handleDateChange(field.name, value)}
                     error={validationErrors?.[field.name]}
                     sx={{ m: 1, minWidth: 150 }}
@@ -1352,7 +878,7 @@ function ProductTable() {
                     type={field.type}
                     label={field.label}
                     name={field.name}
-                    value={newRowData[field.name]}
+                    value={NewRowData[field.name]}
                     onChange={handleInputChange}
                     error={validationErrors?.[field.name]}
                     sx={{ m: 1, minWidth: 150 }}
@@ -1368,7 +894,7 @@ function ProductTable() {
                     type={field.type}
                     label={field.label}
                     name={field.name}
-                    value={newRowData[field.name]}
+                    value={NewRowData[field.name]}
                     onChange={handleInputChange}
                     error={validationErrors?.[field.name]}
                     sx={{ m: 1, minWidth: 150 }}
@@ -1384,7 +910,7 @@ function ProductTable() {
                     type={field.type}
                     label={field.label}
                     name={field.name}
-                    value={newRowData[field.name]}
+                    value={NewRowData[field.name]}
                     onChange={handleInputChange}
                     error={validationErrors?.[field.name]}
                     sx={{ m: 1, minWidth: 150 }}
@@ -1404,7 +930,7 @@ function ProductTable() {
                       type={field.type}
                       label={field.label}
                       name={field.name}
-                      value={newRowData[field.name]}
+                      value={NewRowData[field.name]}
                       onChange={handleMultipleSelectChange(field.name)}
                       error={validationErrors?.[field.name]}
                       sx={{ m: 1, minWidth: 150 }}
@@ -1454,7 +980,7 @@ function ProductTable() {
         )}
       </div>
 
-      {/* {console.log(newRowData?.publish_date?.unix())} */}
+      {/* {console.log(NewRowData?.publish_date?.unix())} */}
 
       <MaterialReactTable table={table} />
 
@@ -1488,6 +1014,25 @@ function ProductTable() {
 
           {EditFields?.map((field) => (
             <>
+
+                {(field.type === "label_p") && (
+                  <CustomInput
+                    type={field.type}
+                    label={field.label}
+                    sx={{ m: 1, minWidth: "100%" }}
+                    variant="outlined"
+                  />
+                )}
+
+                {(field.type === "label_h5") && (
+                  <CustomInput
+                    type={field.type}
+                    label={field.label}
+                    sx={{ m: 1, minWidth: "100%" }}
+                    variant="outlined"
+                  />
+                )}
+              
               {(field.type === "text" || field.type === "number") && (
                 <CustomInput
                   key={field.name}
@@ -1495,7 +1040,7 @@ function ProductTable() {
                   type={field.type}
                   label={field.label}
                   name={field.name}
-                  value={newRowData[field.name]}
+                  value={NewRowData[field.name]}
                   onChange={handleInputChange}
                   error={validationErrors?.[field.name]}
                   sx={{ m: 1, minWidth: "100%" }}
@@ -1510,7 +1055,7 @@ function ProductTable() {
                   type={field.type}
                   label={field.label}
                   name={field.name}
-                  value={newRowData[field.name]}
+                  value={NewRowData[field.name]}
                   onChange={handleTagChange}
                   error={validationErrors?.[field.name]}
                   sx={{ m: 1, minWidth: "100%" }}
@@ -1525,7 +1070,7 @@ function ProductTable() {
                   type={field.type}
                   label={field.label}
                   name={field.name}
-                  value={newRowData[field.name]}
+                  value={NewRowData[field.name]}
                   onChange={(value) => handleDateChange(field.name, value)}
                   error={validationErrors?.[field.name]}
                   sx={{ m: 1, minWidth: "100%" }}
@@ -1540,7 +1085,7 @@ function ProductTable() {
                   type={field.type}
                   label={field.label}
                   name={field.name}
-                  value={newRowData[field.name]}
+                  value={NewRowData[field.name]}
                   onChange={(value) => handleDateChange(field.name, value)}
                   error={validationErrors?.[field.name]}
                   sx={{ m: 1, minWidth: "100%" }}
@@ -1555,7 +1100,7 @@ function ProductTable() {
                   type={field.type}
                   label={field.label}
                   name={field.name}
-                  value={newRowData[field.name]}
+                  value={NewRowData[field.name]}
                   onChange={handleInputChange}
                   error={validationErrors?.[field.name]}
                   sx={{ m: 1, minWidth: "100%" }}
@@ -1571,7 +1116,7 @@ function ProductTable() {
                   type={field.type}
                   label={field.label}
                   name={field.name}
-                  value={newRowData[field.name]}
+                  value={NewRowData[field.name]}
                   onChange={handleInputChange}
                   error={validationErrors?.[field.name]}
                   sx={{ m: 1, minWidth: "100%" }}
@@ -1587,7 +1132,7 @@ function ProductTable() {
                   type={field.type}
                   label={field.label}
                   name={field.name}
-                  value={newRowData[field.name]}
+                  value={NewRowData[field.name]}
                   onChange={handleInputChange}
                   error={validationErrors?.[field.name]}
                   sx={{ m: 1, minWidth: "100%" }}
@@ -1606,7 +1151,7 @@ function ProductTable() {
                   type={field.type}
                   label={field.label}
                   name={field.name}
-                  value={newRowData[field.name]}
+                  value={NewRowData[field.name]}
                   onChange={handleMultipleSelectChange(field.name)}
                   error={validationErrors?.[field.name]}
                   sx={{ m: 1, minWidth: "100%" }}
@@ -1616,6 +1161,7 @@ function ProductTable() {
               )}
             </>
           ))}
+
         </DialogContent>
         <DialogActions>
           <Button variant="contained" type="button" onClick={handleDialogClose}>
@@ -1631,71 +1177,6 @@ function ProductTable() {
 }
 
 export default ProductTable;
-
-//CREATE hook (post new user to api)
-function useCreateUser() {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: async (user) => {
-      //send api update request here
-      await new Promise((resolve) => setTimeout(resolve, 1000)); //fake api call
-      return Promise.resolve();
-    },
-
-    //client side optimistic update
-    // onMutate: (newUserInfo) => {
-    //   queryClient.setQueryData(["users"], (prevUsers) => [
-    //     ...prevUsers,
-    //     {
-    //       ...newUserInfo,
-    //       id: (Math.random() + 1).toString(36).substring(7),
-    //     },
-    //   ]);
-    // },
-
-    // onSettled: () => queryClient.invalidateQueries({ queryKey: ['users'] }), //refetch users after mutation, disabled for demo
-  });
-}
-
-//UPDATE hook (put user in api)
-function useUpdateUser() {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: async (user) => {
-      //send api update request here
-      await new Promise((resolve) => setTimeout(resolve, 1000)); //fake api call
-      return Promise.resolve();
-    },
-    //client side optimistic update
-    onMutate: (newUserInfo) => {
-      queryClient.setQueryData(["users"], (prevUsers) =>
-        prevUsers?.map((prevUser) =>
-          prevUser.id === newUserInfo.id ? newUserInfo : prevUser
-        )
-      );
-    },
-    // onSettled: () => queryClient.invalidateQueries({ queryKey: ['users'] }), //refetch users after mutation, disabled for demo
-  });
-}
-
-//DELETE hook (delete user in api)
-function useDeleteUser() {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: async (userId) => {
-      //send api update request here
-      await new Promise((resolve) => setTimeout(resolve, 1000)); //fake api call
-      return Promise.resolve();
-    },
-    //client side optimistic update
-    onMutate: (userId) => {
-      queryClient.setQueryData(["users"], (prevUsers) =>
-        prevUsers?.filter((user) => user.id !== userId)
-      );
-    },
-    // onSettled: () => queryClient.invalidateQueries({ queryKey: ['users'] }), //refetch users after mutation, disabled for demo
-  });
-}
 
 /**
  * Fetch Products
