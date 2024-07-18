@@ -1112,7 +1112,9 @@ function NewOrder() {
                               <td>
                                 {/* {item.product_details.productMeta.sale_price} */}
 
-                                <input
+                                {item.product_details.real_price}
+
+                                {/* <input
                                   type="number"
                                   value={
                                     item.product_details.real_price
@@ -1126,7 +1128,7 @@ function NewOrder() {
                                       item.quantity
                                     )
                                   }
-                                />
+                                /> */}
                               </td>
 
 
