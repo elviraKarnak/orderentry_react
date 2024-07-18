@@ -3,7 +3,7 @@ import Header from '../../../common/Header';
 import ProductTable from './ProductTable';
 
 
-function Index() {
+function ProductView() {
     // const queryClient = new QueryClient();
  
   return (
@@ -14,7 +14,7 @@ function Index() {
   )
 }
 
-export default Index;
+export default ProductView;
 
 
 
