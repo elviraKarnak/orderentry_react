@@ -42,6 +42,8 @@ export const newRowData = {
   fob_t_3_qty:'',
   landed_t_3_m:'',
   landed_t_3_qty:'',
+
+  shipping_model:''
 };
 
 export const disableRows = {
@@ -128,6 +130,7 @@ export const EditFields = [
 
   {label: 'Tags', name: 'product_tags', type: 'autocomplete'},
 
+  {label: 'Shipping Model', name: 'shipping_model', type: 'select'},
 
   {label: 'Margin Manager', type: 'label_p'},
   {label: 'Tier 1', type: 'label_h5'},

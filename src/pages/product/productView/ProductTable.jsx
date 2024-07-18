@@ -1144,6 +1144,25 @@ function ProductTable() {
                 />
               )}
 
+              {field.type === "select" && field.name === "shipping_model" && (
+                <CustomInput
+                  key={field.name}
+                  disabled={DisableRows[field.name]}
+                  type={field.type}
+                  label={field.label}
+                  name={field.name}
+                  value={NewRowData[field.name]}
+                  onChange={handleInputChange}
+                  error={validationErrors?.[field.name]}
+                  sx={{ m: 1, minWidth: "100%" }}
+                  variant="outlined"
+                  options={[
+                    { id: "landed", name: "Landed" },
+                    { id: "fob", name: "Fob" },
+                  ]}
+                />
+              )}
+
               {field.type === "multiple_select" && field.name === "cat_id" && (
                 <CustomInput
                   key={field.name}

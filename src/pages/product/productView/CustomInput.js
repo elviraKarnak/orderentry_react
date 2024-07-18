@@ -7,6 +7,7 @@ import {
   MenuItem,
   Autocomplete,
   Chip,
+  Checkbox
 } from "@mui/material";
 
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";

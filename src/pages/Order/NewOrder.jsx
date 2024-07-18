@@ -165,6 +165,8 @@ function NewOrder() {
     if (!AddItem) {
       setAddItem((pre) => (pre ? false : true));
 
+      console.log("SelectCustomerData.ship_addr.ship_method ", SelectCustomerData.ship_addr)
+
       var payload = {
         // product_name: ProductDataSearch.product_name,
         // delivary_date: DeliveryDate,
@@ -172,7 +174,7 @@ function NewOrder() {
         // page_no: ProductDataSearch.page_no,
 
         search_text: "",
-        shipping_model:"", // landed or fob
+        shipping_model: SelectCustomerData.ship_addr.ship_method === "fob" ? "fob" : "landed", // landed or fob
         page: "",
         limit: "",
       };
@@ -185,38 +187,46 @@ function NewOrder() {
       // return;
 
       if (responce.status) {
-        var tempArr = userState.ProductData;
 
-        var pIdArr = [];
+        if (responce.result.results.length === 0) {
+          // === replace_ProductData ====
+          dispatch({ type: "replace_ProductData", value: [] });
 
-        for (var item of tempArr) {
-          var p_id = item.product_details.id;
-          pIdArr.push(p_id);
-        }
+        } else {
 
-        for (var i of responce.result.results) {
-          if (!pIdArr.includes(i.id)) {
+          var tempArr = userState.ProductData;
 
-            var total_price=((Number(i.cost_price)*100)/(100-(Number(i.margin_data.t_1_m))));
-            total_price=(total_price*Number(i.minqty)).toFixed(2);
+          var pIdArr = [];
 
-            var temp = {
-              product_details: i,
-              quantity: i.minqty,
-              total: total_price,
-              margin: i.margin_data.t_1_m,
-            };
-
-            tempArr.push(temp);
+          for (var item of tempArr) {
+            var p_id = item.product_details.id;
+            pIdArr.push(p_id);
           }
+
+          for (var i of responce.result.results) {
+            if (!pIdArr.includes(i.id)) {
+
+              var total_price = ((Number(i.cost_price) * 100) / (100 - (Number(i.margin_data.t_1_m))));
+              total_price = (total_price * Number(i.minqty)).toFixed(2);
+
+              var temp = {
+                product_details: i,
+                quantity: i.minqty,
+                total: total_price,
+                margin: i.margin_data.t_1_m,
+              };
+
+              tempArr.push(temp);
+            }
+          }
+
+          console.log("tempArr  ", tempArr);
+
+          // alert(AddItem)
+
+          // === replace_ProductData ====
+          dispatch({ type: "replace_ProductData", value: tempArr });
         }
-
-        console.log("tempArr  ", tempArr);
-
-        // alert(AddItem)
-
-        // === replace_ProductData ====
-        dispatch({ type: "replace_ProductData", value: tempArr });
       }
     } else {
       setAddItem((pre) => (pre ? false : true));
@@ -565,7 +575,7 @@ function NewOrder() {
     return parse(temp);
   };
 
-  const quantityListValueset = (index, quantity, landed_price, fob_price,margin_data) => {
+  const quantityListValueset = (index, quantity, landed_price, fob_price, margin_data) => {
     // Find the index of the object with id 2
     // const indexToUpdate = ProductData.findIndex(item => item.id === 2);
 
@@ -577,42 +587,42 @@ function NewOrder() {
       // Create a new array with the updated value
       const updatedData = [...userState.ProductData];
 
-      var margin=0;
+      var margin = 0;
 
-      console.log("margin_data ",margin_data);
+      console.log("margin_data ", margin_data);
 
 
-      if(margin_data.t_2_isSet===true && margin_data.t_3_isSet ===true){
-        if(quantity>=margin_data.t_1_qty && quantity<margin_data.t_2_qty){
-          margin=margin_data.t_1_m;
+      if (margin_data.t_2_isSet === true && margin_data.t_3_isSet === true) {
+        if (quantity >= margin_data.t_1_qty && quantity < margin_data.t_2_qty) {
+          margin = margin_data.t_1_m;
         }
-        else if(quantity>=margin_data.t_2_qty && quantity<margin_data.t_3_qty){
-          margin=margin_data.t_2_m;
-        }else{
-          margin=margin_data.t_3_m;
+        else if (quantity >= margin_data.t_2_qty && quantity < margin_data.t_3_qty) {
+          margin = margin_data.t_2_m;
+        } else {
+          margin = margin_data.t_3_m;
         }
 
       }
-      else if(margin_data.t_2_isSet===true){
+      else if (margin_data.t_2_isSet === true) {
 
-        if(quantity>=margin_data.t_1_qty && quantity<margin_data.t_2_qty){
-          margin=margin_data.t_1_m;
+        if (quantity >= margin_data.t_1_qty && quantity < margin_data.t_2_qty) {
+          margin = margin_data.t_1_m;
         }
-        else{
-          margin=margin_data.t_2_m;
+        else {
+          margin = margin_data.t_2_m;
         }
 
-      }else if(margin_data.t_3_isSet===true){
-        
-        if(quantity>=margin_data.t_1_qty && quantity<margin_data.t_3_qty){
-          margin=margin_data.t_1_m;
+      } else if (margin_data.t_3_isSet === true) {
+
+        if (quantity >= margin_data.t_1_qty && quantity < margin_data.t_3_qty) {
+          margin = margin_data.t_1_m;
         }
-        else{
-          margin=margin_data.t_3_m;
+        else {
+          margin = margin_data.t_3_m;
         }
       }
-      else{
-        margin=margin_data.t_1_m;
+      else {
+        margin = margin_data.t_1_m;
       }
 
       // alert(margin)
@@ -628,12 +638,12 @@ function NewOrder() {
       // ------- margin -------
       updatedData[indexToUpdate] = {
         ...updatedData[indexToUpdate],
-        margin:margin
+        margin: margin
       };
 
 
-      var total_price=((Number(price)*100)/(100-margin));
-      total_price=(total_price*Number(quantity)).toFixed(2);
+      var total_price = ((Number(price) * 100) / (100 - margin));
+      total_price = (total_price * Number(quantity)).toFixed(2);
       // ------- total -------
       updatedData[indexToUpdate] = {
         ...updatedData[indexToUpdate],
@@ -843,7 +853,7 @@ function NewOrder() {
                         <option
                           selected={
                             SelectCustomerData?.ship_addr.ship_method ===
-                            "fedex"
+                              "fedex"
                               ? "selected"
                               : ""
                           }
@@ -1119,7 +1129,7 @@ function NewOrder() {
                                 />
                               </td>
 
-                              
+
                               <td>{item.total}</td>
                               <td>{item.margin}</td>
 
