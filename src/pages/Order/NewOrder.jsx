@@ -146,10 +146,19 @@ function NewOrder() {
       confirmButtonText: "Yes",
       cancelButtonText: "Cancel",
     }).then(async (result) => {
+
       if (result.isConfirmed) {
+        if (userState.OrderItemsData.length === 0) {
+          toast.warning("Item Not select!");
+        } else {
+          //  =========== modal open ========
+          setCheckOutModal(true);
+        }
+      } else {
         //  ============= order save ===========
         await NewOrderSave();
       }
+      
     });
   };
 
@@ -165,7 +174,10 @@ function NewOrder() {
     if (!AddItem) {
       setAddItem((pre) => (pre ? false : true));
 
-      console.log("SelectCustomerData.ship_addr.ship_method ", SelectCustomerData.ship_addr)
+      console.log(
+        "SelectCustomerData.ship_addr.ship_method ",
+        SelectCustomerData.ship_addr
+      );
 
       var payload = {
         // product_name: ProductDataSearch.product_name,
@@ -174,7 +186,8 @@ function NewOrder() {
         // page_no: ProductDataSearch.page_no,
 
         search_text: "",
-        shipping_model: SelectCustomerData.ship_addr.ship_method === "fob" ? "fob" : "landed", // landed or fob
+        shipping_model:
+          SelectCustomerData.ship_addr.ship_method === "fob" ? "fob" : "landed", // landed or fob
         page: "",
         limit: "",
       };
@@ -187,13 +200,10 @@ function NewOrder() {
       // return;
 
       if (responce.status) {
-
         if (responce.result.results.length === 0) {
           // === replace_ProductData ====
           dispatch({ type: "replace_ProductData", value: [] });
-
         } else {
-
           var tempArr = userState.ProductData;
 
           var pIdArr = [];
@@ -205,8 +215,9 @@ function NewOrder() {
 
           for (var i of responce.result.results) {
             if (!pIdArr.includes(i.id)) {
-
-              var total_price = ((Number(i.cost_price) * 100) / (100 - (Number(i.margin_data.t_1_m))));
+              var total_price =
+                (Number(i.cost_price) * 100) /
+                (100 - Number(i.margin_data.t_1_m));
               total_price = (total_price * Number(i.minqty)).toFixed(2);
 
               var temp = {
@@ -457,7 +468,7 @@ function NewOrder() {
     var t_mergin = isNaN(margin / no_product) ? 0 : margin / no_product;
 
     var obj = {
-      total: total,
+      total: total.toFixed(2),
       margin: t_mergin,
     };
 
@@ -509,10 +520,7 @@ function NewOrder() {
       ship_date: DeliveryDate,
       order_address_details: {
         ship_to: SelectCustomerData.company_name,
-        address:
-          SelectCustomerData.ship_addr.ship_addr_1 +
-          " " +
-          SelectCustomerData.ship_addr.ship_addr_2,
+        address:`${SelectCustomerData.ship_addr.ship_addr_1} ${SelectCustomerData.ship_addr.ship_addr_2}`,
         city: SelectCustomerData.ship_addr.ship_city_name,
         state: SelectCustomerData.ship_addr.ship_state_name,
         zipcode: SelectCustomerData.ship_addr.ship_zip_code,
@@ -575,11 +583,20 @@ function NewOrder() {
     return parse(temp);
   };
 
-  const quantityListValueset = (index, quantity, landed_price, fob_price, margin_data) => {
+  const quantityListValueset = (
+    index,
+    quantity,
+    landed_price,
+    fob_price,
+    margin_data
+  ) => {
     // Find the index of the object with id 2
     // const indexToUpdate = ProductData.findIndex(item => item.id === 2);
 
-    var price = SelectCustomerData.ship_addr.ship_method === "fob" ? fob_price : landed_price;
+    var price =
+      SelectCustomerData.ship_addr.ship_method === "fob"
+        ? fob_price
+        : landed_price;
 
     const indexToUpdate = index;
 
@@ -591,42 +608,34 @@ function NewOrder() {
 
       console.log("margin_data ", margin_data);
 
-
       if (margin_data.t_2_isSet === true && margin_data.t_3_isSet === true) {
         if (quantity >= margin_data.t_1_qty && quantity < margin_data.t_2_qty) {
           margin = margin_data.t_1_m;
-        }
-        else if (quantity >= margin_data.t_2_qty && quantity < margin_data.t_3_qty) {
+        } else if (
+          quantity >= margin_data.t_2_qty &&
+          quantity < margin_data.t_3_qty
+        ) {
           margin = margin_data.t_2_m;
         } else {
           margin = margin_data.t_3_m;
         }
-
-      }
-      else if (margin_data.t_2_isSet === true) {
-
+      } else if (margin_data.t_2_isSet === true) {
         if (quantity >= margin_data.t_1_qty && quantity < margin_data.t_2_qty) {
           margin = margin_data.t_1_m;
-        }
-        else {
+        } else {
           margin = margin_data.t_2_m;
         }
-
       } else if (margin_data.t_3_isSet === true) {
-
         if (quantity >= margin_data.t_1_qty && quantity < margin_data.t_3_qty) {
           margin = margin_data.t_1_m;
-        }
-        else {
+        } else {
           margin = margin_data.t_3_m;
         }
-      }
-      else {
+      } else {
         margin = margin_data.t_1_m;
       }
 
       // alert(margin)
-
 
       // ------- quantity -------
       updatedData[indexToUpdate] = {
@@ -634,15 +643,13 @@ function NewOrder() {
         quantity: quantity,
       };
 
-
       // ------- margin -------
       updatedData[indexToUpdate] = {
         ...updatedData[indexToUpdate],
-        margin: margin
+        margin: margin,
       };
 
-
-      var total_price = ((Number(price) * 100) / (100 - margin));
+      var total_price = (Number(price) * 100) / (100 - margin);
       total_price = (total_price * Number(quantity)).toFixed(2);
       // ------- total -------
       updatedData[indexToUpdate] = {
@@ -853,7 +860,7 @@ function NewOrder() {
                         <option
                           selected={
                             SelectCustomerData?.ship_addr.ship_method ===
-                              "fedex"
+                            "fedex"
                               ? "selected"
                               : ""
                           }
@@ -1131,7 +1138,6 @@ function NewOrder() {
                                 /> */}
                               </td>
 
-
                               <td>{item.total}</td>
                               <td>{item.margin}</td>
 
@@ -1213,6 +1219,7 @@ function NewOrder() {
         SelectCustomerData={SelectCustomerData}
         setSelectCustomerData={setSelectCustomerData}
         DeliveryDate={DeliveryDate}
+        setAddItem={setAddItem}
       />
 
       {/* ============= ImageShowModal ================ */}

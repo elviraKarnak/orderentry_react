@@ -4,7 +4,7 @@ import {BrowserRouter, Route, Routes } from 'react-router-dom';
 import Container from '@mui/material/Container';
 import OderDetails from './pages/oderview/OderDetails';
 import ProductAdd from './pages/product/productEntry/ProductAdd';
-import ProductView from './pages/product/productView/ProductView';
+import ProductView from './pages/product/ProductView/ProductView';
 import BuyerOrderList from './pages/buyer/BuyerOrderList';
 import {QueryClient,QueryClientProvider,useQuery} from '@tanstack/react-query';
 
