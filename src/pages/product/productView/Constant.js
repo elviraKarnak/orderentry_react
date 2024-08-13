@@ -80,10 +80,10 @@ export const disableRows = {
 export const inputFields = [
   {label: 'AWB', name: 'awb', type: 'text'},
   {label: 'Vendor Name', name: 'vendor_name', type: 'text'},
-  {label: 'Product Name', name: 'product_name', type: 'text'},
   {label: 'Farm Invoice#', name: 'farm_invoice', type: 'number'},
-  {label: 'PO#', name: 'po', type: 'number'},
   {label: 'Date Received', name: 'received_date', type: 'date'},
+  {label: 'Product Name', name: 'product_name', type: 'text'},
+  {label: 'PO#', name: 'po', type: 'number'},
   {label: 'SKU', name: 'sku', type: 'number'},
 
   {label: 'BOXES', name: 'boxes', type: 'number'},

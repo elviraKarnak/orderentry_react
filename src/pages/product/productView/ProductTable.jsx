@@ -13,6 +13,8 @@ import {
   DialogTitle,
   Dialog,
   Drawer,
+  Grid,
+  Checkbox,
 } from "@mui/material";
 
 import moment from "moment";
@@ -45,7 +47,7 @@ import Uploadfile from "../../../assests/images/file-upload.png";
 
 import dayjs from "dayjs";
 
-import { inputFields,EditFields, newRowData, disableRows } from "./Constant";
+import { inputFields, EditFields, newRowData, disableRows } from "./Constant";
 
 
 
@@ -65,7 +67,10 @@ function ProductTable() {
 
   const [NewRowData, setNewRowData] = useState(newRowData);
 
-  
+  const [LockAWB, setLockAWB] = useState(false);
+
+
+
 
   const handleDialogClose = () => {
     setEditDialog(false);
@@ -79,6 +84,9 @@ function ProductTable() {
   };
 
   const AddFromClear = () => {
+
+    console.log(newRowData)
+
     setNewRowData(newRowData);
 
     setDisableRows(disableRows);
@@ -275,7 +283,7 @@ function ProductTable() {
     setAddProduct(false);
 
     let rowData = row.original;
-    let temp_data = NewRowData;
+    let temp_data = {...NewRowData};
 
     // product table
     for (let key in temp_data) {
@@ -296,13 +304,13 @@ function ProductTable() {
           const formattedDate = dayjs(unixTimestamp * 1000);
           temp_data[key] = formattedDate;
         }
-      } 
+      }
       else if (key === "received_date") {
         if (rowData[key] !== null) {
           const formattedDate = dayjs(rowData[key]);
           temp_data[key] = formattedDate;
         }
-      } 
+      }
       else if (key === "cat_id") {
         var tempCat = [];
 
@@ -320,14 +328,14 @@ function ProductTable() {
 
         temp_data[key] = tempColor;
       }
-      else if(['fob_t_1_m','landed_t_1_m','fob_t_2_m','fob_t_2_qty','landed_t_2_m','landed_t_2_qty','fob_t_3_m','fob_t_3_qty','landed_t_3_m','landed_t_3_qty'].includes(key)){
+      else if (['fob_t_1_m', 'landed_t_1_m', 'fob_t_2_m', 'fob_t_2_qty', 'landed_t_2_m', 'landed_t_2_qty', 'fob_t_3_m', 'fob_t_3_qty', 'landed_t_3_m', 'landed_t_3_qty'].includes(key)) {
 
-        if(rowData['margin_data']){
-          var data=Number(rowData["productMargin"][key]);
+        if (rowData['margin_data']) {
+          var data = rowData["productMargin"]?Number(rowData["productMargin"][key]):0;
 
-          if(data===0){
+          if (data === 0) {
             temp_data[key] = "";
-          }else{
+          } else {
             temp_data[key] = data;
           }
         }
@@ -342,7 +350,7 @@ function ProductTable() {
       }
     }
 
-    // console.log("temp_data ", temp_data);
+    console.log("temp_data ", temp_data);
     // return;
 
     temp_data.product_id = rowData.id;
@@ -382,6 +390,7 @@ function ProductTable() {
     });
     // table.setEditingRow(row);
     setEditDialog(true);
+
   };
 
   const validate = (data) => {
@@ -502,7 +511,7 @@ function ProductTable() {
 
     // return;
 
-    let temp_data = NewRowData;
+    let temp_data = {...NewRowData};
 
     // validation check
     const errors = validate(temp_data);
@@ -554,6 +563,19 @@ function ProductTable() {
       });
 
       AddFromClear();
+
+      if (LockAWB) {
+        var TempnewRowData = newRowData;
+
+        TempnewRowData.awb = NewRowData.awb;
+        TempnewRowData.vendor_name = NewRowData.vendor_name;
+        TempnewRowData.farm_invoice = NewRowData.farm_invoice;
+        TempnewRowData.received_date = dayjs(NewRowData.received_date);
+        setNewRowData(TempnewRowData);
+      }
+      else {
+        setNewRowData(newRowData);
+      }
     }
 
     // console.log("handleProductAddApi ", responce);
@@ -743,18 +765,23 @@ function ProductTable() {
     }
   };
 
- 
+
 
   useEffect(() => {
     getCategoryList();
     getColorList();
   }, []);
 
+
+
   return (
     <>
       {/* ////////// product add from /////////////// */}
-      <div className="product_view-wrap">
-        <div className="full_w-btn">
+      <div className="product_view-wrap row">
+        <div className="full_w-btn col-md-12">
+
+          <Checkbox checked={LockAWB} onChange={() => setLockAWB(!LockAWB)} />
+
           {!AddProduct && (
             <Button
               type="button"
@@ -795,189 +822,197 @@ function ProductTable() {
           </Button>
         </div>
 
-        {AddProduct && (
-          <>
-            {/* <div className="file_upload-bx">
-              <CustomInput
-                type="file"
-                label="Upload Product Image"
-                name="image"
-                variant="outlined"
-                onChange={handleImageChange}
-                imagePreview={imagePreview}
+        <div>
+          {AddProduct && (
+            <>
+              {/* <div className="file_upload-bx">
+                <CustomInput
+                  type="file"
+                  label="Upload Product Image"
+                  name="image"
+                  variant="outlined"
+                  onChange={handleImageChange}
+                  imagePreview={imagePreview}
 
-              />
-            </div> */}
+                />
+              </div> */}
 
-            {inputFields?.map((field) => (
-              <>
-                {(field.type === "text" || field.type === "number") && (
-                  <CustomInput
-                    key={field.name}
-                    disabled={DisableRows[field.name]}
-                    type={field.type}
-                    label={field.label}
-                    name={field.name}
-                    value={NewRowData[field.name]}
-                    onChange={handleInputChange}
-                    error={validationErrors?.[field.name]}
-                    sx={{ m: 1, minWidth: 150 }}
-                    variant="outlined"
-                  />
-                )}
+              <div className="col-md-2">
+                {inputFields?.map((field) => (
+                  <>
 
-                {field.type === "autocomplete" && (
-                  <CustomInput
-                    key={field.name}
-                    disabled={DisableRows[field.name]}
-                    type={field.type}
-                    label={field.label}
-                    name={field.name}
-                    value={NewRowData[field.name]}
-                    onChange={handleTagChange}
-                    error={validationErrors?.[field.name]}
-                    sx={{ m: 1, minWidth: 400 }}
-                    variant="outlined"
-                  />
-                )}
+                    {(field.type === "text" || field.type === "number") && (
+                      <CustomInput
+                        key={field.name}
+                        disabled={DisableRows[field.name]}
+                        type={field.type}
+                        label={field.label}
+                        name={field.name}
+                        value={NewRowData[field.name]}
+                        onChange={handleInputChange}
+                        error={validationErrors?.[field.name]}
+                        sx={{ m: 1, minWidth: 150 }}
+                        variant="outlined"
+                      />
+                    )}
 
-                {field.type === "date" && (
-                  <CustomInput
-                    key={field.name}
-                    disabled={DisableRows[field.name]}
-                    type={field.type}
-                    label={field.label}
-                    name={field.name}
-                    value={NewRowData[field.name]}
-                    onChange={(value) => handleDateChange(field.name, value)}
-                    error={validationErrors?.[field.name]}
-                    sx={{ m: 1, minWidth: 150 }}
-                    variant="outlined"
-                  />
-                )}
+                    {field.type === "autocomplete" && (
+                      <CustomInput
+                        key={field.name}
+                        disabled={DisableRows[field.name]}
+                        type={field.type}
+                        label={field.label}
+                        name={field.name}
+                        value={NewRowData[field.name]}
+                        onChange={handleTagChange}
+                        error={validationErrors?.[field.name]}
+                        sx={{ m: 1, minWidth: 400 }}
+                        variant="outlined"
+                      />
+                    )}
 
-                {field.type === "dateTime" && (
-                  <CustomInput
-                    key={field.name}
-                    disabled={DisableRows[field.name]}
-                    type={field.type}
-                    label={field.label}
-                    name={field.name}
-                    value={NewRowData[field.name]}
-                    onChange={(value) => handleDateChange(field.name, value)}
-                    error={validationErrors?.[field.name]}
-                    sx={{ m: 1, minWidth: 150 }}
-                    variant="outlined"
-                  />
-                )}
+                    {field.type === "date" && (
+                      <CustomInput
+                        key={field.name}
+                        disabled={DisableRows[field.name]}
+                        type={field.type}
+                        label={field.label}
+                        name={field.name}
+                        value={NewRowData[field.name]}
+                        onChange={(value) => handleDateChange(field.name, value)}
+                        error={validationErrors?.[field.name]}
+                        sx={{ m: 1, minWidth: 150 }}
+                        variant="outlined"
+                      />
+                    )}
 
-                {field.type === "select" && field.name === "product_color" && (
-                  <CustomInput
-                    key={field.name}
-                    disabled={DisableRows[field.name]}
-                    type={field.type}
-                    label={field.label}
-                    name={field.name}
-                    value={NewRowData[field.name]}
-                    onChange={handleInputChange}
-                    error={validationErrors?.[field.name]}
-                    sx={{ m: 1, minWidth: 150 }}
-                    variant="outlined"
-                    options={ColorList}
-                  />
-                )}
+                    {field.type === "dateTime" && (
+                      <CustomInput
+                        key={field.name}
+                        disabled={DisableRows[field.name]}
+                        type={field.type}
+                        label={field.label}
+                        name={field.name}
+                        value={NewRowData[field.name]}
+                        onChange={(value) => handleDateChange(field.name, value)}
+                        error={validationErrors?.[field.name]}
+                        sx={{ m: 1, minWidth: 150 }}
+                        variant="outlined"
+                      />
+                    )}
 
-                {field.type === "select" && field.name === "uom" && (
-                  <CustomInput
-                    key={field.name}
-                    disabled={DisableRows[field.name]}
-                    type={field.type}
-                    label={field.label}
-                    name={field.name}
-                    value={NewRowData[field.name]}
-                    onChange={handleInputChange}
-                    error={validationErrors?.[field.name]}
-                    sx={{ m: 1, minWidth: 150 }}
-                    variant="outlined"
-                    options={[{ id: "ST", name: "ST" }]}
-                  />
-                )}
+                    {field.type === "select" && field.name === "product_color" && (
+                      <CustomInput
+                        key={field.name}
+                        disabled={DisableRows[field.name]}
+                        type={field.type}
+                        label={field.label}
+                        name={field.name}
+                        value={NewRowData[field.name]}
+                        onChange={handleInputChange}
+                        error={validationErrors?.[field.name]}
+                        sx={{ m: 1, minWidth: 150 }}
+                        variant="outlined"
+                        options={ColorList}
+                      />
+                    )}
 
-                {field.type === "select" && field.name === "feature_status" && (
-                  <CustomInput
-                    key={field.name}
-                    disabled={DisableRows[field.name]}
-                    type={field.type}
-                    label={field.label}
-                    name={field.name}
-                    value={NewRowData[field.name]}
-                    onChange={handleInputChange}
-                    error={validationErrors?.[field.name]}
-                    sx={{ m: 1, minWidth: 150 }}
-                    variant="outlined"
-                    options={[
-                      { id: "1", name: "Yes" },
-                      { id: "0", name: "No" },
-                    ]}
-                  />
-                )}
+                    {field.type === "select" && field.name === "uom" && (
+                      <CustomInput
+                        key={field.name}
+                        disabled={DisableRows[field.name]}
+                        type={field.type}
+                        label={field.label}
+                        name={field.name}
+                        value={NewRowData[field.name]}
+                        onChange={handleInputChange}
+                        error={validationErrors?.[field.name]}
+                        sx={{ m: 1, minWidth: 150 }}
+                        variant="outlined"
+                        options={[{ id: "ST", name: "ST" }]}
+                      />
+                    )}
 
-                {field.type === "multiple_select" &&
-                  field.name === "cat_id" && (
-                    <CustomInput
-                      key={field.name}
-                      disabled={DisableRows[field.name]}
-                      type={field.type}
-                      label={field.label}
-                      name={field.name}
-                      value={NewRowData[field.name]}
-                      onChange={handleMultipleSelectChange(field.name)}
-                      error={validationErrors?.[field.name]}
-                      sx={{ m: 1, minWidth: 150 }}
-                      variant="outlined"
-                      options={CategoryList}
-                    />
-                  )}
-              </>
-            ))}
+                    {field.type === "select" && field.name === "feature_status" && (
+                      <CustomInput
+                        key={field.name}
+                        disabled={DisableRows[field.name]}
+                        type={field.type}
+                        label={field.label}
+                        name={field.name}
+                        value={NewRowData[field.name]}
+                        onChange={handleInputChange}
+                        error={validationErrors?.[field.name]}
+                        sx={{ m: 1, minWidth: 150 }}
+                        variant="outlined"
+                        options={[
+                          { id: "1", name: "Yes" },
+                          { id: "0", name: "No" },
+                        ]}
+                      />
+                    )}
 
-            <div>
-              <Button
-                type="button"
-                sx={{ m: 2 }}
-                variant="contained"
-                onClick={handleProductAdd}
-              >
-                Submit
-              </Button>
+                    {field.type === "multiple_select" &&
+                      field.name === "cat_id" && (
+                        <CustomInput
+                          key={field.name}
+                          disabled={DisableRows[field.name]}
+                          type={field.type}
+                          label={field.label}
+                          name={field.name}
+                          value={NewRowData[field.name]}
+                          onChange={handleMultipleSelectChange(field.name)}
+                          error={validationErrors?.[field.name]}
+                          sx={{ m: 1, minWidth: 150 }}
+                          variant="outlined"
+                          options={CategoryList}
+                        />
+                      )}
 
-              <Button
-                sx={{
-                  m: 2,
-                  backgroundColor: "#8585ad",
-                  "&:hover": { backgroundColor: "#6b6b92" },
-                }}
-                variant="contained"
-                onClick={AddFromClear}
-              >
-                Clear
-              </Button>
+                  </>
+                ))}
 
-              <Button
-                type="button"
-                sx={{ m: 2 }}
-                variant="contained"
-                onClick={() => {
-                  setAddProduct(false);
-                  AddFromClear();
-                }}
-                color="error"
-              >
-                Close
-              </Button>
-            </div>
-          </>
-        )}
+              </div>
+
+
+              <div className="col-md-12">
+                <Button
+                  type="button"
+                  sx={{ m: 2 }}
+                  variant="contained"
+                  onClick={handleProductAdd}
+                >
+                  Submit
+                </Button>
+
+                <Button
+                  sx={{
+                    m: 2,
+                    backgroundColor: "#8585ad",
+                    "&:hover": { backgroundColor: "#6b6b92" },
+                  }}
+                  variant="contained"
+                  onClick={AddFromClear}
+                >
+                  Clear
+                </Button>
+
+                <Button
+                  type="button"
+                  sx={{ m: 2 }}
+                  variant="contained"
+                  onClick={() => {
+                    setAddProduct(false);
+                    AddFromClear();
+                  }}
+                  color="error"
+                >
+                  Close
+                </Button>
+              </div>
+            </>
+          )}
+        </div>
       </div>
 
       {/* {console.log(NewRowData?.publish_date?.unix())} */}
@@ -995,7 +1030,7 @@ function ProductTable() {
           onSubmit: handleProductEdit,
         }}
       >
-        <DialogTitle>Product Edit</DialogTitle>
+        <DialogTitle key={"title"}>Product Edit</DialogTitle>
         <DialogContent>
           <div className="product_view-wrap">
             <div className="full_w-btn">
@@ -1015,24 +1050,24 @@ function ProductTable() {
           {EditFields?.map((field) => (
             <>
 
-                {(field.type === "label_p") && (
-                  <CustomInput
-                    type={field.type}
-                    label={field.label}
-                    sx={{ m: 1, minWidth: "100%" }}
-                    variant="outlined"
-                  />
-                )}
+              {(field.type === "label_p") && (
+                <CustomInput
+                  type={field.type}
+                  label={field.label}
+                  sx={{ m: 1, minWidth: "100%" }}
+                  variant="outlined"
+                />
+              )}
 
-                {(field.type === "label_h5") && (
-                  <CustomInput
-                    type={field.type}
-                    label={field.label}
-                    sx={{ m: 1, minWidth: "100%" }}
-                    variant="outlined"
-                  />
-                )}
-              
+              {(field.type === "label_h5") && (
+                <CustomInput
+                  type={field.type}
+                  label={field.label}
+                  sx={{ m: 1, minWidth: "100%" }}
+                  variant="outlined"
+                />
+              )}
+
               {(field.type === "text" || field.type === "number") && (
                 <CustomInput
                   key={field.name}
