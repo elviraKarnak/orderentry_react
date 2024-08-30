@@ -18,6 +18,7 @@ import './assests/css/style_old.css';
 
 //Components
 import Dashboard from './pages/oderview/Dashboard';
+//import SatagingInventory from './pages/staginginvemntoty/SatagingInventory_55';
 import SatagingInventory from './pages/staginginvemntoty/SatagingInventory';
 
 //Temp component
@@ -25,6 +26,8 @@ import SimpleSearch from './pages/OrderEntry/SimpleSearch';
 import NewOrder from './pages/Order/NewOrder';
 import { RequireAuth } from './middleware/ReruireAuth';
 import Store from './Store';
+
+import OrderListto from './pages/oderview/OrderList2';
 
 
 const queryClient = new QueryClient();
@@ -48,6 +51,7 @@ function App() {
                 <Route path='/order-view' element={<Dashboard />} />
                 <Route path='/order-entry' element={<SimpleSearch />} />
                 <Route path='/order-details' element={<OderDetails />} />
+                <Route path='/order-list_new' element={<OrderListto />} />
                 <Route path='/product-entry' element={<ProductAdd />} />
                 <Route path='/product-view' element={<ProductView />} />
                 <Route path='/new-order' element={<RequireAuth><NewOrder /></RequireAuth>} />

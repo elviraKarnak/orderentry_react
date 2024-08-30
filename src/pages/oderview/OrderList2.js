@@ -9,7 +9,7 @@ import Typography from '@mui/material/Typography';
 
 import Header from '../../common/Header';
 
-function OrderList() {
+function OrderListto() {
   
     const [data, setOrderDetails] = useState();
     const columns = useMemo(
@@ -78,39 +78,39 @@ function OrderList() {
           shape: 'rounded',
           variant: 'outlined',
         },
-        // renderDetailPanel: ({ row }) => (
-        // <TableContainer component={Paper}>
-        //     <Table aria-label="simple table">
-        //         <TableHead>
-        //             <TableRow>
-        //                 <TableCell>Id</TableCell>
-        //                 <TableCell>Name</TableCell>
-        //                 <TableCell>Is Preorder</TableCell>
-        //                 <TableCell>Source</TableCell>
-        //                 <TableCell>Margin</TableCell>
-        //                 <TableCell>Unit Cost</TableCell>
-        //             </TableRow>
-        //         </TableHead>
-        //         <TableBody>
-        //         {row.original.products.map((row) => (
-        //             <TableRow
-        //             key={row.id}
-        //             sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-        //             >
-        //             <TableCell component="th" scope="row">
-        //                 {row.id}
-        //             </TableCell>
-        //             <TableCell>{row.title}</TableCell>
-        //             <TableCell>{row.preorder}</TableCell>
-        //             <TableCell>{row.source}</TableCell>
-        //             <TableCell>{row.margin}</TableCell>
-        //             <TableCell>{row.unitCost}</TableCell>
-        //             </TableRow>
-        //         ))}
-        //         </TableBody>
-        //     </Table>   
-        // </TableContainer>
-        // )
+        renderDetailPanel: ({ row }) => (
+        <TableContainer component={Paper}>
+            <Table aria-label="simple table">
+                <TableHead>
+                    <TableRow>
+                        <TableCell>Id</TableCell>
+                        <TableCell>Name</TableCell>
+                        <TableCell>Is Preorder</TableCell>
+                        <TableCell>Source</TableCell>
+                        <TableCell>Margin</TableCell>
+                        <TableCell>Unit Cost</TableCell>
+                    </TableRow>
+                </TableHead>
+                <TableBody>
+                {row.original.products.map((row) => (
+                    <TableRow
+                    key={row.id}
+                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                    >
+                    <TableCell component="th" scope="row">
+                        {row.id}
+                    </TableCell>
+                    <TableCell>{row.title}</TableCell>
+                    <TableCell>{row.preorder}</TableCell>
+                    <TableCell>{row.source}</TableCell>
+                    <TableCell>{row.margin}</TableCell>
+                    <TableCell>{row.unitCost}</TableCell>
+                    </TableRow>
+                ))}
+                </TableBody>
+            </Table>   
+        </TableContainer>
+        )
       });
 
     return (<> 
@@ -120,4 +120,4 @@ function OrderList() {
   
 }
 
-export default OrderList
+export default OrderListto

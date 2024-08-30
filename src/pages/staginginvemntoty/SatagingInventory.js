@@ -1,170 +1,250 @@
-import React from 'react'
+import React, {useEffect} from 'react';
+import {useMemo, useState} from 'react';
+//MRT Imports
+import {MaterialReactTable, useMaterialReactTable} from 'material-react-table';
+
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  Select,
+  MenuItem,
+} from '@mui/material';
+import {AccountCircle, Send} from '@mui/icons-material';
+//import orderArray from '../oderview/orderArray';
+import {getStagingInventoryList,SatagingInventoryItemStatusChange} from '../../utils/fetch';
+
 import Header from '../../common/Header';
+import Typography from '@mui/material/Typography';
+import {useQuery} from '@tanstack/react-query';
+import moment from 'moment';
+import Swal from 'sweetalert2';
 
-import {useMemo, useState } from 'react';
-import { MaterialReactTable, useMaterialReactTable, } from 'material-react-table';
-import Button from '@mui/material/Button';
-import MenuItem from '@mui/material/MenuItem';
-import Select from '@mui/material/Select';
+function SatagingInventory () {
+  
+  const SatagingInventoryDefaultStatus = [
+    { label: "Pending", value: "pending" },
+    { label: "Received", value: "received" },
+    { label: "Transfer", value: "transfer" },
+  ];
 
-import { SatagingInventoryData } from '../../utils/Constant';
-import Swal from 'sweetalert2'
-
-
-function SatagingInventory() {
-
-
-    //data and fetching state
-    const [data, setorderData] = useState(SatagingInventoryData);
-    const [isLoading, setIsLoading] = useState(false);
-    const [rowCount, setRowCount] = useState(0);
-
-    //table state
-    const [pagination, setPagination] = useState({
-        pageIndex: 0,
-        pageSize: 10,
+  /**
+ * Fetch Products
+ */
+  function UsefetchStagingInventoryList () {
+    return useQuery ({
+      queryKey: ['products'],
+      queryFn: async () => {
+        const responce = await getStagingInventoryList ();
+        // console.log("UsefetchStagingInventoryList ",responce.result.results);
+        return responce.result.results;
+      },
     });
+  }
 
-    const orderDefaultStatus = [
-        { label: "Received", value: "received" },
-        { label: "Pending", value: "pending" },
-    ]
+  const {
+    data: stagingInventoryData = [],
+    isError:stagingInventoryisError,
+    isFetching:stagingInventoryIsFetching,
+    isLoading:stagingInventoryIsLoading,
+    refetch: stagingInventoryRefetch,
+  } = UsefetchStagingInventoryList();
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    const orderStatusChange = (id, e) => {
-        console.log(id, e.target.value);
+  const handleStatusChange = (item_id, status) => {
+    // console.log(item_id, status);
 
-        Swal.fire({
-            title: "Are you sure?",
-            text: "You wan't to change order status!",
-            icon: "warning",
-            showCancelButton: true,
-            confirmButtonColor: "#5936eb",
-            cancelButtonColor: "#d33",
-            confirmButtonText: "Yes"
-        }).then(async (result) => {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You wan't to change Sataging inventory status!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#5936eb",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes"
+  }).then(async (result) => {
 
-                if (result.isConfirmed) {
-                  const newData = data.map(item =>
-                    item.id === id ? { ...item, status: e.target.value } : item
-                  );
-                  setorderData(newData);
+      if (result.isConfirmed) {
+          // var status_selected_obj = orderDefaultStatus.filter((item) => item.label === e.target.value);
+          // status_selected_obj = status_selected_obj[0];
+          // console.log(e.target.value);
 
-                Swal.fire({
-                    text: "Order status change successfully.",
-                    icon: "success"
-                });
-            }
+          // alert(item_id)
 
-        });
-    };
+          const payload = {
+              "item_id": item_id,
+              "status": status
+          };
 
-    const columns = useMemo(
-        () => [
-            {
-                accessorKey: 'awb',
-                header: 'AWB#',
-            },
-            {
-                accessorKey: 'farm',
-                header: 'Farm',
-            },
-            {
-                accessorKey: 'po',
-                header: 'PO#',
-            },
-            {
-                accessorKey: 'arrival',
-                header: 'Arrival Date',
-            },
-            {
-                accessorKey: 'boxes',
-                header: 'Boxes',
-            },
-            {
-                accessorKey: 'total',
-                header: 'Total',
-            },
-            {
-                accessorKey: 'status',
-                header: 'Status',
-                size: 150,
-                Cell: ({ renderedCellValue, row }) => (
+          var response = await SatagingInventoryItemStatusChange(payload);
 
-                    <>
-                        {/* {console.log(, renderedCellValue)} */}
-                        <Select
-                            labelId="demo-simple-select-helper-label"
-                            id="demo-simple-select-helper"
-                            className={`dropdown  ${renderedCellValue === "New order" ? "saved" : renderedCellValue.toLowerCase()}`}
-                            value={renderedCellValue}
-                            onChange={e => orderStatusChange(row.original.id, e)}
-                        >
-                            {orderDefaultStatus.map((v, i) => (
-                                <MenuItem key={row.original.id} value={v.value}>{v.label}</MenuItem>
-                            ))}
-                        </Select>
-                    </>
-                ),
-            },
-        ], [orderDefaultStatus, orderStatusChange]);
+          Swal.fire({
+              text: "Sataging Inventory item status change successfully.",
+              icon: "success"
+          });
 
-    const table = useMaterialReactTable({
-        columns,
-        data:data,
-        enableColumnFilterModes: false,
-        enableColumnOrdering: false,
-        enableGrouping: false,
-        enableColumnPinning: false,
-        enableFacetedValues: false,
-        enableRowActions: false,
-        enableRowSelection: true,
-        manualPagination: false,
-        initialState: {
-            showColumnFilters: false,
-            showGlobalFilter: true,
-            //   columnPinning: {
-            //     left: ['mrt-row-expand', 'mrt-row-select'],
-            //     right: ['mrt-row-actions'],
-            //   },
-        },
-        paginationDisplayMode: 'pages',
-        positionToolbarAlertBanner: 'bottom',
-        muiSearchTextFieldProps: {
-            size: 'small',
-            variant: 'outlined',
-        },
-        muiPaginationProps: {
-            color: 'secondary',
-            rowsPerPageOptions: [10, 20, 30],
-            shape: 'rounded',
-            variant: 'outlined',
-        },
-        onPaginationChange: setPagination,
-        rowCount,
-        state: {
-            pagination,
-            isLoading
-        },
-    });
+          stagingInventoryRefetch();
 
-    return (
-        <div className='staginginventory_wrap'>
-          <Header title='Staging Inventory'/>
-            <div className="header_button_wrap">
-            <Button className="sihb_add sihb_button" variant="contained">Add</Button>
-            <Button className="sihb_transfer sihb_button" variant="contained">Transfer</Button>
-            <Button className="sihb_received sihb_button" variant="contained">Received</Button>
-            </div>
-            <div classNameName="data_table-head">
-                <div className="container-fluid">
-                    <div className="view_order_table">
-                        <MaterialReactTable table={table} />
-                    </div>
-                </div>
-            </div>
-        </div>
-    )
+      }
+  });
+
+  }
+  
+
+  const columns = useMemo (
+    () => [
+      {
+        accessorKey: 'awb',
+        header: 'AWB#',
+        size: 150,
+      },
+      {
+        accessorKey: 'farm',
+        header: 'Farm',
+        size: 150,
+      },
+      {
+        accessorKey: 'po', //normal accessorKey
+        header: 'PO#',
+        size: 200,
+      },
+      {
+        accessorKey: 'arrival',
+        header: 'Arrival Date',
+        size: 200,
+          Cell: ({ renderedCellValue, row }) => (
+            <>
+				      {moment(renderedCellValue).format('DD/MM/YYYY')}
+			      </>
+          ),
+      },
+      {
+        accessorKey: 'boxes', //normal accessorKey
+        header: 'Boxes',
+        size: 200,
+      },
+      {
+        accessorKey: 'total',
+        header: 'Total',
+        size: 150,
+      },
+      {
+        accessorKey: 'status',
+        header: 'Status',
+        size: 150,
+      },
+    ],
+    []
+  );
+
+      
+  const orderListTable = useMaterialReactTable ({
+    columns,
+    data:stagingInventoryData,
+    enableColumnFilterModes: true,
+    enableColumnOrdering: true,
+    enableGrouping: true,
+    enableColumnPinning: true,
+    enableFacetedValues: true,
+    enableRowActions: false,
+    enableRowSelection: true,
+    initialState: {
+      showColumnFilters: true,
+      showGlobalFilter: true,
+      //   columnPinning: {
+      //     left: ['mrt-row-expand', 'mrt-row-select'],
+      //     right: ['mrt-row-actions'],
+      //   },
+    },
+    paginationDisplayMode: 'pages',
+    positionToolbarAlertBanner: 'bottom',
+    muiSearchTextFieldProps: {
+      size: 'small',
+      variant: 'outlined',
+    },
+    muiPaginationProps: {
+      color: 'secondary',
+      rowsPerPageOptions: [10, 20, 30],
+      shape: 'rounded',
+      variant: 'outlined',
+    },
+    state: {
+      isLoading: stagingInventoryIsLoading,
+      showAlertBanner: stagingInventoryisError,
+      showProgressBars: stagingInventoryIsFetching,
+    },
+    renderDetailPanel: ({row}) => (
+      <TableContainer component={Paper}>
+        <Table aria-label="simple table">
+          <TableHead>
+            <TableRow>
+              <TableCell>#</TableCell>
+              <TableCell>Product Description</TableCell>
+              <TableCell>Image</TableCell>
+              <TableCell>Category Color</TableCell>
+              <TableCell>SO#</TableCell>
+              <TableCell>Quantity</TableCell>
+              <TableCell>Farm Price</TableCell>
+              <TableCell>Total</TableCell>
+              <TableCell>Status</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {row.original.awbReceiveDataItems.map (row => (
+              <TableRow
+                key={row.id}
+                sx={{'&:last-child td, &:last-child th': {border: 0}}}
+              >
+                <TableCell component="th" scope="row">
+                  {row.id}
+                </TableCell>
+                <TableCell>{row.product_describtion}</TableCell>
+                <TableCell>{row.image}</TableCell>
+                <TableCell>{row.category}</TableCell>
+                <TableCell>#{row.so}</TableCell>
+                <TableCell>{row.quantity}</TableCell>
+                <TableCell>{row.farm_price}</TableCell>
+                <TableCell>{row.total}</TableCell>
+                <TableCell>
+                  {/* {row.status} */}
+                  <Select
+                  value={row.status}
+                  onChange={(e) => handleStatusChange(row.id, e.target.value)}
+                  variant="outlined"
+                  size="small"
+                  className={`dropdown`}
+                >
+                  {SatagingInventoryDefaultStatus.map(status => (
+                    <MenuItem key={status.value} value={status.value}>
+                      {status.label}
+                    </MenuItem>
+                  ))}
+                </Select>
+                  </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+    ),
+  });
+
+
+  return (
+    <div>
+      <Header />
+
+      <div>
+        <Typography variant="h3" className="title">
+          Staging Inventory
+        </Typography>
+      </div>
+      <MaterialReactTable table={orderListTable} />
+    </div>
+  );
 }
 
-export default SatagingInventory
+export default SatagingInventory;
