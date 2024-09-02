@@ -59,7 +59,7 @@ function SatagingInventory () {
 
     Swal.fire({
       title: "Are you sure?",
-      text: "You wan't to change Sataging inventory status!",
+      text: "You wan't to change Sataging inventory item status!",
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#5936eb",
@@ -80,6 +80,14 @@ function SatagingInventory () {
           };
 
           var response = await SatagingInventoryItemStatusChange(payload);
+
+          if(response.result.status === false){
+            Swal.fire({
+              text: "Sataging Inventory item status change failed.",
+              icon: "error"
+            });
+            return;
+          }
 
           Swal.fire({
               text: "Sataging Inventory item status change successfully.",
