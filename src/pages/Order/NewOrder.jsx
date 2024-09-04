@@ -136,30 +136,34 @@ function NewOrder() {
   };
 
   const newOrderSaveAndContinueChk = async () => {
-    Swal.fire({
-      title: "Are you sure?",
-      text: "You want to save this order!",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Yes",
-      cancelButtonText: "Cancel",
-    }).then(async (result) => {
+    // Swal.fire({
+    //   title: "Are you sure?",
+    //   text: "You want to save this order!",
+    //   icon: "warning",
+    //   showCancelButton: true,
+    //   confirmButtonColor: "#3085d6",
+    //   cancelButtonColor: "#d33",
+    //   confirmButtonText: "Yes",
+    //   cancelButtonText: "Cancel",
+    // }).then(async (result) => {
 
-      if (result.isConfirmed) {
-        if (userState.OrderItemsData.length === 0) {
-          toast.warning("Item Not select!");
-        } else {
-          //  =========== modal open ========
-          setCheckOutModal(true);
-        }
-      } else {
-        //  ============= order save ===========
-        await NewOrderSave();
-      }
+    //   if (result.isConfirmed) {
+    //     if (userState.OrderItemsData.length === 0) {
+    //       toast.warning("Item Not select!");
+    //     } else {
+    //       //  =========== modal open ========
+    //       setCheckOutModal(true);
+    //     }
+    //   } else {
+    //     //  ============= order save ===========
+    //     await NewOrderSave();
+    //   }
       
-    });
+    // });
+
+    //  =========== modal open ========
+    setCheckOutModal(true);
+    
   };
 
   // ========== use ========
@@ -550,6 +554,7 @@ function NewOrder() {
   };
 
   const quantityList = (min, stock) => {
+    // alert(min, stock)
     // var ii = (stock / min);
 
     // var temp = '<option value="" >select</option>';
@@ -883,7 +888,7 @@ function NewOrder() {
                     disabled={SelectCustomerData != null ? false : true}
                     className="new-order-btn btn btn-info green"
                   >
-                    Save and continue
+                    view
                   </Button>
                 </div>
 
@@ -964,7 +969,7 @@ function NewOrder() {
                                     <option value={1}>FedEx Priority</option>
                                     <option value={2}>FedEx Priority</option>
                                     <option value={3}>FedEx Priority</option>
-                                </select>
+                     </select>
                 </span> */}
               </Col>
             </Row>
@@ -972,70 +977,7 @@ function NewOrder() {
         )}
 
         <div className="order-total-table">
-          {/* ================ product add list =============== */}
-          {userState.OrderItemsData.length > 0 && (
-            <div className="order-tableone">
-              <table className="table">
-                <thead>
-                  <tr>
-                    <th>Product Description</th>
-                    <th>Image</th>
-                    <th>SKU</th>
-                    <th>Category</th>
-                    <th>Color</th>
-                    <th>Unit Pice</th>
-                    <th>Quantity</th>
-                    <th>UOM</th>
-                    <th>Amount</th>
-                    <th colSpan={2}></th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {userState.OrderItemsData.map((item, index) => (
-                    <>
-                      <tr key={index}>
-                        <td>{parse(item.product_details.product_name)}</td>
-                        <td>
-                          <img
-                            src={item.product_details.image_url}
-                            alt=""
-                            style={{ cursor: "pointer" }}
-                            onClick={() =>
-                              setImageShowModalUrl(
-                                item.product_details.image_url
-                              )
-                            }
-                          />
-                        </td>
-                        <td>{item.product_details.sku}</td>
-                        <td>{item.product_details.category_string}</td>
-                        <td>{item.product_details.color_string}</td>
-                        <td>
-                          {SelectCustomerData.ship_addr.ship_method === "fob"
-                            ? item.product_details.cost_price
-                            : item.product_details.cost_price}
-                        </td>
-                        <td>{item.quantity}</td>
-                        <td>{item.product_details.uom}</td>
-                        <td>{item.total}</td>
-                        {/* <td><Button variant="success">Edit</Button></td> */}
-                        <td>
-                          <Button
-                            onClick={() =>
-                              OrderItemDelete(index, item.product_details.id)
-                            }
-                            variant="danger"
-                          >
-                            Delete
-                          </Button>
-                        </td>
-                      </tr>
-                    </>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
+          
 
           <div className="add-line-item">
             <Button onClick={ProductList}>

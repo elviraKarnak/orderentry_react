@@ -120,7 +120,7 @@ function SatagingInventory () {
         size: 200,
       },
       {
-        accessorKey: 'arrival',
+        accessorKey: 'arrival_date',
         header: 'Arrival Date',
         size: 200,
           Cell: ({ renderedCellValue, row }) => (
@@ -192,7 +192,8 @@ function SatagingInventory () {
               <TableCell>#</TableCell>
               <TableCell>Product Description</TableCell>
               <TableCell>Image</TableCell>
-              <TableCell>Category Color</TableCell>
+              <TableCell>Category</TableCell>
+              <TableCell>Color</TableCell>
               <TableCell>SO#</TableCell>
               <TableCell>Quantity</TableCell>
               <TableCell>Farm Price</TableCell>
@@ -201,7 +202,7 @@ function SatagingInventory () {
             </TableRow>
           </TableHead>
           <TableBody>
-            {row.original.awbReceiveDataItems.map (row => (
+            {row?.original?.awbReceiveDataItems.map (row => (
               <TableRow
                 key={row.id}
                 sx={{'&:last-child td, &:last-child th': {border: 0}}}
@@ -209,9 +210,10 @@ function SatagingInventory () {
                 <TableCell component="th" scope="row">
                   {row.id}
                 </TableCell>
-                <TableCell>{row.product_describtion}</TableCell>
-                <TableCell>{row.image}</TableCell>
+                <TableCell>{row.product_name}</TableCell>
+                <TableCell><img src={row.image_url} alt='' width={"50px"} height={"50px"} /></TableCell>
                 <TableCell>{row.category}</TableCell>
+                <TableCell>{row.color}</TableCell>
                 <TableCell>#{row.so}</TableCell>
                 <TableCell>{row.quantity}</TableCell>
                 <TableCell>{row.farm_price}</TableCell>
