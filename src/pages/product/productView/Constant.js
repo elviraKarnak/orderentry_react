@@ -88,9 +88,9 @@ export const inputFields = [
 
   {label: 'BOXES', name: 'boxes', type: 'number'},
   {label: 'Box Type', name: 'boxtype', type: 'text'},
-  {label: 'Units/Box', name: 'box_unit', type: 'number'},
-  {label: 'Units/Bunch', name: 'bunch_unit', type: 'number'},
-  {label: 'Units/Cost', name: 'cost_unit', type: 'number'},
+  {label: 'Units/Box', name: 'unit_per_box', type: 'number'},
+  {label: 'Units/Bunch', name: 'unit_per_bunch', type: 'number'},
+  {label: 'Units/Cost', name: 'cost_per_unit', type: 'number'},
   {label: 'Sale Price', name: 'sale_price', type: 'number'},
   {label: 'SO#', name: 'so', type: 'number'},
 ];
@@ -110,9 +110,9 @@ export const EditFields = [
 
   {label: 'BOXES', name: 'boxes', type: 'number'},
   {label: 'Box Type', name: 'boxtype', type: 'text'},
-  {label: 'Units/Box', name: 'box_unit', type: 'number'},
-  {label: 'Units/Bunch', name: 'bunch_unit', type: 'number'},
-  {label: 'Units/Cost', name: 'cost_unit', type: 'number'},
+  {label: 'Units/Box', name: 'unit_per_box', type: 'number'},
+  {label: 'Units/Bunch', name: 'unit_per_bunch', type: 'number'},
+  {label: 'Units/Cost', name: 'cost_per_unit', type: 'number'},
   {label: 'SO#', name: 'so', type: 'number'},
 
   {label: 'Publish Date', name: 'publish_date', type: 'dateTime'},

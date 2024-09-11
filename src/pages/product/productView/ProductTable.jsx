@@ -314,7 +314,7 @@ function ProductTable() {
       else if (key === "cat_id") {
         var tempCat = [];
 
-        for (let item of rowData["productCategories"]) {
+        for (let item of rowData["productCategory"]) {
           tempCat.push(item.category.id);
         }
 
@@ -322,7 +322,7 @@ function ProductTable() {
       } else if (key === "product_color") {
         var tempColor = "";
 
-        for (let item of rowData["productColors"]) {
+        for (let item of rowData["productColor"]) {
           tempColor = item.color.id;
         }
 
@@ -428,16 +428,16 @@ function ProductTable() {
       errors.boxtype = "boxtype is required";
     }
 
-    if (!data.box_unit.trim()) {
-      errors.box_unit = "box unit is required";
+    if (!data.unit_per_box.trim()) {
+      errors.unit_per_box = "unit/box unit is required";
     }
 
-    if (!data.bunch_unit.trim()) {
-      errors.bunch_unit = "bunch unit is required";
+    if (!data.unit_per_bunch.trim()) {
+      errors.unit_per_bunch = "unit/bunch unit is required";
     }
 
-    if (!data.cost_unit.trim()) {
-      errors.cost_unit = "cost unit is required";
+    if (!data.cost_per_unit.trim()) {
+      errors.cost_per_unit = "unit/cost is required";
     }
 
     if (!data.sale_price.trim()) {

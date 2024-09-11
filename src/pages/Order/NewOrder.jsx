@@ -158,12 +158,11 @@ function NewOrder() {
     //     //  ============= order save ===========
     //     await NewOrderSave();
     //   }
-      
+
     // });
 
     //  =========== modal open ========
     setCheckOutModal(true);
-    
   };
 
   // ========== use ========
@@ -229,6 +228,8 @@ function NewOrder() {
                 quantity: i.minqty,
                 total: total_price,
                 margin: i.margin_data.t_1_m,
+                temp_product_id: i.id,
+                status:'new',
               };
 
               tempArr.push(temp);
@@ -391,7 +392,7 @@ function NewOrder() {
             : item
         );
 
-        console.log("newOrderItemData ", newOrderItemData);
+        // console.log("newOrderItemData ", newOrderItemData);
 
         // === replace_OrderItemsData ====
         dispatch({ type: "replace_OrderItemsData", value: newOrderItemData });
@@ -407,6 +408,32 @@ function NewOrder() {
       }
     }
   };
+
+
+  const NewOrderAdd_2 = async (index, product_item_id, product_quantity) => {
+    // ================ new array create =======
+
+    if (product_quantity === "") {
+      toast.warning("pleace select product quantity!");
+      return;
+    }
+
+    const indexToUpdate = index;
+    if (indexToUpdate !== -1) {
+      const updatedData = [...userState.ProductData];
+
+      // ------- total -------
+      updatedData[indexToUpdate] = {
+        ...updatedData[indexToUpdate],
+        status: 'order',
+      };
+
+      // === replace_ProductData ====
+      dispatch({ type: "replace_ProductData", value: updatedData });
+
+    }
+  };
+
 
   // ============= Sale's man set price =======
   const salePriceSet = (
@@ -524,7 +551,7 @@ function NewOrder() {
       ship_date: DeliveryDate,
       order_address_details: {
         ship_to: SelectCustomerData.company_name,
-        address:`${SelectCustomerData.ship_addr.ship_addr_1} ${SelectCustomerData.ship_addr.ship_addr_2}`,
+        address: `${SelectCustomerData.ship_addr.ship_addr_1} ${SelectCustomerData.ship_addr.ship_addr_2}`,
         city: SelectCustomerData.ship_addr.ship_city_name,
         state: SelectCustomerData.ship_addr.ship_state_name,
         zipcode: SelectCustomerData.ship_addr.ship_zip_code,
@@ -672,6 +699,151 @@ function NewOrder() {
       // Set the state with the updated array
       // === replace_ProductData ====
       dispatch({ type: "replace_ProductData", value: updatedData });
+
+    }
+  };
+
+  const quantityListValueset_2 = (
+    index,
+    temp_product_id,
+    quantity,
+    landed_price,
+    fob_price,
+    margin_data
+  ) => {
+    // Find the index of the object with id 2
+    // const indexToUpdate = ProductData.findIndex(item => item.id === 2);
+
+    var price =
+      SelectCustomerData.ship_addr.ship_method === "fob"
+        ? fob_price
+        : landed_price;
+
+    // array under id object index
+
+    var indexToUpdate = index;
+
+    // var indexToUpdate = userState.ProductData.map((item, inner_index) =>
+    //   item.temp_product_id == temp_product_id ? inner_index : -1
+    // );
+
+    if (indexToUpdate !== -1) {
+      // Create a new array with the updated value
+      const updatedData = [...userState.ProductData];
+
+      // var indexToUpdate = updatedData.find((item, inner_index) => item.temp_product_id == temp_product_id).product_details.id;
+
+      // alert(`${temp_product_id},'=====>',${indexToUpdate}`)
+      // return;
+
+      var margin = 0;
+
+      console.log("margin_data ", margin_data);
+
+      if (margin_data.t_2_isSet === true && margin_data.t_3_isSet === true) {
+        if (quantity >= margin_data.t_1_qty && quantity < margin_data.t_2_qty) {
+          margin = margin_data.t_1_m;
+        } else if (
+          quantity >= margin_data.t_2_qty &&
+          quantity < margin_data.t_3_qty
+        ) {
+          margin = margin_data.t_2_m;
+        } else {
+          margin = margin_data.t_3_m;
+        }
+      } else if (margin_data.t_2_isSet === true) {
+        if (quantity >= margin_data.t_1_qty && quantity < margin_data.t_2_qty) {
+          margin = margin_data.t_1_m;
+        } else {
+          margin = margin_data.t_2_m;
+        }
+      } else if (margin_data.t_3_isSet === true) {
+        if (quantity >= margin_data.t_1_qty && quantity < margin_data.t_3_qty) {
+          margin = margin_data.t_1_m;
+        } else {
+          margin = margin_data.t_3_m;
+        }
+      } else {
+        margin = margin_data.t_1_m;
+      }
+
+      // alert(margin)
+
+      // ------- quantity -------
+      updatedData[indexToUpdate] = {
+        ...updatedData[indexToUpdate],
+        quantity: quantity,
+      };
+
+      // ------- margin -------
+      updatedData[indexToUpdate] = {
+        ...updatedData[indexToUpdate],
+        margin: margin,
+      };
+
+      var total_price = (Number(price) * 100) / (100 - margin);
+      total_price = (total_price * Number(quantity)).toFixed(2);
+      // ------- total -------
+      updatedData[indexToUpdate] = {
+        ...updatedData[indexToUpdate],
+        total: total_price,
+      };
+
+      // ------- margin -------
+      // var sale_price = Number(quantity) * Number(unit_price);
+      // var buy_price = Number(quantity) * Number(cost_price);
+      // var margin = (((sale_price - buy_price) / sale_price) * 100).toFixed(2);
+
+      // updatedData[indexToUpdate] = { ...updatedData[indexToUpdate], margin: (margin !== 'NaN' ? margin : 0) };
+
+      // Set the state with the updated array
+
+      // === replace_ProductData ====
+      dispatch({ type: "replace_ProductData", value: updatedData });
+
+      // var stateChangeData = {
+      //   replace_ProductData: updatedData,
+      // };
+
+      /////////////////////////////////////////////////////////////////////
+
+      // var indexToUpdate = updatedData.find((item, inner_index) => item.temp_product_id == temp_product_id).product_details.id;
+
+      // if (indexToUpdate !== -1 && userState.OrderItemsData.length > 0) {
+
+      //   // indexToUpdate = userState.OrderItemsData.map((item, inner_index) =>
+      //   //   item.temp_product_id === temp_product_id ? inner_index : -1
+      //   // );
+
+      //   // Create a new array with the updated value
+      //   // const updatedData = userState.ProductData[indexToUpdate];
+      //   const productUpdatedData = updatedData[indexToUpdate];
+
+      //   if (
+      //     userState.AddProductArr.includes(
+      //       productUpdatedData.product_details.id
+      //     )
+      //   ) {
+      //     // toast.warning("Product alredy selected!")
+
+      //     var newOrderItemData = userState.OrderItemsData.map((item) =>
+      //       item.product_details.id === productUpdatedData.product_details.id
+      //         ? productUpdatedData
+      //         : item
+      //     );
+
+      //     // console.log("newOrderItemData ", newOrderItemData);
+
+      //     // === replace_OrderItemsData ====
+      //     // dispatch({ type: "replace_OrderItemsData", value: newOrderItemData });
+
+      //     stateChangeData.replace_OrderItemsData = newOrderItemData;
+      //   } 
+      // }
+      // dispatch({
+      //   type: "replace_ProductData_OrderItemsData_AddProductArr_OrderItemsData",
+      //   value: stateChangeData,
+      // });
     }
   };
 
@@ -888,27 +1060,27 @@ function NewOrder() {
                     disabled={SelectCustomerData != null ? false : true}
                     className="new-order-btn btn btn-info green"
                   >
-                    view
+                    View Order
                   </Button>
                 </div>
 
                 <div className="text-lg-end">
                   {/* <Button
-                                        type="button"
-                                        className="btn btn-secondary rounded-5 cart-btn"
-                                        data-bs-toggle="modal"
-                                        data-bs-target="#checkoutModal"
-                                    >
-                                        Total  
-                                    </Button> */}
+                    type="button"
+                    className="btn btn-secondary rounded-5 cart-btn"
+                    data-bs-toggle="modal"
+                    data-bs-target="#checkoutModal"
+                  >
+                    Total
+                  </Button> */}
 
                   {/* <Button
-                                        type="button"
-                                        className="btn btn-secondary rounded-5 cart-btn"
-                                        onClick={() => setCheckOutModal(true)}
-                                    >
-                                        Total
-                                    </Button> */}
+                    type="button"
+                    className="btn btn-secondary rounded-5 cart-btn"
+                    onClick={() => setCheckOutModal(true)}
+                  >
+                    Total
+                  </Button> */}
                 </div>
 
                 {/* ===================== */}
@@ -918,17 +1090,17 @@ function NewOrder() {
                     {/* <label>Order Number</label> <span>#123456789</span> */}
                   </p>
                   {/* <p className="clearfix">
-                                <label>Invoice Date</label>{" "}
-                                <DatePicker
-                                    locale="es"
-                                    showIcon
-                                    closeOnScroll={true}
-                                    placeholderText="To"
-                                    selected={formDate}
-                                    onChange={(date) => setFormDate(date)}
-                                    className={"form-control"}
-                                />
-                            </p> */}
+                    <label>Invoice Date</label>{" "}
+                    <DatePicker
+                      locale="es"
+                      showIcon
+                      closeOnScroll={true}
+                      placeholderText="To"
+                      selected={formDate}
+                      onChange={(date) => setFormDate(date)}
+                      className={"form-control"}
+                    />
+                  </p> */}
                   <p className="clearfix">
                     <label>Delivery Date</label>{" "}
                     <DatePicker
@@ -977,8 +1149,6 @@ function NewOrder() {
         )}
 
         <div className="order-total-table">
-          
-
           <div className="add-line-item">
             <Button onClick={ProductList}>
               {" "}
@@ -1039,14 +1209,16 @@ function NewOrder() {
                               <td>
                                 <Form.Select
                                   onChange={(e) =>
-                                    quantityListValueset(
+                                    quantityListValueset_2(
                                       index,
+                                      item.temp_product_id,
                                       e.target.value,
                                       item.product_details.cost_price,
                                       item.product_details.cost_price,
                                       item.product_details.margin_data
                                     )
                                   }
+                                  value={item.quantity}
                                 >
                                   {quantityList(
                                     item.product_details.minqty,
@@ -1054,6 +1226,7 @@ function NewOrder() {
                                   )}
                                 </Form.Select>
                               </td>
+
                               {/*  <td>{item.product_details.fob_price}</td> */}
 
                               <td>{item.product_details.cost_price}</td>
@@ -1084,13 +1257,11 @@ function NewOrder() {
                               <td>{item.margin}</td>
 
                               <td>
-                                {userState.AddProductArr.includes(
-                                  item.product_details.id
-                                ) ? (
+                                {item.status==='order' ? (
                                   <>
                                     <Button
                                       onClick={() =>
-                                        NewOrderAdd(
+                                        NewOrderAdd_2(
                                           index,
                                           item.product_details.id,
                                           item.quantity
@@ -1105,7 +1276,7 @@ function NewOrder() {
                                   <>
                                     <Button
                                       onClick={() =>
-                                        NewOrderAdd(
+                                        NewOrderAdd_2(
                                           index,
                                           item.product_details.id,
                                           item.quantity
@@ -1162,6 +1333,8 @@ function NewOrder() {
         setSelectCustomerData={setSelectCustomerData}
         DeliveryDate={DeliveryDate}
         setAddItem={setAddItem}
+        quantityListValueset_2={quantityListValueset_2}
+        quantityList={quantityList}
       />
 
       {/* ============= ImageShowModal ================ */}

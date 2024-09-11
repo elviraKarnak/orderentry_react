@@ -67,6 +67,7 @@ function Index(props) {
   };
 
   const CheckOutConfirm = () => {
+
     props.setCheckOutModal(false);
     setShippingModal(true);
   };
@@ -92,10 +93,10 @@ function Index(props) {
     //     toast.error(responce.data.msg)
     // }
 
-    if (userState.OrderItemsData.length === 0) {
-      toast.warning("Item not select!");
-      return;
-    }
+    // if (userState.OrderItemsData.length === 0) {
+    //   toast.warning("Item not select!");
+    //   return;
+    // }
 
     if (payment_type === "" && payment_type_value === "") {
       toast.warning("Please select payment type!");
@@ -110,7 +111,11 @@ function Index(props) {
     // ============= new ============== //
     var tempItem = [];
 
-    for (var item of userState.OrderItemsData) {
+    var OrderItemsData=userState.ProductData.filter((item)=>item.status==='order');
+
+    // userState.OrderItemsData
+
+    for (var item of OrderItemsData) {
       var temp = {
         item_id: item.product_details.id,
         item_details: item.product_details.product_name,
@@ -132,6 +137,7 @@ function Index(props) {
     }
 
     var new_payload = {
+      awb:"AWB-9988713",
       customer_id: props.SelectCustomerData.id,
       wp_order_id: "",
       order_type: "in-house", // in-house or website
@@ -145,20 +151,22 @@ function Index(props) {
       ship_date: props.DeliveryDate,
       order_address_details: {
         ship_to: props.SelectCustomerData.company_name,
-        address:`${props.SelectCustomerData.ship_addr.ship_addr_1} ${props.SelectCustomerData.ship_addr.ship_addr_2}`,
+        address: `${props.SelectCustomerData.ship_addr.ship_addr_1} ${props.SelectCustomerData.ship_addr.ship_addr_2}`,
         city: props.SelectCustomerData.ship_addr.ship_city_name,
         state: props.SelectCustomerData.ship_addr.ship_state_name,
         zipcode: props.SelectCustomerData.ship_addr.ship_zip_code,
       },
 
-        //// selear data ////
-        // sales_rep_id: userState.id,
-        // ship_method:props.SelectCustomerData.ship_addr.ship_method === "fob"? "fob": "landed",
-        // payment_type: payment_type,
+      //// selear data ////
+      // sales_rep_id: userState.id,
+      // ship_method:props.SelectCustomerData.ship_addr.ship_method === "fob"? "fob": "landed",
+      // payment_type: payment_type,
     };
     // ////////////////////////////////////////////
 
     console.log("final paylaad ", new_payload);
+
+    // return;
 
     if (props.OrderId) {
       if (props.OrderId != null) {
@@ -174,25 +182,22 @@ function Index(props) {
 
     console.log(responce.data);
 
-
     if (responce.status) {
-        // toast.success("Order Process Successfully");
+      // toast.success("Order Process Successfully");
 
-        setOrderProcessingModal(false);
-  
-        // === order_data_reset ====
-        dispatch({ type: "order_data_reset" });
-  
-        props.setAddItem((pre) => (pre ? false : true));
-  
-        Swal.fire("Saved!", "Your order has been process.", "success");
-  
-        // navigate("/order-view");
-      } else {
-        toast.error(responce.result.msg);
-      }
+      setOrderProcessingModal(false);
 
+      // === order_data_reset ====
+      dispatch({ type: "order_data_reset" });
 
+      props.setAddItem((pre) => (pre ? false : true));
+
+      Swal.fire("Saved!", "Your order has been process.", "success");
+
+      // navigate("/order-view");
+    } else {
+      toast.error(responce.result.msg);
+    }
   };
 
   const GetOrderItemList = async () => {
@@ -306,9 +311,10 @@ function Index(props) {
                   </tr>
                 </thead>
                 <tbody>
-                  {userState.OrderItemsData.length > 0 &&
-                    userState.OrderItemsData.map((item, index) => (
+                  {userState.ProductData.length > 0 &&
+                    userState.ProductData.map((item, index) => (
                       <>
+                      {item.status==='order' && 
                         <tr key={index}>
                           <td className="company_name">
                             {item.product_details.product_name}
@@ -317,7 +323,27 @@ function Index(props) {
                             {/* ${(props.SelectCustomerData?.ship_addr.ship_method === "fob" ? item.product_details.fob_price : item.product_details.landed_price)} */}
                             ${item.product_details.real_price}
                           </td>
-                          <td>{item.quantity} ST</td>
+                          {/* <td>{item.quantity} ST</td> */}
+                          <td>
+                            <Form.Select
+                              onChange={(e) =>
+                                props.quantityListValueset_2(
+                                  index,
+                                  item.temp_product_id,
+                                  e.target.value,
+                                  item.product_details.cost_price,
+                                  item.product_details.cost_price,
+                                  item.product_details.margin_data
+                                )
+                              }
+                              value={item.quantity}
+                            >
+                              {props.quantityList(
+                                item.product_details.minqty,
+                                item.product_details.stock
+                              )}
+                            </Form.Select>
+                          </td>
                           <td className="amount-col">${item.total}</td>
                           <td>
                             <img
@@ -329,7 +355,7 @@ function Index(props) {
                               alt=""
                             />
                           </td>
-                        </tr>
+                        </tr>}
                       </>
                     ))}
 
@@ -368,7 +394,7 @@ function Index(props) {
             </p>
 
             <Button
-              disabled={userState.OrderItemsData.length > 0 ? false : true}
+              // disabled={userState.OrderItemsData.length > 0 ? false : true}
               className="new-order-btn btn btn-info"
               onClick={CheckOutConfirm}
             >
@@ -593,7 +619,9 @@ function Index(props) {
                             type="radio"
                             name="radio"
                             value={"card"}
-                            onChange={() => PaymentTypeSelect("card", "American Express Card")}
+                            onChange={() =>
+                              PaymentTypeSelect("card", "American Express Card")
+                            }
                           />
                           <span class="checkmark"></span>
                         </label>

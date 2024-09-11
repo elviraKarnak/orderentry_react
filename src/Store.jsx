@@ -121,6 +121,30 @@ function reducer(state, action) {
                 AddProductArr: action.value,
             };
 
+        case "replace_ProductData_OrderItemsData_AddProductArr_OrderItemsData":
+            var temp={};
+            if(action.value.replace_ProductData){
+                temp.ProductData=action.value.replace_ProductData;
+            }
+
+            if(action.value.replace_OrderItemsData){
+                temp.OrderItemsData=action.value.replace_OrderItemsData;
+            }
+
+            if(action.value.new_AddProductArr){
+                temp.AddProductArr=[...state.AddProductArr,action.value.new_AddProductArr];
+            }
+
+            if(action.value.new_OrderItemsData){
+                temp.OrderItemsData=[...state.OrderItemsData,action.value.new_OrderItemsData];
+            }
+
+
+            return {
+                ...state,
+                ...temp,
+            }
+
 
         case "TotalPM":
             return {
