@@ -22,7 +22,8 @@ import Dashboard from './pages/oderview/Dashboard';
 import SatagingInventory from './pages/staginginvemntoty/SatagingInventory';
 
 //Temp component
-import SimpleSearch from './pages/OrderEntry/SimpleSearch';
+// import SimpleSearch from './pages/OrderEntry/SimpleSearch';
+import SimpleSearchNew from './pages/OrderEntry/SimpleSearchNew';
 import NewOrder from './pages/Order/NewOrder';
 import { RequireAuth } from './middleware/ReruireAuth';
 import Store from './Store';
@@ -49,7 +50,7 @@ function App() {
               <Routes>
                 <Route path='/' element={<Dashboard />} />
                 <Route path='/order-view' element={<Dashboard />} />
-                <Route path='/order-entry' element={<SimpleSearch />} />
+                <Route path='/order-entry' element={<SimpleSearchNew />} />
                 <Route path='/order-details' element={<OderDetails />} />
                 <Route path='/order-list_new' element={<OrderListto />} />
                 <Route path='/product-entry' element={<ProductAdd />} />
