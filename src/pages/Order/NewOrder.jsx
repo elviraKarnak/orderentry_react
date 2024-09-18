@@ -229,7 +229,7 @@ function NewOrder() {
                 total: total_price,
                 margin: i.margin_data.t_1_m,
                 temp_product_id: i.id,
-                status:'new',
+                status: 'new',
               };
 
               tempArr.push(temp);
@@ -484,15 +484,22 @@ function NewOrder() {
   };
 
   const TotalAmountCount = async () => {
-    var no_product = userState.OrderItemsData.length;
+    // var no_product = userState.OrderItemsData.length;
+    var no_product = 0;
     var total = 0;
     var margin = 0;
 
-    for (var i of userState.OrderItemsData) {
+    for (var item of userState.ProductData) {
+      if (item.status == 'order') {
+        no_product += 1;
+      }
+    }
+
+    for (var i of userState.ProductData) {
       total += Number(i.total);
     }
 
-    for (var i of userState.OrderItemsData) {
+    for (var i of userState.ProductData) {
       margin += Number(i.margin);
     }
 
@@ -890,7 +897,7 @@ function NewOrder() {
 
   useEffect(() => {
     TotalAmountCount();
-  }, [userState.OrderItemsData]);
+  }, [userState.ProductData]);
 
   // ======= reset pre vious data ==========
   useEffect(() => {
@@ -1037,7 +1044,7 @@ function NewOrder() {
                         <option
                           selected={
                             SelectCustomerData?.ship_addr.ship_method ===
-                            "fedex"
+                              "fedex"
                               ? "selected"
                               : ""
                           }
@@ -1161,7 +1168,7 @@ function NewOrder() {
           </div>
 
           <br />
-          {/* ================ product list =============== */}
+          {/* /////////////////////////// product list //////////////////////////// */}
           {userState.ProductData.length > 0 && (
             <div className="order-tabletwo">
               {AddItem && (
@@ -1257,7 +1264,7 @@ function NewOrder() {
                               <td>{item.margin}</td>
 
                               <td>
-                                {item.status==='order' ? (
+                                {item.status === 'order' ? (
                                   <>
                                     <Button
                                       onClick={() =>
