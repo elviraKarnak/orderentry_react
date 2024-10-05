@@ -10,9 +10,9 @@ import {
     MenuItem,
   } from '@mui/material';
 import React from 'react'
-import { SatagingInventoryDefaultStatus } from '../../utils/Constant'
+import { SatagingInventoryDefaultStatus } from '../../../utils/Constant'
 import Swal from 'sweetalert2';
-import { SatagingInventoryItemStatusChange } from '../../utils/fetch';
+import { SatagingInventoryItemStatusChange } from '../../../utils/fetch';
 
 function SatagingInventoryItemDetails({row,stagingInventoryRefetch}) {
 

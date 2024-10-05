@@ -1,33 +1,34 @@
-import React, {useEffect} from 'react';
-import {useMemo, useState} from 'react';
+import React, { useEffect } from 'react';
+import { useMemo, useState } from 'react';
 //MRT Imports
-import {MaterialReactTable, useMaterialReactTable} from 'material-react-table';
+import { MaterialReactTable, useMaterialReactTable } from 'material-react-table';
 
 
-import {AccountCircle, Send} from '@mui/icons-material';
+import { AccountCircle, Send } from '@mui/icons-material';
 //import orderArray from '../oderview/orderArray';
-import {getStagingInventoryList,SatagingInventoryItemStatusChange} from '../../utils/fetch';
+import { getStagingInventoryList, SatagingInventoryItemStatusChange } from '../../utils/fetch';
 
 import Header from '../../common/Header';
 import Typography from '@mui/material/Typography';
-import {useQuery} from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import moment from 'moment';
 import Swal from 'sweetalert2';
 import { SatagingInventoryDefaultStatus } from '../../utils/Constant';
-import SatagingInventoryItemDetails from './SatagingInventoryItemDetails';
+import SatagingInventoryItemDetails from './components/SatagingInventoryItemDetails';
+import ProductEntry from './components/ProductEntry';
 
-function SatagingInventory () {
-  
-  
+function SatagingInventory() {
+
+
 
   /**
  * Fetch Products
  */
-  function UsefetchStagingInventoryList () {
-    return useQuery ({
+  function UsefetchStagingInventoryList() {
+    return useQuery({
       queryKey: ['products'],
       queryFn: async () => {
-        const responce = await getStagingInventoryList ();
+        const responce = await getStagingInventoryList();
         // console.log("UsefetchStagingInventoryList ",responce.result.results);
         return responce.result.results;
       },
@@ -36,16 +37,16 @@ function SatagingInventory () {
 
   const {
     data: stagingInventoryData = [],
-    isError:stagingInventoryisError,
-    isFetching:stagingInventoryIsFetching,
-    isLoading:stagingInventoryIsLoading,
+    isError: stagingInventoryisError,
+    isFetching: stagingInventoryIsFetching,
+    isLoading: stagingInventoryIsLoading,
     refetch: stagingInventoryRefetch,
   } = UsefetchStagingInventoryList();
 
-  
-  
 
-  const columns = useMemo (
+
+
+  const columns = useMemo(
     () => [
       {
         accessorKey: 'awb',
@@ -66,11 +67,11 @@ function SatagingInventory () {
         accessorKey: 'arrival_date',
         header: 'Arrival Date',
         size: 200,
-          Cell: ({ renderedCellValue, row }) => (
-            <>
-				      {moment(renderedCellValue).format('DD/MM/YYYY')}
-			      </>
-          ),
+        Cell: ({ renderedCellValue, row }) => (
+          <>
+            {moment(renderedCellValue).format('DD/MM/YYYY')}
+          </>
+        ),
       },
       {
         accessorKey: 'boxes', //normal accessorKey
@@ -91,10 +92,10 @@ function SatagingInventory () {
     []
   );
 
-      
-  const orderListTable = useMaterialReactTable ({
+
+  const orderListTable = useMaterialReactTable({
     columns,
-    data:stagingInventoryData,
+    data: stagingInventoryData,
     enableColumnFilterModes: true,
     enableColumnOrdering: true,
     enableGrouping: true,
@@ -127,22 +128,34 @@ function SatagingInventory () {
       showAlertBanner: stagingInventoryisError,
       showProgressBars: stagingInventoryIsFetching,
     },
-    renderDetailPanel: ({row}) => (
+    renderDetailPanel: ({ row }) => (
       <SatagingInventoryItemDetails row={row} stagingInventoryRefetch={stagingInventoryRefetch} />
     ),
   });
 
 
   return (
-    <div>
-      <Header />
+    <div className='container'>
+      <div className='row'>
 
-      <div>
-        <Typography variant="h3" className="title">
-          Staging Inventory
-        </Typography>
+        <div className='col-sm-12'>
+          <Header />
+        </div>
+
+        <div className='col-sm-12'>
+          <ProductEntry />
+        </div>
+
+        <div className='col-sm-12'>
+          <Typography variant="h4" className="title">
+            Staging Inventory List
+          </Typography>
+        </div>
+
+        <div className='col-sm-12'>
+          <MaterialReactTable table={orderListTable} />
+        </div>
       </div>
-      <MaterialReactTable table={orderListTable} />
     </div>
   );
 }

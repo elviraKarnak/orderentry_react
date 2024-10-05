@@ -3,7 +3,7 @@ import React from 'react'
 import {BrowserRouter, Route, Routes } from 'react-router-dom';
 import Container from '@mui/material/Container';
 import OderDetails from './pages/oderview/OderDetails';
-import ProductAdd from './pages/product/productEntry/ProductAdd';
+import ProductEntry from './pages/product/productEntry/ProductEntry';
 import ProductView from './pages/product/productView/ProductView';
 import BuyerOrderList from './pages/buyer/BuyerOrderList';
 import {QueryClient,QueryClientProvider,useQuery} from '@tanstack/react-query';
@@ -53,7 +53,7 @@ function App() {
                 <Route path='/order-entry' element={<SimpleSearchNew />} />
                 <Route path='/order-details' element={<OderDetails />} />
                 <Route path='/order-list_new' element={<OrderListto />} />
-                <Route path='/product-entry' element={<ProductAdd />} />
+                <Route path='/product-entry' element={<ProductEntry />} />
                 <Route path='/product-view' element={<ProductView />} />
                 <Route path='/new-order' element={<RequireAuth><NewOrder /></RequireAuth>} />
                 <Route path='/staging-inventory' element={<SatagingInventory />} />

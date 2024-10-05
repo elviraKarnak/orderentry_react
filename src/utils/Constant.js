@@ -16,16 +16,21 @@ export const menueDataAdmin = [
     path: '/buyer-dashbord',
   },
   {
+    menuName: 'Product View',
+    path: '/product-view',
+  },
+  // {
+  //   menuName: 'Product Entry',
+  //   path: '/product-entry',
+  // },
+  {
     menuName: 'Staging Inventory',
     path: '/staging-inventory',
   },
   //    {menuName:'Product Entry',
   //    path:'/product-entry'
   //    },
-  {
-    menuName: 'Product View',
-    path: '/product-view',
-  },
+
   {
     menuName: 'Admin',
     path: '/',
@@ -190,7 +195,28 @@ export const SatagingInventoryData = [
 ];
 
 export const SatagingInventoryDefaultStatus = [
-  {label: 'Pending', value: 'pending'},
-  {label: 'Received', value: 'received'},
-  {label: 'Transfer', value: 'transfer'},
+  { label: 'Pending', value: 'pending' },
+  { label: 'Received', value: 'received' },
+  { label: 'Transfer', value: 'transfer' },
+];
+
+
+export const boxTypeOptions = [
+  { value: '', label: '' },
+  { value: 'FB', label: 'Full Box' },
+  { value: 'BX', label: 'Box' },
+  { value: 'HB', label: 'Half Box' },
+  { value: 'QB', label: '1/4 Box' },
+  { value: 'EB', label: '1/8 Box' },
+  { value: 'CS', label: 'Cases' },
+  { value: 'BD', label: 'Bundles' },
+  { value: 'ST', label: 'Stem' },
+  { value: 'BU', label: 'Bunch' },
+  { value: 'EA', label: 'Each' },
+  { value: 'TR', label: 'Tray' },
+  { value: 'BQ', label: 'Bouquet' },
+  { value: 'WP', label: 'Wet Pack' },
+  { value: 'HA', label: 'Hamper' },
+  { value: 'KG', label: 'Kilogram' },
+  { value: 'LB', label: 'Pounds' }
 ];
