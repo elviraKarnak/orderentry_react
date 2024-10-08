@@ -18,20 +18,62 @@ import { yupResolver } from '@hookform/resolvers/yup';
 
 import { inputFields, schema } from './VlidationSchema';
 import moment from 'moment';
+import { ProductEntryAdd } from '../../../../utils/fetch';
+import ProductAutocomplete from './ProductAutocomplete';
+import Swal from 'sweetalert2';
+import dayjs from "dayjs";
 
 
-function ProductEntry() {
+function ProductEntry({ stagingInventoryRefetch }) {
 
-    const { control, handleSubmit, formState: { errors }, reset } = useForm({
+    const { control, handleSubmit, formState: { errors }, reset, setValue, getValues, watch } = useForm({
         resolver: yupResolver(schema),
     });
 
     const [LockAWB, setLockAWB] = useState(false);
     const [AddProductEntry, setAddProductEntry] = useState(false);
 
-    const onSubmit = (data) => {
-        data.received_date = moment(data.received_date).unix();
+    const onSubmit = async (data) => {
+
+        data.date_received = moment(data.date_received).format('YYYY-MM-DD');
+        data.product_category = data.product_name.category_string;
+        data.product_color = data.product_name.color_string;
+        data.product_image = data.product_name.image_url;
+        data.product_name = data.product_name.product_name;
+
         console.log(data);
+
+
+
+        var responce = await ProductEntryAdd(data);
+
+        console.log("ProductEntryAdd ", responce);
+
+
+        if (responce.status) {
+
+            Swal.fire({
+                text: "Product entry add successfully.",
+                icon: "success",
+            });
+
+            reset();
+
+            stagingInventoryRefetch();
+
+            if (LockAWB) {
+
+                setValue('awb', data.awb);
+                setValue('vendor_name', data.vendor_name);
+                setValue('farm_invoice_number', data.farm_invoice_number);
+                setValue('date_received', dayjs(data.date_received));
+            }
+
+        }
+
+
+
+
 
     };
 
@@ -115,23 +157,45 @@ function ProductEntry() {
                                         <Controller
                                             name={field.name}
                                             control={control}
-                                            render={({ field: controllerField }) => (
+                                            render={({ field: controllerField }) => (<>
                                                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                                                     <DatePicker
                                                         {...controllerField}
                                                         label={field.label}
-                                                        // value={controllerField.value || ''}
+                                                        value={controllerField.value || null}
+                                                        onChange={(newValue) => {
+                                                            controllerField.onChange(newValue);
+                                                        }}
                                                         renderInput={(params) => (
                                                             <TextField
                                                                 {...params}
+                                                                label={field.label}
                                                                 error={!!errors[field.name]}
-                                                                helperText={errors[field.name] ? errors[field.name].message : ''}
+                                                                helperText={errors[field.name]?.message || ''}
                                                             />
                                                         )}
                                                     />
                                                 </LocalizationProvider>
+                                                {!!errors[field.name] && <p style={{ color: "red",fontSize:"0.75rem",fontWeight:400 }}>{errors[field.name]?.message || ''}</p>}
+                                            </>)}
+                                        />
+                                    ) : field.type === 'auto_complete' ? (
+                                        <Controller
+                                            name={field.name}
+                                            control={control}
+                                            render={({ field: controllerField }) => (
+                                                <ProductAutocomplete
+                                                    {...controllerField}
+                                                    name={field.name}
+                                                    label={field.label}
+                                                    errors={errors}
+                                                    setValue={setValue}
+                                                    getValues={getValues}
+                                                    watch={watch}
+                                                />
                                             )}
                                         />
+
                                     ) : null}
                                 </FormControl>
                             ))}

@@ -74,19 +74,21 @@ function SatagingInventoryItemDetails({row,stagingInventoryRefetch}) {
           <TableHead>
             <TableRow>
               <TableCell>#</TableCell>
-              <TableCell>Product Description</TableCell>
               <TableCell>Image</TableCell>
+              <TableCell>Product Description</TableCell>
+              <TableCell>Vendor Name</TableCell>
               <TableCell>Category</TableCell>
               <TableCell>Color</TableCell>
               <TableCell>SO#</TableCell>
               <TableCell>Quantity</TableCell>
               <TableCell>Farm Price</TableCell>
               <TableCell>Total</TableCell>
+              <TableCell>Date</TableCell>
               <TableCell>Status</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {row?.original?.awbReceiveDataItems?.map (row => (
+            {row?.original?.inhouseProductEntryDataItems?.map (row => (
               <TableRow
                 key={row.id}
                 sx={{'&:last-child td, &:last-child th': {border: 0}}}
@@ -94,14 +96,16 @@ function SatagingInventoryItemDetails({row,stagingInventoryRefetch}) {
                 <TableCell component="th" scope="row">
                   {row.id}
                 </TableCell>
+                <TableCell><img src={row.product_image} alt='' width={"50px"} height={"50px"} /></TableCell>
                 <TableCell>{row.product_name}</TableCell>
-                <TableCell><img src={row.image_url} alt='' width={"50px"} height={"50px"} /></TableCell>
-                <TableCell>{row.category}</TableCell>
-                <TableCell>{row.color}</TableCell>
+                <TableCell>{row.vendor_name}</TableCell>
+                <TableCell>{row.product_category}</TableCell>
+                <TableCell>{row.product_color}</TableCell>
                 <TableCell>#{row.so}</TableCell>
-                <TableCell>{row.quantity}</TableCell>
-                <TableCell>{row.farm_price}</TableCell>
-                <TableCell>{row.total}</TableCell>
+                <TableCell>{row.boxes} {row.box_type}</TableCell>
+                <TableCell>{row.cost_per_unit}</TableCell>
+                <TableCell>{row.total_price}</TableCell>
+                <TableCell>{row.date_received}</TableCell>
                 <TableCell>
                   {/* {row.status} */}
                   <Select

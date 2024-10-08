@@ -53,34 +53,49 @@ function SatagingInventory() {
         header: 'AWB#',
         size: 150,
       },
+      // {
+      //   accessorKey: 'farm',
+      //   header: 'Farm',
+      //   size: 150,
+      // },
+      // {
+      //   accessorKey: 'po', //normal accessorKey
+      //   header: 'PO#',
+      //   size: 200,
+      // },
+      // {
+      //   accessorKey: 'arrival_date',
+      //   header: 'Arrival Date',
+      //   size: 200,
+      //   Cell: ({ renderedCellValue, row }) => (
+      //     <>
+      //       {moment(renderedCellValue).format('DD/MM/YYYY')}
+      //     </>
+      //   ),
+      // },
+      // {
+      //   accessorKey: 'boxes', //normal accessorKey
+      //   header: 'Boxes',
+      //   size: 200,
+      // },
+      // {
+      //   accessorKey: 'total',
+      //   header: 'Total',
+      //   size: 150,
+      // },
       {
-        accessorKey: 'farm',
-        header: 'Farm',
+        accessorKey: 'date',
+        header: 'Date',
         size: 150,
-      },
-      {
-        accessorKey: 'po', //normal accessorKey
-        header: 'PO#',
-        size: 200,
-      },
-      {
-        accessorKey: 'arrival_date',
-        header: 'Arrival Date',
-        size: 200,
-        Cell: ({ renderedCellValue, row }) => (
+        Cell: ({ renderedCellValue }) => (
           <>
-            {moment(renderedCellValue).format('DD/MM/YYYY')}
+            {moment(renderedCellValue.date).format('DD/MM/YYYY HH:mm:ss')}
           </>
         ),
       },
       {
-        accessorKey: 'boxes', //normal accessorKey
-        header: 'Boxes',
-        size: 200,
-      },
-      {
-        accessorKey: 'total',
-        header: 'Total',
+        accessorKey:"total_records",
+        header: 'Total Records',
         size: 150,
       },
       {
@@ -143,7 +158,7 @@ function SatagingInventory() {
         </div>
 
         <div className='col-sm-12'>
-          <ProductEntry />
+          <ProductEntry stagingInventoryRefetch={stagingInventoryRefetch} />
         </div>
 
         <div className='col-sm-12'>

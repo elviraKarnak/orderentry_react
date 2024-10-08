@@ -540,6 +540,43 @@ export async function ProductAdd (payload) {
   }
 }
 
+
+
+// Product Entry Add API
+export async function ProductEntryAdd (payload) {
+  try {
+    let config = {
+      method: 'post',
+      maxBodyLength: Infinity,
+      url: `${REACT_APP_API_SERVICE_URL}/api/v1/admin/stating-inventory/productEntry`,
+      headers: {
+        'x-api-key': 'b1d1I0p7A2Er2n0eD2b0As8c0kT8p2M9',
+        token: window.sessionStorage.getItem ('access-token'),
+        'Content-Type': 'application/json',
+      },
+      data: payload,
+    };
+
+    const fmiOrderSystemAppResponse = await axios.request (config);
+
+    if (fmiOrderSystemAppResponse.status === 200) {
+      const fmiOrderSystemAppResult = await fmiOrderSystemAppResponse.data;
+      // Success
+      return {status: true, result: fmiOrderSystemAppResult};
+    } else {
+      // Server-side error
+      console.log ('Server error:', fmiOrderSystemAppResponse.status);
+      const errorData = await fmiOrderSystemAppResponse.data;
+      console.log ('Server errorData ', errorData);
+      return {status: false, error: errorData};
+    }
+  } catch (error) {
+    // Network error
+    console.log ('Network error:', error);
+    return {status: 'error', error: 'Network error'};
+  }
+}
+
 // Product Edit API
 export async function ProductEdit (payload) {
   try {
@@ -707,6 +744,42 @@ export const getStagingInventoryList = async () => {
       method: 'GET',
       maxBodyLength: Infinity,
       url: `${REACT_APP_API_SERVICE_URL}/api/v1/admin/stating-inventory/list`,
+      headers: {
+        'x-api-key': 'b1d1I0p7A2Er2n0eD2b0As8c0kT8p2M9',
+        token: window.sessionStorage.getItem ('access-token'),
+        'Content-Type': 'application/json',
+      }
+    };
+
+    const fmiOrderSystemAppResponse = await axios.request (config);
+
+    if (fmiOrderSystemAppResponse.status === 200) {
+      const fmiOrderSystemAppResult = await fmiOrderSystemAppResponse.data;
+      // Success
+      return {status: true, result: fmiOrderSystemAppResult};
+    } else {
+      // Server-side error
+      console.log ('Server error:', fmiOrderSystemAppResponse.status);
+      const errorData = await fmiOrderSystemAppResponse.data;
+      console.log ('Server errorData ', errorData);
+      return {status: false, error: errorData};
+    }
+  } catch (error) {
+    // Network error
+    console.log ('Network error:', error);
+    return {status: 'error', error: 'Network error'};
+  }
+};
+
+
+export const getStagingInventoryProductSearch = async (paylaod) => {
+
+  try {
+
+    let config = {
+      method: 'GET',
+      maxBodyLength: Infinity,
+      url: `${REACT_APP_API_SERVICE_URL}/api/v1/admin/stating-inventory/productSearchList?search_text=${paylaod}`,
       headers: {
         'x-api-key': 'b1d1I0p7A2Er2n0eD2b0As8c0kT8p2M9',
         token: window.sessionStorage.getItem ('access-token'),
