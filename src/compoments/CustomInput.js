@@ -41,7 +41,7 @@ const CustomInput = ({
       return (
         <FormControl sx={sx} margin="normal">
           <h5>{label}</h5>
-          <hr/>
+          <hr />
         </FormControl>
       );
     case "text":
@@ -77,9 +77,9 @@ const CustomInput = ({
               helperText={error}
               {...props}
             >
-              {options.map((option) => (
-                <MenuItem key={option.id} value={option.id}>
-                  {option.name || option.name}
+              {options.map((option, index) => (
+                <MenuItem key={index} value={option.value}>
+                  {option.label || option.label}
                 </MenuItem>
               ))}
             </Select>
@@ -103,9 +103,9 @@ const CustomInput = ({
               helperText={error}
               {...props}
             >
-              {options.map((option) => (
-                <MenuItem key={option.id} value={option.id}>
-                  {option.name || option.name}
+              {options.map((option, index) => (
+                <MenuItem key={index} value={option.value}>
+                  {option.label || option.label}
                 </MenuItem>
               ))}
             </Select>

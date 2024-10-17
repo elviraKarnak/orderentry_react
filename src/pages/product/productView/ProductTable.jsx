@@ -67,6 +67,7 @@ function ProductTable() {
   const [DisableRows, setDisableRows] = useState(disableRows);
 
   const [NewRowData, setNewRowData] = useState(newRowData);
+  const [InputFields, setInputFields] = useState(inputFields);
 
   const [LockAWB, setLockAWB] = useState(false);
 
@@ -284,7 +285,7 @@ function ProductTable() {
     setAddProduct(false);
 
     let rowData = row.original;
-    let temp_data = {...NewRowData};
+    let temp_data = { ...NewRowData };
 
     // product table
     for (let key in temp_data) {
@@ -332,7 +333,7 @@ function ProductTable() {
       else if (['fob_t_1_m', 'landed_t_1_m', 'fob_t_2_m', 'fob_t_2_qty', 'landed_t_2_m', 'landed_t_2_qty', 'fob_t_3_m', 'fob_t_3_qty', 'landed_t_3_m', 'landed_t_3_qty'].includes(key)) {
 
         if (rowData['margin_data']) {
-          var data = rowData["productMargin"]?Number(rowData["productMargin"][key]):0;
+          var data = rowData["productMargin"] ? Number(rowData["productMargin"][key]) : 0;
 
           if (data === 0) {
             temp_data[key] = "";
@@ -397,10 +398,6 @@ function ProductTable() {
   const validate = (data) => {
     const errors = {};
 
-    if (!data.awb.trim()) {
-      errors.awb = "awb is required";
-    }
-
     if (!data.vendor_name.trim()) {
       errors.vendor_name = "vendor name is required";
     }
@@ -409,45 +406,82 @@ function ProductTable() {
       errors.farm_invoice = "farm invoice is required";
     }
 
-    if (!data.po.trim()) {
-      errors.po = "po# is required";
-    }
-
     if (data.received_date === null) {
       errors.received_date = "received date is required";
     }
 
-    if (!data.sku.trim()) {
+    if (!data.product_name.trim()) {
+      errors.product_name = "product name is required";
+    }
+
+    if (data.sku === '') {
       errors.sku = "SKU is required";
     }
 
-    if (!data.boxes.trim()) {
+    if (data.boxes === '') {
       errors.boxes = "boxes is required";
     }
 
-    if (!data.boxtype.trim()) {
+    if (data.boxtype === '') {
       errors.boxtype = "boxtype is required";
     }
 
-    if (!data.unit_per_box.trim()) {
+    if (data.unit_per_box === '') {
       errors.unit_per_box = "unit/box unit is required";
     }
 
-    if (!data.unit_per_bunch.trim()) {
+    if (data.unit_per_bunch === '') {
       errors.unit_per_bunch = "unit/bunch unit is required";
     }
 
-    if (!data.cost_per_unit.trim()) {
+    if (data.cost_per_unit === '') {
       errors.cost_per_unit = "unit/cost is required";
     }
 
-    if (!data.sale_price.trim()) {
+    if (data.sale_price === '') {
       errors.sale_price = "sale price is required";
     }
 
-    if (!data.so.trim()) {
+    if (data.so === '') {
       errors.so = "so is required";
     }
+
+
+    if (data.cat_id.length === 0) {
+      errors.cat_id = "category is required";
+    }
+
+
+    if (!data.product_color.trim()) {
+      errors.product_color = "product color is required";
+    }
+
+    if (!data.shop_by_branch.trim()) {
+      errors.shop_by_branch = "shop by branch is required";
+    }
+
+    if (!data.pre_order.trim()) {
+      errors.pre_order = "pre order is required";
+    }
+
+    if (!data.feature_available.trim()) {
+      errors.feature_available = "feature available is required";
+    }
+    else {
+      if (data.feature_available === '1') {
+        if (data.feature_start_date === null) {
+          errors.feature_start_date = "feature start date is required";
+        }
+
+
+        if (data.feature_expire_date === null) {
+          errors.feature_expire_date = "feature expire date is required";
+        }
+      }
+    }
+
+
+
 
     // if (!data.margin.trim()) {
     //   errors.margin = "margin is required";
@@ -507,12 +541,12 @@ function ProductTable() {
   //CREATE action
   const handleProductAdd = async () => {
     // console.log("handleProductAdd ", values);
-    // console.log("NewRowData ", NewRowData);
+    console.log("NewRowData ", NewRowData);
     // console.log("selectedImage ", selectedImage);
 
     // return;
 
-    let temp_data = {...NewRowData};
+    let temp_data = { ...NewRowData };
 
     // validation check
     const errors = validate(temp_data);
@@ -543,6 +577,16 @@ function ProductTable() {
       temp_data.received_date = temp_data.received_date.format("YYYY-MM-DD");
     }
 
+
+    if (temp_data?.feature_start_date !== null) {
+      temp_data.feature_start_date = temp_data.feature_start_date.format("YYYY-MM-DD");
+    }
+
+
+    if (temp_data?.feature_expire_date !== null) {
+      temp_data.feature_expire_date = temp_data.feature_expire_date.format("YYYY-MM-DD");
+    }
+
     if (temp_data?.publish_date !== null) {
       temp_data.publish_date = temp_data.publish_date.unix();
     }
@@ -554,6 +598,10 @@ function ProductTable() {
         formData.append(key, temp_data[key]);
       }
     }
+
+    console.log("formData ", temp_data);
+
+    return;
 
     var responce = await ProductAdd(formData);
 
@@ -752,7 +800,37 @@ function ProductTable() {
     console.log(responce.result.data);
 
     if (responce.result.data.length > 0) {
-      setCategoryList(responce.result.data);
+
+      var temp = responce.result.data.map(item => {
+        return { label: item.name, value: item.id }
+      })
+
+      // console.log("setCategoryList ", temp);
+
+      // var allInputFields = InputFields.map((item) => {
+      //   if (item.name === 'cat_id') {
+      //     item.options = temp;
+      //   }
+      //   return item;
+      // })
+
+      setInputFields((pre) => (
+        pre.map((item) => {
+
+          if (item.name === 'cat_id') {
+            item.options = temp;
+          }
+          return item;
+        })
+
+      ));
+
+      // console.log("allInputFields ", allInputFields)
+      // setInputFields(allInputFields)
+
+
+      // setCategoryList(temp);
+      // setCategoryList(responce.result.data);
     }
   };
 
@@ -762,7 +840,26 @@ function ProductTable() {
     console.log(responce.result.data);
 
     if (responce.result.data.length > 0) {
-      setColorList(responce.result.data);
+
+      var temp = responce.result.data.map(item => {
+        return { label: item.name, value: item.id }
+      })
+
+
+      setInputFields((pre) => (
+        pre.map((item) => {
+
+          if (item.name === 'product_color') {
+            item.options = temp;
+          }
+          return item;
+        })
+
+      ));
+
+      // console.log("setColorList ", temp)
+      // setColorList(temp);
+      // setColorList(responce.result.data);
     }
   };
 
@@ -775,13 +872,14 @@ function ProductTable() {
 
 
 
+
   return (
     <>
       {/* ////////// product add from /////////////// */}
       <div className="product_view-wrap row">
         <div className="full_w-btn col-md-12">
 
-          <Checkbox checked={LockAWB} onChange={() => setLockAWB(!LockAWB)} />
+          {/* <Checkbox checked={LockAWB} onChange={() => setLockAWB(!LockAWB)} /> */}
 
           {!AddProduct && (
             <Button
@@ -839,7 +937,7 @@ function ProductTable() {
               </div> */}
 
               <div className="col-md-2">
-                {inputFields?.map((field) => (
+                {InputFields?.map((field) => (
                   <>
 
                     {(field.type === "text" || field.type === "number") && (
@@ -902,7 +1000,7 @@ function ProductTable() {
                       />
                     )}
 
-                    {field.type === "select" && field.name === "product_color" && (
+                    {field.type === "select" && (
                       <CustomInput
                         key={field.name}
                         disabled={DisableRows[field.name]}
@@ -914,11 +1012,12 @@ function ProductTable() {
                         error={validationErrors?.[field.name]}
                         sx={{ m: 1, minWidth: 150 }}
                         variant="outlined"
-                        options={ColorList}
+                        // options={field.name === "product_color" ? ColorList : field.options}
+                        options={field.options}
                       />
                     )}
 
-                    {field.type === "select" && field.name === "uom" && (
+                    {/* {field.type === "select" && field.name === "uom" && (
                       <CustomInput
                         key={field.name}
                         disabled={DisableRows[field.name]}
@@ -951,27 +1050,54 @@ function ProductTable() {
                           { id: "0", name: "No" },
                         ]}
                       />
-                    )}
+                    )} */}
 
                     {field.type === "multiple_select" &&
-                      field.name === "cat_id" && (
-                        <CustomInput
-                          key={field.name}
-                          disabled={DisableRows[field.name]}
-                          type={field.type}
-                          label={field.label}
-                          name={field.name}
-                          value={NewRowData[field.name]}
-                          onChange={handleMultipleSelectChange(field.name)}
-                          error={validationErrors?.[field.name]}
-                          sx={{ m: 1, minWidth: 150 }}
-                          variant="outlined"
-                          options={CategoryList}
-                        />
+                      (<CustomInput
+                        key={field.name}
+                        disabled={DisableRows[field.name]}
+                        type={field.type}
+                        label={field.label}
+                        name={field.name}
+                        value={NewRowData[field.name]}
+                        onChange={handleMultipleSelectChange(field.name)}
+                        error={validationErrors?.[field.name]}
+                        sx={{ m: 1, minWidth: 150 }}
+                        variant="outlined"
+                        // options={field.name === "cat_id" ? CategoryList : field.options}
+                        options={field.options}
+                      />
                       )}
 
                   </>
                 ))}
+
+
+                {NewRowData.feature_available === '1' && (
+                  <>
+                    <CustomInput
+                      type="date"
+                      label="Feature Start Date"
+                      name="feature_start_date"
+                      value={NewRowData.feature_start_date}
+                      onChange={(value) => handleDateChange('feature_start_date', value)}
+                      error={validationErrors?.feature_start_date}
+                      sx={{ m: 1, minWidth: 150 }}
+                      variant="outlined"
+                    />
+
+                    <CustomInput
+                      type="date"
+                      label="Feature Expire Date"
+                      name="feature_expire_date"
+                      value={NewRowData.feature_expire_date}
+                      onChange={(value) => handleDateChange('feature_expire_date', value)}
+                      error={validationErrors?.feature_expire_date}
+                      sx={{ m: 1, minWidth: 150 }}
+                      variant="outlined"
+                    />
+                  </>
+                )}
 
               </div>
 
@@ -1129,7 +1255,7 @@ function ProductTable() {
                 />
               )}
 
-              {field.type === "select" && field.name === "product_color" && (
+              {field.type === "select" && (
                 <CustomInput
                   key={field.name}
                   disabled={DisableRows[field.name]}
@@ -1141,7 +1267,7 @@ function ProductTable() {
                   error={validationErrors?.[field.name]}
                   sx={{ m: 1, minWidth: "100%" }}
                   variant="outlined"
-                  options={ColorList}
+                  options={field.name === "product_color" ? ColorList : field.options}
                 />
               )}
 

@@ -89,12 +89,12 @@ function SatagingInventory() {
         size: 150,
         Cell: ({ renderedCellValue }) => (
           <>
-            {moment(renderedCellValue.date).format('DD/MM/YYYY HH:mm:ss')}
+            {renderedCellValue && moment(renderedCellValue.date).format('DD/MM/YYYY HH:mm:ss')}
           </>
         ),
       },
       {
-        accessorKey:"total_records",
+        accessorKey: "total_records",
         header: 'Total Records',
         size: 150,
       },

@@ -1,3 +1,5 @@
+import { boxTypeOptions } from "../../../utils/Constant";
+
 export const newRowData = {
   awb: '',
   vendor_name: '',
@@ -8,9 +10,9 @@ export const newRowData = {
   received_date: null,
   boxes: '',
   boxtype: '',
-  box_unit: '',
-  bunch_unit: '',
-  cost_unit: '',
+  unit_per_box: '',
+  unit_per_bunch: '',
+  cost_per_unit: '',
   sale_price: '',
   so: '',
 
@@ -23,27 +25,36 @@ export const newRowData = {
   minqty: '',
   product_tags: [],
   source: '',
+
   pre_order: '',
+  shop_by_branch: '',
+  feature_available: '',
+  feature_start_date: null,
+  feature_expire_date: null,
+
   cat_id: [],
   product_color: '',
   uom: '',
   feature_status: '',
-  
 
-  fob_t_1_m:'',
-  landed_t_1_m:'',
 
-  fob_t_2_m:'',
-  fob_t_2_qty:'',
-  landed_t_2_m:'',
-  landed_t_2_qty:'',
 
-  fob_t_3_m:'',
-  fob_t_3_qty:'',
-  landed_t_3_m:'',
-  landed_t_3_qty:'',
 
-  shipping_model:''
+
+  fob_t_1_m: '',
+  landed_t_1_m: '',
+
+  fob_t_2_m: '',
+  fob_t_2_qty: '',
+  landed_t_2_m: '',
+  landed_t_2_qty: '',
+
+  fob_t_3_m: '',
+  fob_t_3_qty: '',
+  landed_t_3_m: '',
+  landed_t_3_qty: '',
+
+  shipping_model: ''
 };
 
 export const disableRows = {
@@ -78,82 +89,114 @@ export const disableRows = {
 };
 
 export const inputFields = [
-  {label: 'AWB', name: 'awb', type: 'text'},
-  {label: 'Vendor Name', name: 'vendor_name', type: 'text'},
-  {label: 'Farm Invoice#', name: 'farm_invoice', type: 'number'},
-  {label: 'Date Received', name: 'received_date', type: 'date'},
-  {label: 'Product Name', name: 'product_name', type: 'text'},
-  {label: 'PO#', name: 'po', type: 'number'},
-  {label: 'SKU', name: 'sku', type: 'number'},
+  // {label: 'AWB', name: 'awb', type: 'text'},
+  { label: 'Vendor Name', name: 'vendor_name', type: 'text' },
+  { label: 'Farm Invoice#', name: 'farm_invoice', type: 'number' },
+  { label: 'Date Received', name: 'received_date', type: 'date' },
+  { label: 'Product Name', name: 'product_name', type: 'text' },
+  // {label: 'PO#', name: 'po', type: 'number'},
+  { label: 'SKU', name: 'sku', type: 'number' },
 
-  {label: 'BOXES', name: 'boxes', type: 'number'},
-  {label: 'Box Type', name: 'boxtype', type: 'text'},
-  {label: 'Units/Box', name: 'unit_per_box', type: 'number'},
-  {label: 'Units/Bunch', name: 'unit_per_bunch', type: 'number'},
-  {label: 'Units/Cost', name: 'cost_per_unit', type: 'number'},
-  {label: 'Sale Price', name: 'sale_price', type: 'number'},
-  {label: 'SO#', name: 'so', type: 'number'},
+  { label: 'BOXES', name: 'boxes', type: 'number' },
+  { label: 'Box Type', name: 'boxtype', type: 'select', options: boxTypeOptions },
+  { label: 'Units/Box', name: 'unit_per_box', type: 'number' },
+  { label: 'Units/Bunch', name: 'unit_per_bunch', type: 'number' },
+  { label: 'Units/Cost', name: 'cost_per_unit', type: 'number' },
+  { label: 'Sale Price', name: 'sale_price', type: 'number' },
+  { label: 'SO#', name: 'so', type: 'number' },
+
+  { label: 'Category', name: 'cat_id', type: 'multiple_select', options: [] },
+  { label: 'Color', name: 'product_color', type: 'select', options: [] },
+
+
+  {
+    label: 'Shop By Branch', name: 'shop_by_branch', type: 'select', options: [
+      { label: '', value: '' },
+      { label: 'Yes', value: '1' },
+      { label: 'No', value: '0' },
+    ]
+  },
+
+  {
+    label: 'Pre Order', name: 'pre_order', type: 'select', options: [
+      { label: '', value: '' },
+      { label: 'Yes', value: '1' },
+      { label: 'No', value: '0' },
+    ]
+  },
+
+
+  {
+    label: 'Feature Available', name: 'feature_available', type: 'select', options: [
+      { label: '', value: '' },
+      { label: 'Yes', value: '1' },
+      { label: 'No', value: '0' },
+    ]
+  },
+
+  // { label: 'Publish Start Date', name: 'feature_1', type: 'date' },
+  // { label: 'Publish Expire Date', name: 'feature_2', type: 'date' },
 ];
 
 export const EditFields = [
-  {label: 'Regular Price', name: 'real_price', type: 'number'},
-  {label: 'Sale Price', name: 'sale_price', type: 'number'},
-  {label: 'Cost Price', name: 'cost_price', type: 'number'},
+  { label: 'Regular Price', name: 'real_price', type: 'number' },
+  { label: 'Sale Price', name: 'sale_price', type: 'number' },
+  { label: 'Cost Price', name: 'cost_price', type: 'number' },
 
-  {label: 'AWB', name: 'awb', type: 'text'},
-  {label: 'Vendor Name', name: 'vendor_name', type: 'text'},
-  {label: 'Product Name', name: 'product_name', type: 'text'},
-  {label: 'Farm Invoice#', name: 'farm_invoice', type: 'number'},
-  {label: 'PO#', name: 'po', type: 'number'},
-  {label: 'Date Received', name: 'received_date', type: 'date'},
-  {label: 'SKU', name: 'sku', type: 'number'},
+  { label: 'AWB', name: 'awb', type: 'text' },
+  { label: 'Vendor Name', name: 'vendor_name', type: 'text' },
+  { label: 'Product Name', name: 'product_name', type: 'text' },
+  { label: 'Farm Invoice#', name: 'farm_invoice', type: 'number' },
+  { label: 'PO#', name: 'po', type: 'number' },
+  { label: 'Date Received', name: 'received_date', type: 'date' },
+  { label: 'SKU', name: 'sku', type: 'number' },
 
-  {label: 'BOXES', name: 'boxes', type: 'number'},
-  {label: 'Box Type', name: 'boxtype', type: 'text'},
-  {label: 'Units/Box', name: 'unit_per_box', type: 'number'},
-  {label: 'Units/Bunch', name: 'unit_per_bunch', type: 'number'},
-  {label: 'Units/Cost', name: 'cost_per_unit', type: 'number'},
-  {label: 'SO#', name: 'so', type: 'number'},
+  { label: 'BOXES', name: 'boxes', type: 'number' },
+  { label: 'Box Type', name: 'boxtype', type: 'text' },
+  { label: 'Units/Box', name: 'unit_per_box', type: 'number' },
+  { label: 'Units/Bunch', name: 'unit_per_bunch', type: 'number' },
+  { label: 'Units/Cost', name: 'cost_per_unit', type: 'number' },
+  { label: 'SO#', name: 'so', type: 'number' },
 
-  {label: 'Publish Date', name: 'publish_date', type: 'dateTime'},
+  { label: 'Publish Date', name: 'publish_date', type: 'dateTime' },
 
-  {label: 'Stock', name: 'stock', type: 'number'},
-  {label: 'Min Qty', name: 'minqty', type: 'number'},
+  { label: 'Stock', name: 'stock', type: 'number' },
+  { label: 'Min Qty', name: 'minqty', type: 'number' },
 
-  {label: 'Source', name: 'source', type: 'text'},
+  { label: 'Source', name: 'source', type: 'text' },
 
-  {label: 'Category', name: 'cat_id', type: 'multiple_select'},
-  {label: 'Color', name: 'product_color', type: 'select'},
+  { label: 'Category', name: 'cat_id', type: 'multiple_select' },
+  { label: 'Color', name: 'product_color', type: 'select' },
 
-  {label: 'UOM', name: 'uom', type: 'select'},
-  {label: 'Feature', name: 'feature_status', type: 'select'},
+  { label: 'UOM', name: 'uom', type: 'select' },
+  { label: 'Feature', name: 'feature_status', type: 'select' },
 
-  {label: 'Tags', name: 'product_tags', type: 'autocomplete'},
+  { label: 'Tags', name: 'product_tags', type: 'autocomplete' },
 
-  {label: 'Shipping Model', name: 'shipping_model', type: 'select'},
+  { label: 'Shipping Model', name: 'shipping_model', type: 'select' },
 
-  {label: 'Margin Manager', type: 'label_p'},
-  {label: 'Tier 1', type: 'label_h5'},
+  { label: 'Margin Manager', type: 'label_p' },
+  { label: 'Tier 1', type: 'label_h5' },
 
-  {label: 'FOB Margin', name: 'fob_t_1_m', type: 'number'},
+  { label: 'FOB Margin', name: 'fob_t_1_m', type: 'number' },
 
-  {label: 'Landed Margin', name: 'landed_t_1_m', type: 'number'},
+  { label: 'Landed Margin', name: 'landed_t_1_m', type: 'number' },
 
 
-  {label: 'Tier 2', type: 'label_h5'},
+  { label: 'Tier 2', type: 'label_h5' },
 
-  {label: 'FOB Min Qty', name: 'fob_t_2_qty', type: 'number'},
-  {label: 'FOB Margin', name: 'fob_t_2_m', type: 'number'},
+  { label: 'FOB Min Qty', name: 'fob_t_2_qty', type: 'number' },
+  { label: 'FOB Margin', name: 'fob_t_2_m', type: 'number' },
 
-  {label: 'Landed Min Qty', name: 'landed_t_2_qty', type: 'number'},
-  {label: 'Landed Margin', name: 'landed_t_2_m', type: 'number'},
+  { label: 'Landed Min Qty', name: 'landed_t_2_qty', type: 'number' },
+  { label: 'Landed Margin', name: 'landed_t_2_m', type: 'number' },
 
-  {label: 'Tier 3', type: 'label_h5'},
+  { label: 'Tier 3', type: 'label_h5' },
 
-  {label: 'FOB Min Qty', name: 'fob_t_3_qty', type: 'number'},
-  {label: 'FOB Margin', name: 'fob_t_3_m', type: 'number'},
+  { label: 'FOB Min Qty', name: 'fob_t_3_qty', type: 'number' },
+  { label: 'FOB Margin', name: 'fob_t_3_m', type: 'number' },
 
-  {label: 'Landed Min Qty', name: 'landed_t_3_qty', type: 'number'},
-  {label: 'Landed Margin', name: 'landed_t_3_m', type: 'number'},
+  { label: 'Landed Min Qty', name: 'landed_t_3_qty', type: 'number' },
+  { label: 'Landed Margin', name: 'landed_t_3_m', type: 'number' },
 
 ];
