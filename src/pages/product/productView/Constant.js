@@ -1,3 +1,5 @@
+import moment from "moment";
+import dayjs from "dayjs";
 import { boxTypeOptions } from "../../../utils/Constant";
 
 export const newRowData = {
@@ -28,17 +30,14 @@ export const newRowData = {
 
   pre_order: '',
   shop_by_branch: '',
-  feature_available: '',
-  feature_start_date: null,
-  feature_expire_date: null,
+  future_available_status: '',
+  future_start_date: null,
+  future_expire_date: null,
+  
 
   cat_id: [],
   product_color: '',
   uom: '',
-  feature_status: '',
-
-
-
 
 
   fob_t_1_m: '',
@@ -84,7 +83,7 @@ export const disableRows = {
   cat_id: false,
   product_color: false,
   uom: false,
-  feature_status: false,
+  feature_available_status: false,
   publish_date: false,
 };
 
@@ -127,7 +126,7 @@ export const inputFields = [
 
 
   {
-    label: 'Feature Available', name: 'feature_available', type: 'select', options: [
+    label: 'Future Available', name: 'future_available_status', type: 'select', options: [
       { label: '', value: '' },
       { label: 'Yes', value: '1' },
       { label: 'No', value: '0' },
@@ -138,21 +137,21 @@ export const inputFields = [
   // { label: 'Publish Expire Date', name: 'feature_2', type: 'date' },
 ];
 
-export const EditFields = [
+export const editFields = [
   { label: 'Regular Price', name: 'real_price', type: 'number' },
   { label: 'Sale Price', name: 'sale_price', type: 'number' },
   { label: 'Cost Price', name: 'cost_price', type: 'number' },
 
-  { label: 'AWB', name: 'awb', type: 'text' },
+  // { label: 'AWB', name: 'awb', type: 'text' },
   { label: 'Vendor Name', name: 'vendor_name', type: 'text' },
   { label: 'Product Name', name: 'product_name', type: 'text' },
   { label: 'Farm Invoice#', name: 'farm_invoice', type: 'number' },
-  { label: 'PO#', name: 'po', type: 'number' },
+  // { label: 'PO#', name: 'po', type: 'number' },
   { label: 'Date Received', name: 'received_date', type: 'date' },
   { label: 'SKU', name: 'sku', type: 'number' },
 
   { label: 'BOXES', name: 'boxes', type: 'number' },
-  { label: 'Box Type', name: 'boxtype', type: 'text' },
+  { label: 'Box Type', name: 'boxtype', type: 'select', options: boxTypeOptions},
   { label: 'Units/Box', name: 'unit_per_box', type: 'number' },
   { label: 'Units/Bunch', name: 'unit_per_bunch', type: 'number' },
   { label: 'Units/Cost', name: 'cost_per_unit', type: 'number' },
@@ -168,13 +167,36 @@ export const EditFields = [
   { label: 'Category', name: 'cat_id', type: 'multiple_select' },
   { label: 'Color', name: 'product_color', type: 'select' },
 
-  { label: 'UOM', name: 'uom', type: 'select' },
-  { label: 'Feature', name: 'feature_status', type: 'select' },
+  { label: 'UOM', name: 'uom', type: 'select', options: [{ label: '', value: '' }, { label: "ST", value: "ST" }] },
+
 
   { label: 'Tags', name: 'product_tags', type: 'autocomplete' },
 
-  { label: 'Shipping Model', name: 'shipping_model', type: 'select' },
+  {
+    label: 'Shipping Model', name: 'shipping_model', type: 'select', options: [
+      { label: '', value: '' },
+      { label: "landed", value: "Landed" },
+      { label: "fob", value: "Fob" },
+    ]
+  },
 
+  {
+    label: 'Shop By Branch', name: 'shop_by_branch', type: 'select', options: [
+      { label: '', value: '' },
+      { label: 'Yes', value: '1' },
+      { label: 'No', value: '0' },
+    ]
+  },
+
+  {
+    label: 'Pre Order', name: 'pre_order', type: 'select', options: [
+      { label: '', value: '' },
+      { label: 'Yes', value: '1' },
+      { label: 'No', value: '0' },
+    ]
+  },
+
+  // //////////// margin //////////////////
   { label: 'Margin Manager', type: 'label_p' },
   { label: 'Tier 1', type: 'label_h5' },
 
@@ -198,5 +220,17 @@ export const EditFields = [
 
   { label: 'Landed Min Qty', name: 'landed_t_3_qty', type: 'number' },
   { label: 'Landed Margin', name: 'landed_t_3_m', type: 'number' },
+  // //////////// margin //////////////////
+
+
+  { label: 'Future Product Available', type: 'label_p' },
+
+  {
+    label: 'future Available', name: 'future_available_status', type: 'select', options: [
+      { label: '', value: '' },
+      { label: 'Yes', value: '1' },
+      { label: 'No', value: '0' },
+    ]
+  },
 
 ];

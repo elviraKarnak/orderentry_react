@@ -16,7 +16,7 @@ const inputFields = [
     { label: 'Units/Cost', name: 'cost_per_unit', type: 'number', sx: { m: 1, minWidth: 150 }, required: true },
     { label: 'Sale Price', name: 'sale_price', type: 'number', sx: { m: 1, minWidth: 150 }, required: true },
     { label: 'SO#', name: 'so', type: 'text', sx: { m: 1, minWidth: 150 }, required: true },
-    { label: 'Margin %', name: 'margin_percentage', type: 'number', sx: { m: 1, minWidth: 150 }, required: true },
+    // { label: 'Margin %', name: 'margin_percentage', type: 'number', sx: { m: 1, minWidth: 150 }, required: true },
 ];
 
 
