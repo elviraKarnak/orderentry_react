@@ -114,7 +114,7 @@ function SatagingInventoryItemDetails({row,stagingInventoryRefetch}) {
                   variant="outlined"
                   size="small"
                   className={`dropdown`}
-                  disabled={row.status === 'transfer'}
+                  disabled={row.status === 'transferred'}
                 >
                   {SatagingInventoryDefaultStatus.map(status => (
                     <MenuItem key={status.value} value={status.value}>

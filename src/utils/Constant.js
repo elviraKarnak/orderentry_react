@@ -197,7 +197,7 @@ export const SatagingInventoryData = [
 export const SatagingInventoryDefaultStatus = [
   { label: 'Pending', value: 'pending' },
   { label: 'Received', value: 'received' },
-  { label: 'Transfer', value: 'transfer' },
+  { label: 'Transfer', value: 'transferred' },
 ];
 
 
