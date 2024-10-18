@@ -270,6 +270,14 @@ function ProductTable() {
         header: "Status",
         enableEditing: false,
         size: 5,
+        Cell: ({ renderedCellValue }) => (
+          <>
+            {renderedCellValue === 'new' && 'New'}
+            {renderedCellValue === 'pending' && 'Pending'}
+            {renderedCellValue === 'received' && 'Received'}
+            {renderedCellValue === 'transferred' && 'Transfer'}
+          </>
+        ),
       },
     ],
     [validationErrors, imagePreview, CategoryList, NewRowData, ColorList]
@@ -597,13 +605,13 @@ function ProductTable() {
     }
 
 
-    if (temp_data?.feature_start_date !== null) {
-      temp_data.feature_start_date = temp_data.feature_start_date.format("YYYY-MM-DD");
+    if (temp_data?.future_start_date !== null) {
+      temp_data.future_start_date = temp_data.future_start_date.format("YYYY-MM-DD");
     }
 
 
-    if (temp_data?.feature_expire_date !== null) {
-      temp_data.feature_expire_date = temp_data.feature_expire_date.format("YYYY-MM-DD");
+    if (temp_data?.future_expire_date !== null) {
+      temp_data.future_expire_date = temp_data.future_expire_date.format("YYYY-MM-DD");
     }
 
     if (temp_data?.publish_date !== null) {
@@ -913,7 +921,7 @@ function ProductTable() {
   }, []);
 
 
-  
+
 
 
   return (
@@ -1116,26 +1124,26 @@ function ProductTable() {
                 ))}
 
 
-                {NewRowData.feature_available_status === '1' && (
+                {NewRowData.future_available_status === '1' && (
                   <>
                     <CustomInput
                       type="date"
-                      label="Feature Start Date"
-                      name="feature_start_date"
-                      value={NewRowData.feature_start_date}
-                      onChange={(value) => handleDateChange('feature_start_date', value)}
-                      error={validationErrors?.feature_start_date}
+                      label="Future Start Date"
+                      name="future_start_date"
+                      value={NewRowData.future_start_date}
+                      onChange={(value) => handleDateChange('future_start_date', value)}
+                      error={validationErrors?.future_start_date}
                       sx={{ m: 1, minWidth: 150 }}
                       variant="outlined"
                     />
 
                     <CustomInput
                       type="date"
-                      label="Feature Expire Date"
-                      name="feature_expire_date"
-                      value={NewRowData.feature_expire_date}
-                      onChange={(value) => handleDateChange('feature_expire_date', value)}
-                      error={validationErrors?.feature_expire_date}
+                      label="Future Expire Date"
+                      name="future_expire_date"
+                      value={NewRowData.future_expire_date}
+                      onChange={(value) => handleDateChange('future_expire_date', value)}
+                      error={validationErrors?.future_expire_date}
                       sx={{ m: 1, minWidth: 150 }}
                       variant="outlined"
                     />
@@ -1336,26 +1344,26 @@ function ProductTable() {
           ))}
 
 
-          {NewRowData.feature_available_status === '1' && (
+          {NewRowData.future_available_status === '1' && (
             <>
               <CustomInput
                 type="date"
-                label="Feature Start Date"
-                name="feature_start_date"
-                value={NewRowData.feature_start_date}
-                onChange={(value) => handleDateChange('feature_start_date', value)}
-                error={validationErrors?.feature_start_date}
+                label="Future Start Date"
+                name="future_start_date"
+                value={NewRowData.future_start_date}
+                onChange={(value) => handleDateChange('future_start_date', value)}
+                error={validationErrors?.future_start_date}
                 sx={{ m: 1, minWidth: 150 }}
                 variant="outlined"
               />
 
               <CustomInput
                 type="date"
-                label="Feature Expire Date"
-                name="feature_expire_date"
-                value={NewRowData.feature_expire_date}
-                onChange={(value) => handleDateChange('feature_expire_date', value)}
-                error={validationErrors?.feature_expire_date}
+                label="Future Expire Date"
+                name="future_expire_date"
+                value={NewRowData.future_expire_date}
+                onChange={(value) => handleDateChange('future_expire_date', value)}
+                error={validationErrors?.future_expire_date}
                 sx={{ m: 1, minWidth: 150 }}
                 variant="outlined"
               />

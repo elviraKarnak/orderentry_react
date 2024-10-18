@@ -19,7 +19,7 @@ const ProductAutocomplete = ({ name, label, errors, setValue, getValues, watch }
 
     const handleChange = (event, newValue) => {
         setValue(name, newValue || null);
-        console.log("newValue", newValue);
+        console.log("newValue: ",name ,":", newValue);
 
         if (newValue) {
             setValue('vendor_name', newValue.productMeta.vendor_name);
@@ -31,7 +31,7 @@ const ProductAutocomplete = ({ name, label, errors, setValue, getValues, watch }
             setValue('cost_per_unit', newValue.productMeta.cost_per_unit);
             setValue('sale_price', newValue.productMeta.sale_price);
             setValue('so', newValue.productMeta.so);
-            setValue('margin_percentage', newValue?.productMargin?.landed_t_1_m);
+            // setValue('margin_percentage', newValue?.productMargin?.landed_t_1_m);
         }
     };
 

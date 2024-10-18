@@ -102,6 +102,13 @@ function SatagingInventory() {
         accessorKey: 'status',
         header: 'Status',
         size: 150,
+        Cell: ({ renderedCellValue }) => (
+          <>
+            {renderedCellValue === 'pending' && 'Pending'}
+            {renderedCellValue === 'received' && 'Received'}
+            {renderedCellValue === 'transferred' && 'Transfer'}
+          </>
+        ),
       },
     ],
     []

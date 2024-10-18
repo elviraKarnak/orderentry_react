@@ -35,15 +35,15 @@ function ProductEntry({ stagingInventoryRefetch }) {
 
     const onSubmit = async (data) => {
 
+        console.log("product_name ",data)
         data.date_received = moment(data.date_received).format('YYYY-MM-DD');
         data.product_category = data.product_name.category_string;
         data.product_color = data.product_name.color_string;
         data.product_image = data.product_name.image_url;
+        data.product_id = data.product_name.id;
         data.product_name = data.product_name.product_name;
 
-        console.log(data);
-
-
+        // console.log("data  ",data);
 
         var responce = await ProductEntryAdd(data);
 
@@ -176,7 +176,7 @@ function ProductEntry({ stagingInventoryRefetch }) {
                                                         )}
                                                     />
                                                 </LocalizationProvider>
-                                                {!!errors[field.name] && <p style={{ color: "red",fontSize:"0.75rem",fontWeight:400 }}>{errors[field.name]?.message || ''}</p>}
+                                                {!!errors[field.name] && <p style={{ color: "red", fontSize: "0.75rem", fontWeight: 400 }}>{errors[field.name]?.message || ''}</p>}
                                             </>)}
                                         />
                                     ) : field.type === 'auto_complete' ? (
