@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import { Container, Row, Col, Form, Button } from "react-bootstrap";
@@ -6,9 +6,8 @@ import { Container, Row, Col, Form, Button } from "react-bootstrap";
 import AddImage from "../../assests/images/add.png";
 import AddCircleOut from "../../assests/images/add-circle-outline-white.png";
 
+import DatePicker, { setDefaultLocale } from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import DatePicker, { registerLocale } from "react-datepicker";
-import es from 'date-fns/locale/es';
 import moment from "moment";
 // import CustomerSelectDropdown from "../../compoments/customer/CustomerSelectDropdown";
 import CustomerAutoSearch from "../../compoments/customer/CustomerAutoSearch";
@@ -35,16 +34,12 @@ import Toolbar from '@mui/material/Toolbar'
 import Typography from '@mui/material/Typography';
 import { useQuery } from '@tanstack/react-query';
 
-
-// Register the locale
-registerLocale('es', es);
-
+setDefaultLocale("es");
 
 function NewOrder() {
-
   const { userState, dispatch } = useContext(userContext);
   const [ProductName, setProductName] = useState("");
-  const [DeliveryDate, setDeliveryDate] = useState(null);
+  const [DeliveryDate, setDeliveryDate] = useState();
   const [Customer, setCustomer] = useState(false);
   const [CustomerData, setCustomerData] = useState([]);
   const [Step, setStep] = useState(1);
@@ -64,10 +59,9 @@ function NewOrder() {
   const [productData2, setProductData2] = useState([]);
 
   const [ProductDataSearch, setProductDataSearch] = useState({
-    limit: "",
-    page: "",
-    search_text: "",
-    shop_by_branch: true
+    limit: 10,
+    page_no: 1,
+    product_name: "",
   });
 
   const [ProductData, setProductData] = useState([]);
@@ -179,76 +173,84 @@ function NewOrder() {
   const ProductList = async () => {
     console.log("DeliveryDate ", DeliveryDate);
 
-    if (DeliveryDate == undefined || DeliveryDate == null) {
+    if (DeliveryDate === undefined) {
       toast.warning("Please select delivery date");
       return;
     }
 
-    // console.log(
-    //   "SelectCustomerData.ship_addr.ship_method ",
-    //   SelectCustomerData.ship_addr
-    // );
+    if (!AddItem) {
+      setAddItem((pre) => (pre ? false : true));
 
-    var payload = {
-      search_text: ProductDataSearch.search_text.trim(),
-      shipping_model: SelectCustomerData?.ship_addr?.ship_method === "fob" ? "fob" : "landed", // landed or fob
-      page: ProductDataSearch.page,
-      limit: ProductDataSearch.limit,
-      shop_by_branch: ProductDataSearch.shop_by_branch ? '1' : '0',
-    };
+      console.log(
+        "SelectCustomerData.ship_addr.ship_method ",
+        SelectCustomerData.ship_addr
+      );
 
-    // alert(JSON.stringify(payload));
+      var payload = {
+        // product_name: ProductDataSearch.product_name,
+        // delivary_date: DeliveryDate,
+        // limit: ProductDataSearch.limit,
+        // page_no: ProductDataSearch.page_no,
 
-    // var responce = await productService.productSearch(payload);
-    let responce = await fmiOrderSystemAppProductOrderEntrySearch(payload);
+        search_text: "",
+        shipping_model: SelectCustomerData.ship_addr.ship_method === "fob" ? "fob" : "landed", // landed or fob
+        page: "",
+        limit: "",
+        shop_by_branch: "1",
+      };
 
-    console.log(responce, " ======== product node data ====");
+      // var responce = await productService.productSearch(payload);
+      let responce = await fmiOrderSystemAppProductOrderEntrySearch(payload);
 
-    // return;
+      console.log(responce, " ======== product node data ====");
 
-    if (responce.status) {
-      if (responce.result.results.length === 0) {
-        // === replace_ProductData ====
-        dispatch({ type: "replace_ProductData", value: [] });
-      } else {
-        var tempArr = userState.ProductData;
+      // return;
 
-        var pIdArr = [];
+      if (responce.status) {
+        if (responce.result.results.length === 0) {
+          // === replace_ProductData ====
+          dispatch({ type: "replace_ProductData", value: [] });
+        } else {
+          var tempArr = userState.ProductData;
 
-        for (var item of tempArr) {
-          var p_id = item.product_details.id;
-          pIdArr.push(p_id);
-        }
+          var pIdArr = [];
 
-        for (var i of responce.result.results) {
-
-          if (!pIdArr.includes(i.id)) {
-
-            var total_price = ((Number(i.cost_price) * 100) / (100 - Number(i.margin_data.t_1_m)));
-            total_price = (total_price * Number(i.minqty)).toFixed(2);
-
-            var temp = {
-              product_details: i,
-              quantity: i.minqty,
-              total: total_price,
-              margin: i.margin_data.t_1_m,
-              temp_product_id: i.id,
-              status: 'new',
-            };
-
-            tempArr.push(temp);
+          for (var item of tempArr) {
+            var p_id = item.product_details.id;
+            pIdArr.push(p_id);
           }
+
+          for (var i of responce.result.results) {
+            if (!pIdArr.includes(i.id)) {
+              var total_price =
+                (Number(i.cost_price) * 100) /
+                (100 - Number(i.margin_data.t_1_m));
+              total_price = (total_price * Number(i.minqty)).toFixed(2);
+
+              var temp = {
+                product_details: i,
+                quantity: i.minqty,
+                total: total_price,
+                margin: i.margin_data.t_1_m,
+                temp_product_id: i.id,
+                status: 'new',
+              };
+
+              tempArr.push(temp);
+            }
+          }
+
+          console.log("tempArr  ", tempArr);
+
+          // alert(AddItem)
+
+          // === replace_ProductData ====
+          dispatch({ type: "replace_ProductData", value: tempArr });
         }
-
-        console.log("tempArr  ", tempArr);
-
-        // alert(AddItem)
-
-        // === replace_ProductData ====
-        dispatch({ type: "replace_ProductData", value: tempArr });
       }
+    } else {
+      setAddItem((pre) => (pre ? false : true));
     }
-
   };
 
   // const { data, isLoading, error } = useQuery({
@@ -922,13 +924,6 @@ function NewOrder() {
 
   // console.log("userState.ProductData ",userState.ProductData)
 
-
-  useEffect(() => {
-    if ((DeliveryDate != undefined) || (DeliveryDate != null)) {
-      ProductList();
-    }
-  }, [ProductDataSearch,DeliveryDate])
-
   return (
     <>
       {loader && <Loader />}
@@ -1149,7 +1144,16 @@ function NewOrder() {
         {SelectCustomerData != null && (
           <div className="category-select">
             <Row className="justify-content-end">
-
+              <Col lg={3} className="text-lg-end">
+                <span className="select-box">
+                  <select className="form-select">
+                    <option selected="">Shop By Branch</option>
+                    <option value={1}>FedEx Priority</option>
+                    <option value={2}>FedEx Priority</option>
+                    <option value={3}>FedEx Priority</option>
+                  </select>
+                </span>
+              </Col>
             </Row>
           </div>
         )}
@@ -1157,43 +1161,35 @@ function NewOrder() {
         {SelectCustomerData != null && (
           <div className="category-select">
             <Row className="justify-content-end">
-              <Col lg={2} className="text-lg-start">
-                <Form.Check
-                  type="checkbox"
-                  label="Shop By Branch"
-                  checked={ProductDataSearch.shop_by_branch}
-                  onChange={(e) => {
-                    setProductDataSearch({
-                      ...ProductDataSearch,
-                      shop_by_branch: e.target.checked
-                    })
-                  }}
-                />
-              </Col>
-
               <Col lg={3} className="text-lg-end">
                 <span className="select-box search">
                   <Form.Control
                     type="text"
                     className="form-control"
                     placeholder="Search"
-                    value={ProductDataSearch.search_text}
-                    onChange={(e) => {
-                      setProductDataSearch({
-                        ...ProductDataSearch,
-                        search_text: e.target.value
-                      })
-                    }}
+                    value={ProductName}
+                    onChange={(e) => ProductNameSearch(e.target.value)}
                   />
                 </span>
+                {/* <span className="select-box">
+                                <select className="form-select">
+                                    <option selected="">All Colors</option>
+                                    <option value={1}>FedEx Priority</option>
+                                    <option value={2}>FedEx Priority</option>
+                                    <option value={3}>FedEx Priority</option>
+                     </select>
+                </span> */}
               </Col>
             </Row>
           </div>
         )}
 
         <div className="order-total-table">
-          <div className="add-line-item  pb-3">
-            <img src={AddCircleOut} alt="" /> Add a line item{" "}
+          <div className="add-line-item">
+            <Button onClick={ProductList}>
+              {" "}
+              <img src={AddCircleOut} alt="" /> Add a line item{" "}
+            </Button>{" "}
             <span>
               Margin {userState.TotalPM.margin}% Subtotal $
               {userState.TotalPM.total}
@@ -1204,77 +1200,79 @@ function NewOrder() {
           {/* /////////////////////////// product list //////////////////////////// */}
           {userState.ProductData.length > 0 && (
             <div className="order-tabletwo">
-              <table className="table">
-                <thead>
-                  <tr>
-                    <th>Product</th>
-                    <th>Image</th>
-                    <th>Category</th>
-                    <th>Color</th>
-                    <th>Source</th>
-                    <th>Quantity</th>
-                    <th>Cost Price</th>
-                    <th>Sale Price</th>
-                    <th>Total</th>
-                    <th>Margin</th>
-                    <th>Action</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {userState.ProductData.length > 0 &&
-                    userState.ProductData.map((item, index) => (
-                      <>
-                        <tr key={index}>
-                          <td>
-                            {parse(item.product_details.product_name)}
-                          </td>
-                          <td>
-                            <img
-                              src={item.product_details.image_url}
-                              alt=""
-                              style={{ cursor: "pointer" }}
-                              onClick={() =>
-                                setImageShowModalUrl(
-                                  item.product_details.image_url
-                                )
-                              }
-                            />
-                          </td>
-                          <td>{item.product_details.category_string}</td>
-                          <td>{item.product_details.color_string}</td>
-                          <td>{item.product_details.source}</td>
+              {AddItem && (
+                <>
+                  <table className="table">
+                    <thead>
+                      <tr>
+                        <th>Product</th>
+                        <th>Image</th>
+                        <th>Category</th>
+                        <th>Color</th>
+                        <th>Source</th>
+                        <th>Quantity</th>
+                        <th>Cost Price</th>
+                        <th>Sale Price</th>
+                        <th>Total</th>
+                        <th>Margin</th>
+                        <th>Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {userState.ProductData.length > 0 &&
+                        userState.ProductData.map((item, index) => (
+                          <>
+                            <tr key={index}>
+                              <td>
+                                {parse(item.product_details.product_name)}
+                              </td>
+                              <td>
+                                <img
+                                  src={item.product_details.image_url}
+                                  alt=""
+                                  style={{ cursor: "pointer" }}
+                                  onClick={() =>
+                                    setImageShowModalUrl(
+                                      item.product_details.image_url
+                                    )
+                                  }
+                                />
+                              </td>
+                              <td>{item.product_details.category_string}</td>
+                              <td>{item.product_details.color_string}</td>
+                              <td>{item.product_details.source}</td>
 
-                          <td>
-                            <Form.Select
-                              onChange={(e) =>
-                                quantityListValueset_2(
-                                  index,
-                                  item.temp_product_id,
-                                  e.target.value,
-                                  item.product_details.cost_price,
-                                  item.product_details.cost_price,
-                                  item.product_details.margin_data
-                                )
-                              }
-                              value={item.quantity}
-                            >
-                              {quantityList(
-                                item.product_details.minqty,
-                                item.product_details.stock
-                              )}
-                            </Form.Select>
-                          </td>
+                              <td>
+                                <Form.Select
+                                  onChange={(e) =>
+                                    quantityListValueset_2(
+                                      index,
+                                      item.temp_product_id,
+                                      e.target.value,
+                                      item.product_details.cost_price,
+                                      item.product_details.cost_price,
+                                      item.product_details.margin_data
+                                    )
+                                  }
+                                  value={item.quantity}
+                                >
+                                  {quantityList(
+                                    item.product_details.minqty,
+                                    item.product_details.stock
+                                  )}
+                                </Form.Select>
+                              </td>
 
-                          {/*  <td>{item.product_details.fob_price}</td> */}
+                              {/*  <td>{item.product_details.fob_price}</td> */}
 
-                          <td>{item.product_details.cost_price}</td>
+                              <td>{item.product_details.cost_price}</td>
 
-                          <td>
-                            {/* {item.product_details.productMeta.sale_price} */}
+                              <td>
+                                {/* {item.product_details.productMeta.sale_price} */}
 
-                            {item.product_details.real_price}
+                                {item.product_details.real_price}
 
-                            {/* <input
+                                {/* <input
                                   type="number"
                                   value={
                                     item.product_details.real_price
@@ -1289,49 +1287,51 @@ function NewOrder() {
                                     )
                                   }
                                 /> */}
-                          </td>
+                              </td>
 
-                          <td>{item.total}</td>
-                          <td>{item.margin}</td>
+                              <td>{item.total}</td>
+                              <td>{item.margin}</td>
 
-                          <td>
-                            {item.status === 'order' ? (
-                              <>
-                                <Button
-                                  onClick={() =>
-                                    NewOrderAdd_2(
-                                      index,
-                                      item.product_details.id,
-                                      item.quantity
-                                    )
-                                  }
-                                  variant={"success"}
-                                >
-                                  Save
-                                </Button>
-                              </>
-                            ) : (
-                              <>
-                                <Button
-                                  onClick={() =>
-                                    NewOrderAdd_2(
-                                      index,
-                                      item.product_details.id,
-                                      item.quantity
-                                    )
-                                  }
-                                  variant="secondary"
-                                >
-                                  Add
-                                </Button>
-                              </>
-                            )}
-                          </td>
-                        </tr>
-                      </>
-                    ))}
-                </tbody>
-              </table>
+                              <td>
+                                {item.status === 'order' ? (
+                                  <>
+                                    <Button
+                                      onClick={() =>
+                                        NewOrderAdd_2(
+                                          index,
+                                          item.product_details.id,
+                                          item.quantity
+                                        )
+                                      }
+                                      variant={"success"}
+                                    >
+                                      Save
+                                    </Button>
+                                  </>
+                                ) : (
+                                  <>
+                                    <Button
+                                      onClick={() =>
+                                        NewOrderAdd_2(
+                                          index,
+                                          item.product_details.id,
+                                          item.quantity
+                                        )
+                                      }
+                                      variant="secondary"
+                                    >
+                                      Add
+                                    </Button>
+                                  </>
+                                )}
+                              </td>
+                            </tr>
+                          </>
+                        ))}
+                    </tbody>
+                  </table>{" "}
+                </>
+              )}
 
               {/* <div className="order-total">
                         <p>

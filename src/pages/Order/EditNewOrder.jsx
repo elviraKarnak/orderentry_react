@@ -761,6 +761,7 @@ function EditNewOrder() {
                 updatedData[l_index].quantity = "";
                 updatedData[l_index].total = 0;
                 updatedData[l_index].margin = 0;
+                updatedData[l_index].status = 'new';
                 break;
             }
         }

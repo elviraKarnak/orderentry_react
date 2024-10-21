@@ -111,7 +111,7 @@ function Index(props) {
     // ============= new ============== //
     var tempItem = [];
 
-    var OrderItemsData=userState.ProductData.filter((item)=>item.status==='order');
+    var OrderItemsData = userState.ProductData.filter((item) => item.status === 'order');
 
     // userState.OrderItemsData
 
@@ -137,7 +137,7 @@ function Index(props) {
     }
 
     var new_payload = {
-      awb:"AWB-9988713",
+      awb: "AWB-9988713",
       customer_id: props.SelectCustomerData.id,
       wp_order_id: "",
       order_type: "in-house", // in-house or website
@@ -223,6 +223,7 @@ function Index(props) {
         updatedData[l_index].quantity = "";
         updatedData[l_index].total = 0;
         updatedData[l_index].margin = 0;
+        updatedData[l_index].status = 'new';
         break;
       }
     }
@@ -272,7 +273,7 @@ function Index(props) {
     setPaytemt_type_value(value);
   };
 
-  console.log("props.SelectCustomerData  ", props.SelectCustomerData);
+  // console.log("props.SelectCustomerData  ", props.SelectCustomerData);
 
   // useEffect(() => {
   //     GetOrderItemList();
@@ -314,48 +315,48 @@ function Index(props) {
                   {userState.ProductData.length > 0 &&
                     userState.ProductData.map((item, index) => (
                       <>
-                      {item.status==='order' && 
-                        <tr key={index}>
-                          <td className="company_name">
-                            {item.product_details.product_name}
-                          </td>
-                          <td>
-                            {/* ${(props.SelectCustomerData?.ship_addr.ship_method === "fob" ? item.product_details.fob_price : item.product_details.landed_price)} */}
-                            ${item.product_details.real_price}
-                          </td>
-                          {/* <td>{item.quantity} ST</td> */}
-                          <td>
-                            <Form.Select
-                              onChange={(e) =>
-                                props.quantityListValueset_2(
-                                  index,
-                                  item.temp_product_id,
-                                  e.target.value,
-                                  item.product_details.cost_price,
-                                  item.product_details.cost_price,
-                                  item.product_details.margin_data
-                                )
-                              }
-                              value={item.quantity}
-                            >
-                              {props.quantityList(
-                                item.product_details.minqty,
-                                item.product_details.stock
-                              )}
-                            </Form.Select>
-                          </td>
-                          <td className="amount-col">${item.total}</td>
-                          <td>
-                            <img
-                              style={{ cursor: "pointer" }}
-                              onClick={() =>
-                                OrderItemDelete(index, item.product_details.id)
-                              }
-                              src={Delete}
-                              alt=""
-                            />
-                          </td>
-                        </tr>}
+                        {item.status === 'order' &&
+                          <tr key={index}>
+                            <td className="company_name">
+                              {item.product_details.product_name}
+                            </td>
+                            <td>
+                              {/* ${(props.SelectCustomerData?.ship_addr.ship_method === "fob" ? item.product_details.fob_price : item.product_details.landed_price)} */}
+                              ${item.product_details.real_price}
+                            </td>
+                            {/* <td>{item.quantity} ST</td> */}
+                            <td>
+                              <Form.Select
+                                onChange={(e) =>
+                                  props.quantityListValueset_2(
+                                    index,
+                                    item.temp_product_id,
+                                    e.target.value,
+                                    item.product_details.cost_price,
+                                    item.product_details.cost_price,
+                                    item.product_details.margin_data
+                                  )
+                                }
+                                value={item.quantity}
+                              >
+                                {props.quantityList(
+                                  item.product_details.minqty,
+                                  item.product_details.stock
+                                )}
+                              </Form.Select>
+                            </td>
+                            <td className="amount-col">${item.total}</td>
+                            <td>
+                              <img
+                                style={{ cursor: "pointer" }}
+                                onClick={() =>
+                                  OrderItemDelete(index, item.product_details.id)
+                                }
+                                src={Delete}
+                                alt=""
+                              />
+                            </td>
+                          </tr>}
                       </>
                     ))}
 
@@ -483,46 +484,46 @@ function Index(props) {
 
                           {props.SelectCustomerData?.ship_addr
                             .ship_country_name && (
-                            <>
-                              {
-                                props.SelectCustomerData?.ship_addr
-                                  .ship_country_name
-                              }
-                              ,
-                            </>
-                          )}
+                              <>
+                                {
+                                  props.SelectCustomerData?.ship_addr
+                                    .ship_country_name
+                                }
+                                ,
+                              </>
+                            )}
 
                           {props.SelectCustomerData?.ship_addr
                             .ship_state_name && (
-                            <>
-                              {
-                                props.SelectCustomerData?.ship_addr
-                                  .ship_state_name
-                              }
-                              ,
-                            </>
-                          )}
+                              <>
+                                {
+                                  props.SelectCustomerData?.ship_addr
+                                    .ship_state_name
+                                }
+                                ,
+                              </>
+                            )}
 
                           {props.SelectCustomerData?.ship_addr
                             .ship_city_name && (
-                            <>
-                              {
-                                props.SelectCustomerData?.ship_addr
-                                  .ship_city_name
-                              }
-                              ,
-                            </>
-                          )}
+                              <>
+                                {
+                                  props.SelectCustomerData?.ship_addr
+                                    .ship_city_name
+                                }
+                                ,
+                              </>
+                            )}
 
                           {props.SelectCustomerData?.ship_addr
                             .ship_zip_code && (
-                            <>
-                              {
-                                props.SelectCustomerData?.ship_addr
-                                  .ship_zip_code
-                              }
-                            </>
-                          )}
+                              <>
+                                {
+                                  props.SelectCustomerData?.ship_addr
+                                    .ship_zip_code
+                                }
+                              </>
+                            )}
                         </h4>
                       </div>
                     </div>
@@ -556,7 +557,7 @@ function Index(props) {
                         <option
                           selected={
                             props.SelectCustomerData?.ship_addr.ship_method ===
-                            "fob"
+                              "fob"
                               ? "selected"
                               : ""
                           }
@@ -567,7 +568,7 @@ function Index(props) {
                         <option
                           selected={
                             props.SelectCustomerData?.ship_addr.ship_method ===
-                            "fedex"
+                              "fedex"
                               ? "selected"
                               : ""
                           }
