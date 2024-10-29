@@ -35,15 +35,23 @@ function ProductEntry({ stagingInventoryRefetch }) {
 
     const onSubmit = async (data) => {
 
-        console.log("product_name ",data)
+        console.log("product_name ", data)
         data.date_received = moment(data.date_received).format('YYYY-MM-DD');
-        data.product_category = data.product_name.category_string;
-        data.product_color = data.product_name.color_string;
-        data.product_image = data.product_name.image_url;
-        data.product_id = data.product_name.id;
-        data.product_name = data.product_name.product_name;
+        if (data.pre_product) {
+            data.product_category = data.product_name.category_string || null;
+            data.product_color = data.product_name.color_string || null;
+            data.product_image = data.product_name.image_url || null;
+            data.product_id = data.product_name.id || null;
+            data.product_name = data.product_name.product_name;
+        } else {
+            data.product_name = data.new_product_name
+        }
 
-        // console.log("data  ",data);
+        delete data.pre_product;
+        delete data.new_product_name;
+
+        console.log("data  ", data);
+        // return;
 
         var responce = await ProductEntryAdd(data);
 

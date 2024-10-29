@@ -6,6 +6,7 @@ const ProductAutocomplete = ({ name, label, errors, setValue, getValues, watch }
     const [options, setOptions] = useState([]);
     const watchedFieldValue = watch(name);
     const [inputValue, setInputValue] = useState(watchedFieldValue || '');
+    // const [inputValue, setInputValue] = useState('');
 
 
     const fetchProducts = async (query) => {
@@ -19,7 +20,9 @@ const ProductAutocomplete = ({ name, label, errors, setValue, getValues, watch }
 
     const handleChange = (event, newValue) => {
         setValue(name, newValue || null);
-        console.log("newValue: ",name ,":", newValue);
+        setValue('pre_product', true);
+        setValue("new_product_name", "");
+        console.log("handleChange: ", name, ":", newValue);
 
         if (newValue) {
             setValue('vendor_name', newValue.productMeta.vendor_name);
@@ -33,6 +36,23 @@ const ProductAutocomplete = ({ name, label, errors, setValue, getValues, watch }
             setValue('so', newValue.productMeta.so);
             // setValue('margin_percentage', newValue?.productMargin?.landed_t_1_m);
         }
+    };
+
+
+    const handleInputChange = (event, newInputValue) => {
+        // const newInputValue = event?.target?.value;
+
+        if (newInputValue != null && newInputValue != undefined && newInputValue != "undefined") {
+            setInputValue(newInputValue);
+            setValue('pre_product', false);
+            setValue("new_product_name", newInputValue);
+            // alert(typeof(newInputValue))
+            setValue(name, newInputValue);
+        }
+
+
+        console.log("handleInputChange: ", name, newInputValue);
+        // console.log("watchedFieldValue ",watchedFieldValue)
     };
 
     useEffect(() => {
@@ -65,7 +85,7 @@ const ProductAutocomplete = ({ name, label, errors, setValue, getValues, watch }
             value={getValues(name) || null}
             onChange={handleChange}
             inputValue={inputValue}
-            onInputChange={(event, newInputValue) => setInputValue(newInputValue)}
+            onInputChange={handleInputChange}
             renderInput={(params) => (
                 <TextField
                     {...params}

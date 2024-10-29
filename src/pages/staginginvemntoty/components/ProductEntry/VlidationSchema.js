@@ -8,7 +8,7 @@ const inputFields = [
     { label: 'Vendor Name', name: 'vendor_name', type: 'text', sx: { m: 1, minWidth: 150 }, required: true },
     { label: 'Farm Invoice#', name: 'farm_invoice_number', type: 'text', sx: { m: 1, minWidth: 150 }, required: true },
     { label: 'Date Received', name: 'date_received', type: 'date', sx: { m: 1, minWidth: 100 }, required: true },
-    { label: 'PO#', name: 'po', type: 'number', sx: { m: 1, minWidth: 150 }, required: false },
+    { label: 'PO#', name: 'po', type: 'text', sx: { m: 1, minWidth: 150 }, required: false },
     { label: 'BOXES', name: 'boxes', type: 'number', sx: { m: 1, minWidth: 150 }, required: true },
     { label: 'Box Type', name: 'box_type', type: 'select', sx: { m: 1, minWidth: 150 }, options: boxTypeOptions, required: true },
     { label: 'Units/Box', name: 'unit_per_box', type: 'number', sx: { m: 1, minWidth: 150 }, required: true },
@@ -51,7 +51,10 @@ const generateYupSchema = (fields) => {
                     break;
                 case 'auto_complete':
                     schema[field.name] = yup
-                        .object()
+                        .mixed()
+                        .test('isObjectOrString', `${field.label} must be an object or string`, value => {
+                            return typeof value === 'object' || typeof value === 'string';
+                        })
                         .required(`${field.label} is required`);
                     break;
                 default:
