@@ -1,29 +1,47 @@
 import React, { useEffect } from 'react';
 import { useMemo, useState } from 'react';
 //MRT Imports
-import { MaterialReactTable, useMaterialReactTable } from 'material-react-table';
+import {
+  MaterialReactTable,
+  useMaterialReactTable,
+  MRT_GlobalFilterTextField,
+  MRT_ToggleFiltersButton
+} from 'material-react-table';
+
+//Material UI Imports
+import {
+  Box,
+  Button,
+  ListItemIcon,
+  MenuItem,
+  Typography,
+  lighten,
+} from '@mui/material';
+
 
 
 import { AccountCircle, Send } from '@mui/icons-material';
 //import orderArray from '../oderview/orderArray';
-import { getStagingInventoryList, SatagingInventoryItemStatusChange } from '../../utils/fetch';
+import { getStagingInventoryList, SatagingInventoryItemBlukStatusChange, SatagingInventoryItemStatusChange } from '../../utils/fetch';
 
 import Header from '../../common/Header';
-import Typography from '@mui/material/Typography';
 import { useQuery } from '@tanstack/react-query';
 import moment from 'moment';
 import Swal from 'sweetalert2';
 import { SatagingInventoryDefaultStatus } from '../../utils/Constant';
 import SatagingInventoryItemDetails from './components/SatagingInventoryItemDetails';
 import ProductEntry from './components/ProductEntry';
+// import { QueryClient } from 'react-query';
 
 function SatagingInventory() {
+
+  // const queryClient = new Q
 
 
 
   /**
- * Fetch Products
- */
+   * Fetch Products
+   */
   function UsefetchStagingInventoryList() {
     return useQuery({
       queryKey: ['products'],
@@ -48,6 +66,10 @@ function SatagingInventory() {
 
   const columns = useMemo(
     () => [
+      {
+        accessorKey: 'id',
+        header: 'ID',
+      },
       {
         accessorKey: 'awb',
         header: 'AWB#',
@@ -150,9 +172,95 @@ function SatagingInventory() {
       showAlertBanner: stagingInventoryisError,
       showProgressBars: stagingInventoryIsFetching,
     },
+    initialState: {
+      columnVisibility: {
+        id: false, // Hide the 'id' column initially
+      },
+    },
     renderDetailPanel: ({ row }) => (
       <SatagingInventoryItemDetails row={row} stagingInventoryRefetch={stagingInventoryRefetch} />
     ),
+    renderTopToolbar: ({ table }) => {
+
+      const handleStatus = async(status) => {
+
+        var temp_id_array = [];
+        table.getSelectedRowModel().flatRows.map((row) => {
+          temp_id_array.push(row.getValue('id'))
+        });
+        console.log(temp_id_array)
+        // alert(status)
+
+        const response=await SatagingInventoryItemBlukStatusChange({
+          "item_ids": temp_id_array,
+          "status": status
+        });
+
+        console.log(response);
+
+        stagingInventoryRefetch();
+
+      };
+
+      // const handleActivate = () => {
+      //   table.getSelectedRowModel().flatRows.map((row) => {
+      //     alert('activating ' + row.getValue('name'));
+      //   });
+      // };
+
+      // const handleContact = () => {
+      //   table.getSelectedRowModel().flatRows.map((row) => {
+      //     alert('contact ' + row.getValue('name'));
+      //   });
+      // };
+
+      return (
+        <Box
+          sx={(theme) => ({
+            backgroundColor: lighten(theme.palette.background.default, 0.05),
+            display: 'flex',
+            gap: '0.5rem',
+            p: '8px',
+            justifyContent: 'space-between',
+          })}
+        >
+          <Box sx={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+            {/* import MRT sub-components */}
+            <MRT_GlobalFilterTextField table={table} />
+            <MRT_ToggleFiltersButton table={table} />
+          </Box>
+          <Box>
+            <Box sx={{ display: 'flex', gap: '0.5rem' }}>
+              <Button
+                color="error"
+                disabled={!table.getIsSomeRowsSelected()}
+                onClick={() => handleStatus('received')}
+                variant="contained"
+              >
+                Received
+              </Button>
+              <Button
+                color="success"
+                disabled={!table.getIsSomeRowsSelected()}
+                onClick={() => handleStatus('transferred')}
+                variant="contained"
+              >
+                Transfered
+              </Button>
+              {/* <Button
+                color="info"
+                disabled={!table.getIsSomeRowsSelected()}
+                onClick={handleContact}
+                variant="contained"
+              >
+                Contact
+              </Button> */}
+            </Box>
+          </Box>
+        </Box>
+      );
+
+    }
   });
 
 
@@ -175,7 +283,9 @@ function SatagingInventory() {
         </div>
 
         <div className='col-sm-12'>
-          <MaterialReactTable table={orderListTable} />
+          <MaterialReactTable
+            table={orderListTable}
+          />
         </div>
       </div>
     </div>

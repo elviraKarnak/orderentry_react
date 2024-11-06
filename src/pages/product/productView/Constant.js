@@ -16,7 +16,7 @@ export const newRowData = {
   unit_per_bunch: '',
   cost_per_unit: '',
   sale_price: '',
-  so: '',
+  // so: '',
 
   publish_date: null,
 
@@ -30,9 +30,8 @@ export const newRowData = {
 
   pre_order: '',
   shop_by_branch: '',
-  future_available_status: '',
-  future_start_date: null,
-  future_expire_date: null,
+  future_start_date: null, // if pre_order is yes then future_start_date is required
+  future_expire_date: null, // if pre_order is yes then future_expire_date is required
   
 
   cat_id: [],
@@ -70,7 +69,7 @@ export const disableRows = {
   bunch_unit: false,
   cost_unit: false,
   sale_price: false,
-  so: false,
+  // so: false,
 
   sku: false,
   real_stock: false,
@@ -102,7 +101,7 @@ export const inputFields = [
   { label: 'Units/Bunch', name: 'unit_per_bunch', type: 'number' },
   { label: 'Units/Cost', name: 'cost_per_unit', type: 'number' },
   { label: 'Sale Price', name: 'sale_price', type: 'number' },
-  { label: 'SO#', name: 'so', type: 'number' },
+  // { label: 'SO#', name: 'so', type: 'number' },
 
   { label: 'Category', name: 'cat_id', type: 'multiple_select', options: [] },
   { label: 'Color', name: 'product_color', type: 'select', options: [] },
@@ -118,15 +117,6 @@ export const inputFields = [
 
   {
     label: 'Pre Order', name: 'pre_order', type: 'select', options: [
-      { label: '', value: '' },
-      { label: 'Yes', value: '1' },
-      { label: 'No', value: '0' },
-    ]
-  },
-
-
-  {
-    label: 'Future Available', name: 'future_available_status', type: 'select', options: [
       { label: '', value: '' },
       { label: 'Yes', value: '1' },
       { label: 'No', value: '0' },
@@ -155,7 +145,7 @@ export const editFields = [
   { label: 'Units/Box', name: 'unit_per_box', type: 'number' },
   { label: 'Units/Bunch', name: 'unit_per_bunch', type: 'number' },
   { label: 'Units/Cost', name: 'cost_per_unit', type: 'number' },
-  { label: 'SO#', name: 'so', type: 'number' },
+  // { label: 'SO#', name: 'so', type: 'number' },
 
   { label: 'Publish Date', name: 'publish_date', type: 'dateTime' },
 
@@ -188,13 +178,7 @@ export const editFields = [
     ]
   },
 
-  {
-    label: 'Pre Order', name: 'pre_order', type: 'select', options: [
-      { label: '', value: '' },
-      { label: 'Yes', value: '1' },
-      { label: 'No', value: '0' },
-    ]
-  },
+  
 
   // //////////// margin //////////////////
   { label: 'Margin Manager', type: 'label_p' },
@@ -224,9 +208,8 @@ export const editFields = [
 
 
   { label: 'Future Product Available', type: 'label_p' },
-
   {
-    label: 'future Available', name: 'future_available_status', type: 'select', options: [
+    label: 'Pre Order', name: 'pre_order', type: 'select', options: [
       { label: '', value: '' },
       { label: 'Yes', value: '1' },
       { label: 'No', value: '0' },

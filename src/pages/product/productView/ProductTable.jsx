@@ -204,21 +204,21 @@ function ProductTable() {
         enableEditing: false,
         size: 10,
       },
-      {
-        accessorKey: "future_available_status",
-        header: "Future Status", //<StarRateRoundedIcon style={{ color: "blue" }} />,
-        enableEditing: false,
-        size: 5,
-        Cell: ({ renderedCellValue }) => (
-          <>
-            {renderedCellValue === "1" ? (
-              <StarRateRoundedIcon style={{ color: "blue" }} />
-            ) : (
-              <StarOutlineRoundedIcon style={{ color: "blue" }} />
-            )}
-          </>
-        ),
-      },
+      // {
+      //   accessorKey: "future_available_status",
+      //   header: "Future Status",
+      //   enableEditing: false,
+      //   size: 5,
+      //   Cell: ({ renderedCellValue }) => (
+      //     <>
+      //       {renderedCellValue === "1" ? (
+      //         <StarRateRoundedIcon style={{ color: "blue" }} />
+      //       ) : (
+      //         <StarOutlineRoundedIcon style={{ color: "blue" }} />
+      //       )}
+      //     </>
+      //   ),
+      // },
       {
         accessorKey: "publish_date",
         header: "Publish Date",
@@ -328,13 +328,13 @@ function ProductTable() {
           temp_data[key] = formattedDate;
         }
       }
-      else if (key === "future_start_date" && rowData['future_available_status'] === '1') {
+      else if (key === "future_start_date" && rowData['pre_order'] === '1') {
         if (rowData[key] !== null) {
           const formattedDate = dayjs(rowData[key]);
           temp_data[key] = formattedDate;
         }
       }
-      else if (key === "future_expire_date" && rowData['future_available_status'] === '1') {
+      else if (key === "future_expire_date" && rowData['pre_order'] === '1') {
         if (rowData[key] !== null) {
           const formattedDate = dayjs(rowData[key]);
           temp_data[key] = formattedDate;
@@ -469,9 +469,9 @@ function ProductTable() {
       errors.sale_price = "sale price is required";
     }
 
-    if (data.so === '') {
-      errors.so = "so is required";
-    }
+    // if (data.so === '') {
+    //   errors.so = "so is required";
+    // }
 
 
     if (data.cat_id.length === 0) {
@@ -487,15 +487,12 @@ function ProductTable() {
       errors.shop_by_branch = "shop by branch is required";
     }
 
-    if (!data.pre_order.trim()) {
-      errors.pre_order = "pre order is required";
-    }
 
-    if (!data.future_available_status.trim()) {
-      errors.future_available_status = "future available is required";
+    if (!data.pre_order.trim()) {
+      errors.pre_order = "Pre Order available is required";
     }
     else {
-      if (data.future_available_status === '1') {
+      if (data.pre_order === '1') {
         if (data.future_start_date === null) {
           errors.future_start_date = "future start date is required";
         }
@@ -795,6 +792,12 @@ function ProductTable() {
       maxWidth: "md",
       fullWidth: true,
     },
+
+    muiTableBodyRowProps: ({ row }) => ({
+      sx: {
+        backgroundColor: row.original.status === "new" ? "lightblue" : (row.original.status === "transferred" ? "lightgreen" : "white"),
+      },
+    }),
 
     renderRowActions: ({ row, table }) => (
       <Box sx={{ display: "flex", gap: "1rem" }}>
@@ -1124,7 +1127,7 @@ function ProductTable() {
                 ))}
 
 
-                {NewRowData.future_available_status === '1' && (
+                {NewRowData.pre_order === '1' && (
                   <>
                     <CustomInput
                       type="date"
@@ -1344,7 +1347,7 @@ function ProductTable() {
           ))}
 
 
-          {NewRowData.future_available_status === '1' && (
+          {NewRowData.pre_order === '1' && (
             <>
               <CustomInput
                 type="date"
