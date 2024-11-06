@@ -20,7 +20,7 @@ function OrderProductList({ ProductDataSearch, SelectCustomerData, DeliveryDate 
         isLoading: isLoading,
     } = UseFetchOrderProducts({ ProductDataSearch, SelectCustomerData, DeliveryDate });
 
-    console.log("fetchedproducts ",fetchedproducts)
+    console.log("fetchedproducts ", fetchedproducts)
 
 
 
@@ -67,6 +67,11 @@ function OrderProductList({ ProductDataSearch, SelectCustomerData, DeliveryDate 
                 enableEditing: false,
             },
             {
+                accessorKey: "Quantity",
+                header: "Quantity",
+                enableEditing: false,
+            },
+            {
                 accessorKey: "product_details.cost_price",
                 header: "Cost Price",
                 enableEditing: false,
@@ -76,20 +81,32 @@ function OrderProductList({ ProductDataSearch, SelectCustomerData, DeliveryDate 
                 header: "Sale Price",
                 enableEditing: false,
             },
-            
+            {
+                accessorKey: "total",
+                header: "Total Price",
+                enableEditing: false,
+            },
+            {
+                accessorKey: "margin",
+                header: "Margin",
+                enableEditing: false,
+            },
+
+
         ], [ProductDataSearch, SelectCustomerData, DeliveryDate]);
 
     // product table setting //
     const table = useMaterialReactTable({
         columns: columns,
         data: fetchedproducts,
-        enableColumnFilterModes: true,
-        enableColumnOrdering: true,
+        enableGlobalFilter:false,
+        enableColumnOrdering: false,
+        enableKeyboardShortcuts: false,
+        enableColumnActions: false,
+        enableColumnFilters: true,
+        enablePagination: true,
         manualPagination: false,
-        initialState: {
-            showColumnFilters: false,
-            showGlobalFilter: true,
-        },
+        enableSorting: true,
         enableEditing: true,
         getRowId: (row) => row.id,
         muiToolbarAlertBannerProps: {

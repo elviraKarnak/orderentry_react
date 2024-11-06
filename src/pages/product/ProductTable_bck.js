@@ -28,7 +28,7 @@ import {
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import ImageIcon from "@mui/icons-material/Image";
-import { ProductAdd, categoryList, fetchProducts } from "../../../utils/fetch";
+import { ProductAdd, categoryList, fetchProducts } from "../../utils/fetch";
 import placeholderImage from "../../../assests/images/placeholder.png";
 
 import Swal from "sweetalert2";

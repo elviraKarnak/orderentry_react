@@ -30,10 +30,15 @@ import {
   fmiOrderSystemAppOrderAdd,
   fmiOrderSystemAppProductOrderEntrySearch,
 } from "../../utils/fetch";
+import {
+  MaterialReactTable,
+  useMaterialReactTable,
+} from "material-react-table";
 import AppBar from '@mui/material/AppBar'
 import Toolbar from '@mui/material/Toolbar'
 import Typography from '@mui/material/Typography';
 import { useQuery } from '@tanstack/react-query';
+import OrderProductList from "./components/OrderProductList";
 
 
 // Register the locale
@@ -113,6 +118,7 @@ function NewOrder() {
       setAvailableDates({ ...availableDates, minDate: minDate });
     }
   };
+
 
   const shipMethodChange = async (e) => {
     if (e.target.value == "") {
@@ -927,7 +933,7 @@ function NewOrder() {
     if ((DeliveryDate != undefined) || (DeliveryDate != null)) {
       ProductList();
     }
-  }, [ProductDataSearch,DeliveryDate])
+  }, [ProductDataSearch, DeliveryDate])
 
   return (
     <>
@@ -1202,7 +1208,7 @@ function NewOrder() {
 
           <br />
           {/* /////////////////////////// product list //////////////////////////// */}
-          {userState.ProductData.length > 0 && (
+          {userState.ProductData.length > 0 && (<>
             <div className="order-tabletwo">
               <table className="table">
                 <thead>
@@ -1347,7 +1353,16 @@ function NewOrder() {
                         <p />
                     </div> */}
             </div>
-          )}
+          </>)}
+
+          <div>
+            <OrderProductList
+              ProductDataSearch={ProductDataSearch}
+              SelectCustomerData={SelectCustomerData}
+              DeliveryDate={DeliveryDate}
+            />
+          </div>
+
         </div>
       </Container>
 

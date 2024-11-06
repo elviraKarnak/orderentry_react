@@ -38,16 +38,16 @@ import {
   categoryList,
   colorList,
   fetchProducts_2,
-} from "../../../utils/fetch";
-import placeholderImage from "../../../assests/images/placeholder.png";
+} from "../../utils/fetch";
+import placeholderImage from "../../assests/images/placeholder.png";
 
 import Swal from "sweetalert2";
-import CustomInput from "../../../compoments/CustomInput";
-import Uploadfile from "../../../assests/images/file-upload.png";
+import CustomInput from "../../compoments/CustomInput";
+import Uploadfile from "../../assests/images/file-upload.png";
 
 import dayjs from "dayjs";
 
-import { inputFields, EditFields, newRowData, disableRows } from "./Constant";
+import { inputFields, editFields, newRowData, disableRows } from "./Constant";
 
 
 
@@ -67,6 +67,8 @@ function ProductTable() {
   const [DisableRows, setDisableRows] = useState(disableRows);
 
   const [NewRowData, setNewRowData] = useState(newRowData);
+  const [InputFields, setInputFields] = useState(inputFields);
+  const [EditFields, setEditFields] = useState(editFields);
 
   const [LockAWB, setLockAWB] = useState(false);
 
@@ -202,21 +204,21 @@ function ProductTable() {
         enableEditing: false,
         size: 10,
       },
-      {
-        accessorKey: "feature_status",
-        header: "Feature Status", //<StarRateRoundedIcon style={{ color: "blue" }} />,
-        enableEditing: false,
-        size: 5,
-        Cell: ({ renderedCellValue }) => (
-          <>
-            {renderedCellValue === "1" ? (
-              <StarRateRoundedIcon style={{ color: "blue" }} />
-            ) : (
-              <StarOutlineRoundedIcon style={{ color: "blue" }} />
-            )}
-          </>
-        ),
-      },
+      // {
+      //   accessorKey: "future_available_status",
+      //   header: "Future Status",
+      //   enableEditing: false,
+      //   size: 5,
+      //   Cell: ({ renderedCellValue }) => (
+      //     <>
+      //       {renderedCellValue === "1" ? (
+      //         <StarRateRoundedIcon style={{ color: "blue" }} />
+      //       ) : (
+      //         <StarOutlineRoundedIcon style={{ color: "blue" }} />
+      //       )}
+      //     </>
+      //   ),
+      // },
       {
         accessorKey: "publish_date",
         header: "Publish Date",
@@ -237,7 +239,7 @@ function ProductTable() {
         size: 30,
         Cell: ({ renderedCellValue }) => (
           <>
-            {renderedCellValue === "yes" ? (
+            {renderedCellValue === "1" ? (
               <CheckSharpIcon style={{ color: "green" }} />
             ) : (
               <CancelSharpIcon style={{ color: "red" }} />
@@ -263,6 +265,20 @@ function ProductTable() {
         enableEditing: false,
         size: 5,
       },
+      {
+        accessorKey: "status",
+        header: "Status",
+        enableEditing: false,
+        size: 5,
+        Cell: ({ renderedCellValue }) => (
+          <>
+            {renderedCellValue === 'new' && 'New'}
+            {renderedCellValue === 'pending' && 'Pending'}
+            {renderedCellValue === 'received' && 'Received'}
+            {renderedCellValue === 'transferred' && 'Transfer'}
+          </>
+        ),
+      },
     ],
     [validationErrors, imagePreview, CategoryList, NewRowData, ColorList]
   );
@@ -284,7 +300,7 @@ function ProductTable() {
     setAddProduct(false);
 
     let rowData = row.original;
-    let temp_data = {...NewRowData};
+    let temp_data = { ...NewRowData };
 
     // product table
     for (let key in temp_data) {
@@ -312,6 +328,18 @@ function ProductTable() {
           temp_data[key] = formattedDate;
         }
       }
+      else if (key === "future_start_date" && rowData['pre_order'] === '1') {
+        if (rowData[key] !== null) {
+          const formattedDate = dayjs(rowData[key]);
+          temp_data[key] = formattedDate;
+        }
+      }
+      else if (key === "future_expire_date" && rowData['pre_order'] === '1') {
+        if (rowData[key] !== null) {
+          const formattedDate = dayjs(rowData[key]);
+          temp_data[key] = formattedDate;
+        }
+      }
       else if (key === "cat_id") {
         var tempCat = [];
 
@@ -332,7 +360,7 @@ function ProductTable() {
       else if (['fob_t_1_m', 'landed_t_1_m', 'fob_t_2_m', 'fob_t_2_qty', 'landed_t_2_m', 'landed_t_2_qty', 'fob_t_3_m', 'fob_t_3_qty', 'landed_t_3_m', 'landed_t_3_qty'].includes(key)) {
 
         if (rowData['margin_data']) {
-          var data = rowData["productMargin"]?Number(rowData["productMargin"][key]):0;
+          var data = rowData["productMargin"] ? Number(rowData["productMargin"][key]) : 0;
 
           if (data === 0) {
             temp_data[key] = "";
@@ -386,7 +414,7 @@ function ProductTable() {
       cat_id: false,
       product_color: false,
       uom: false,
-      feature_status: false,
+      feature_available_status: false,
       publish_date: false,
     });
     // table.setEditingRow(row);
@@ -397,10 +425,6 @@ function ProductTable() {
   const validate = (data) => {
     const errors = {};
 
-    if (!data.awb.trim()) {
-      errors.awb = "awb is required";
-    }
-
     if (!data.vendor_name.trim()) {
       errors.vendor_name = "vendor name is required";
     }
@@ -409,45 +433,79 @@ function ProductTable() {
       errors.farm_invoice = "farm invoice is required";
     }
 
-    if (!data.po.trim()) {
-      errors.po = "po# is required";
-    }
-
     if (data.received_date === null) {
       errors.received_date = "received date is required";
     }
 
-    if (!data.sku.trim()) {
+    if (!data.product_name.trim()) {
+      errors.product_name = "product name is required";
+    }
+
+    if (data.sku === '') {
       errors.sku = "SKU is required";
     }
 
-    if (!data.boxes.trim()) {
+    if (data.boxes === '') {
       errors.boxes = "boxes is required";
     }
 
-    if (!data.boxtype.trim()) {
+    if (data.boxtype === '') {
       errors.boxtype = "boxtype is required";
     }
 
-    if (!data.unit_per_box.trim()) {
+    if (data.unit_per_box === '') {
       errors.unit_per_box = "unit/box unit is required";
     }
 
-    if (!data.unit_per_bunch.trim()) {
+    if (data.unit_per_bunch === '') {
       errors.unit_per_bunch = "unit/bunch unit is required";
     }
 
-    if (!data.cost_per_unit.trim()) {
+    if (data.cost_per_unit === '') {
       errors.cost_per_unit = "unit/cost is required";
     }
 
-    if (!data.sale_price.trim()) {
+    if (data.sale_price === '') {
       errors.sale_price = "sale price is required";
     }
 
-    if (!data.so.trim()) {
-      errors.so = "so is required";
+    // if (data.so === '') {
+    //   errors.so = "so is required";
+    // }
+
+
+    if (data.cat_id.length === 0) {
+      errors.cat_id = "category is required";
     }
+
+
+    if (!data.product_color.trim()) {
+      errors.product_color = "product color is required";
+    }
+
+    if (!data.shop_by_branch.trim()) {
+      errors.shop_by_branch = "shop by branch is required";
+    }
+
+
+    if (!data.pre_order.trim()) {
+      errors.pre_order = "Pre Order available is required";
+    }
+    else {
+      if (data.pre_order === '1') {
+        if (data.future_start_date === null) {
+          errors.future_start_date = "future start date is required";
+        }
+
+
+        if (data.future_expire_date === null) {
+          errors.future_expire_date = "future expire date is required";
+        }
+      }
+    }
+
+
+
 
     // if (!data.margin.trim()) {
     //   errors.margin = "margin is required";
@@ -507,12 +565,12 @@ function ProductTable() {
   //CREATE action
   const handleProductAdd = async () => {
     // console.log("handleProductAdd ", values);
-    // console.log("NewRowData ", NewRowData);
+    console.log("NewRowData ", NewRowData);
     // console.log("selectedImage ", selectedImage);
 
     // return;
 
-    let temp_data = {...NewRowData};
+    let temp_data = { ...NewRowData };
 
     // validation check
     const errors = validate(temp_data);
@@ -543,6 +601,16 @@ function ProductTable() {
       temp_data.received_date = temp_data.received_date.format("YYYY-MM-DD");
     }
 
+
+    if (temp_data?.future_start_date !== null) {
+      temp_data.future_start_date = temp_data.future_start_date.format("YYYY-MM-DD");
+    }
+
+
+    if (temp_data?.future_expire_date !== null) {
+      temp_data.future_expire_date = temp_data.future_expire_date.format("YYYY-MM-DD");
+    }
+
     if (temp_data?.publish_date !== null) {
       temp_data.publish_date = temp_data.publish_date.unix();
     }
@@ -555,11 +623,15 @@ function ProductTable() {
       }
     }
 
+    // console.log("formData ", temp_data);
+
+    // return;
+
     var responce = await ProductAdd(formData);
 
     if (responce.status) {
       Swal.fire({
-        text: "Product add successfully.",
+        text: "Product added successfully.",
         icon: "success",
       });
 
@@ -643,7 +715,7 @@ function ProductTable() {
 
     if (responce.status) {
       Swal.fire({
-        text: "Product edit successfully.",
+        text: "Product updated successfully.",
         icon: "success",
       });
     }
@@ -721,6 +793,12 @@ function ProductTable() {
       fullWidth: true,
     },
 
+    muiTableBodyRowProps: ({ row }) => ({
+      sx: {
+        backgroundColor: row.original.status === "new" ? "#eded" : "#ffff",
+      },
+    }),
+
     renderRowActions: ({ row, table }) => (
       <Box sx={{ display: "flex", gap: "1rem" }}>
         <Tooltip title="Edit">
@@ -752,7 +830,48 @@ function ProductTable() {
     console.log(responce.result.data);
 
     if (responce.result.data.length > 0) {
-      setCategoryList(responce.result.data);
+
+      var temp = responce.result.data.map(item => {
+        return { label: item.name, value: item.id }
+      })
+
+      // console.log("setCategoryList ", temp);
+
+      // var allInputFields = InputFields.map((item) => {
+      //   if (item.name === 'cat_id') {
+      //     item.options = temp;
+      //   }
+      //   return item;
+      // })
+
+      setInputFields((pre) => (
+        pre.map((item) => {
+
+          if (item.name === 'cat_id') {
+            item.options = temp;
+          }
+          return item;
+        })
+
+      ));
+
+      setEditFields((pre) => (
+        pre.map((item) => {
+
+          if (item.name === 'cat_id') {
+            item.options = temp;
+          }
+          return item;
+        })
+
+      ));
+
+      // console.log("allInputFields ", allInputFields)
+      // setInputFields(allInputFields)
+
+
+      // setCategoryList(temp);
+      // setCategoryList(responce.result.data);
     }
   };
 
@@ -762,7 +881,38 @@ function ProductTable() {
     console.log(responce.result.data);
 
     if (responce.result.data.length > 0) {
-      setColorList(responce.result.data);
+
+      var temp = responce.result.data.map(item => {
+        return { label: item.name, value: `${item.id}` }
+      })
+
+
+      setInputFields((pre) => (
+        pre.map((item) => {
+
+          if (item.name === 'product_color') {
+            item.options = temp;
+          }
+          return item;
+        })
+
+      ));
+
+
+      setEditFields((pre) => (
+        pre.map((item) => {
+
+          if (item.name === 'product_color') {
+            item.options = temp;
+          }
+          return item;
+        })
+
+      ));
+
+      // console.log("setColorList ", temp)
+      // setColorList(temp);
+      // setColorList(responce.result.data);
     }
   };
 
@@ -775,13 +925,15 @@ function ProductTable() {
 
 
 
+
+
   return (
     <>
       {/* ////////// product add from /////////////// */}
       <div className="product_view-wrap row">
         <div className="full_w-btn col-md-12">
 
-          <Checkbox checked={LockAWB} onChange={() => setLockAWB(!LockAWB)} />
+          {/* <Checkbox checked={LockAWB} onChange={() => setLockAWB(!LockAWB)} /> */}
 
           {!AddProduct && (
             <Button
@@ -839,7 +991,7 @@ function ProductTable() {
               </div> */}
 
               <div className="col-md-2">
-                {inputFields?.map((field) => (
+                {InputFields?.map((field) => (
                   <>
 
                     {(field.type === "text" || field.type === "number") && (
@@ -852,7 +1004,7 @@ function ProductTable() {
                         value={NewRowData[field.name]}
                         onChange={handleInputChange}
                         error={validationErrors?.[field.name]}
-                        sx={{ m: 1, minWidth: 150 }}
+                        sx={field.sx}
                         variant="outlined"
                       />
                     )}
@@ -867,7 +1019,7 @@ function ProductTable() {
                         value={NewRowData[field.name]}
                         onChange={handleTagChange}
                         error={validationErrors?.[field.name]}
-                        sx={{ m: 1, minWidth: 400 }}
+                        sx={field.sx}
                         variant="outlined"
                       />
                     )}
@@ -882,7 +1034,7 @@ function ProductTable() {
                         value={NewRowData[field.name]}
                         onChange={(value) => handleDateChange(field.name, value)}
                         error={validationErrors?.[field.name]}
-                        sx={{ m: 1, minWidth: 150 }}
+                        sx={field.sx}
                         variant="outlined"
                       />
                     )}
@@ -897,12 +1049,12 @@ function ProductTable() {
                         value={NewRowData[field.name]}
                         onChange={(value) => handleDateChange(field.name, value)}
                         error={validationErrors?.[field.name]}
-                        sx={{ m: 1, minWidth: 150 }}
+                        sx={field.sx}
                         variant="outlined"
                       />
                     )}
 
-                    {field.type === "select" && field.name === "product_color" && (
+                    {field.type === "select" && (
                       <CustomInput
                         key={field.name}
                         disabled={DisableRows[field.name]}
@@ -912,13 +1064,14 @@ function ProductTable() {
                         value={NewRowData[field.name]}
                         onChange={handleInputChange}
                         error={validationErrors?.[field.name]}
-                        sx={{ m: 1, minWidth: 150 }}
+                        sx={field.sx}
                         variant="outlined"
-                        options={ColorList}
+                        // options={field.name === "product_color" ? ColorList : field.options}
+                        options={field.options}
                       />
                     )}
 
-                    {field.type === "select" && field.name === "uom" && (
+                    {/* {field.type === "select" && field.name === "uom" && (
                       <CustomInput
                         key={field.name}
                         disabled={DisableRows[field.name]}
@@ -951,27 +1104,54 @@ function ProductTable() {
                           { id: "0", name: "No" },
                         ]}
                       />
-                    )}
+                    )} */}
 
                     {field.type === "multiple_select" &&
-                      field.name === "cat_id" && (
-                        <CustomInput
-                          key={field.name}
-                          disabled={DisableRows[field.name]}
-                          type={field.type}
-                          label={field.label}
-                          name={field.name}
-                          value={NewRowData[field.name]}
-                          onChange={handleMultipleSelectChange(field.name)}
-                          error={validationErrors?.[field.name]}
-                          sx={{ m: 1, minWidth: 150 }}
-                          variant="outlined"
-                          options={CategoryList}
-                        />
+                      (<CustomInput
+                        key={field.name}
+                        disabled={DisableRows[field.name]}
+                        type={field.type}
+                        label={field.label}
+                        name={field.name}
+                        value={NewRowData[field.name]}
+                        onChange={handleMultipleSelectChange(field.name)}
+                        error={validationErrors?.[field.name]}
+                        sx={field.sx}
+                        variant="outlined"
+                        // options={field.name === "cat_id" ? CategoryList : field.options}
+                        options={field.options}
+                      />
                       )}
 
                   </>
                 ))}
+
+
+                {NewRowData.pre_order === '1' && (
+                  <>
+                    <CustomInput
+                      type="date"
+                      label="Future Start Date"
+                      name="future_start_date"
+                      value={NewRowData.future_start_date}
+                      onChange={(value) => handleDateChange('future_start_date', value)}
+                      error={validationErrors?.future_start_date}
+                      sx={{ m: 1, minWidth: 100 }}
+                      variant="outlined"
+                    />
+
+                    <CustomInput
+                      type="date"
+                      label="Future Expire Date"
+                      name="future_expire_date"
+                      value={NewRowData.future_expire_date}
+                      onChange={(value) => handleDateChange('future_expire_date', value)}
+                      error={validationErrors?.future_expire_date}
+                      sx={{ m: 1, maxWidth: 218 }}
+                      variant="outlined"
+                    />
+                  </>
+                )}
 
               </div>
 
@@ -1129,7 +1309,7 @@ function ProductTable() {
                 />
               )}
 
-              {field.type === "select" && field.name === "product_color" && (
+              {field.type === "select" && (
                 <CustomInput
                   key={field.name}
                   disabled={DisableRows[field.name]}
@@ -1141,65 +1321,12 @@ function ProductTable() {
                   error={validationErrors?.[field.name]}
                   sx={{ m: 1, minWidth: "100%" }}
                   variant="outlined"
-                  options={ColorList}
+                  options={field.options}
                 />
               )}
 
-              {field.type === "select" && field.name === "uom" && (
-                <CustomInput
-                  key={field.name}
-                  disabled={DisableRows[field.name]}
-                  type={field.type}
-                  label={field.label}
-                  name={field.name}
-                  value={NewRowData[field.name]}
-                  onChange={handleInputChange}
-                  error={validationErrors?.[field.name]}
-                  sx={{ m: 1, minWidth: "100%" }}
-                  variant="outlined"
-                  options={[{ id: "ST", name: "ST" }]}
-                />
-              )}
 
-              {field.type === "select" && field.name === "feature_status" && (
-                <CustomInput
-                  key={field.name}
-                  disabled={DisableRows[field.name]}
-                  type={field.type}
-                  label={field.label}
-                  name={field.name}
-                  value={NewRowData[field.name]}
-                  onChange={handleInputChange}
-                  error={validationErrors?.[field.name]}
-                  sx={{ m: 1, minWidth: "100%" }}
-                  variant="outlined"
-                  options={[
-                    { id: "1", name: "Yes" },
-                    { id: "0", name: "No" },
-                  ]}
-                />
-              )}
-
-              {field.type === "select" && field.name === "shipping_model" && (
-                <CustomInput
-                  key={field.name}
-                  disabled={DisableRows[field.name]}
-                  type={field.type}
-                  label={field.label}
-                  name={field.name}
-                  value={NewRowData[field.name]}
-                  onChange={handleInputChange}
-                  error={validationErrors?.[field.name]}
-                  sx={{ m: 1, minWidth: "100%" }}
-                  variant="outlined"
-                  options={[
-                    { id: "landed", name: "Landed" },
-                    { id: "fob", name: "Fob" },
-                  ]}
-                />
-              )}
-
-              {field.type === "multiple_select" && field.name === "cat_id" && (
+              {field.type === "multiple_select" && (
                 <CustomInput
                   key={field.name}
                   disabled={DisableRows[field.name]}
@@ -1211,11 +1338,40 @@ function ProductTable() {
                   error={validationErrors?.[field.name]}
                   sx={{ m: 1, minWidth: "100%" }}
                   variant="outlined"
-                  options={CategoryList}
+                  options={field.options}
                 />
               )}
+
+
             </>
           ))}
+
+
+          {NewRowData.pre_order === '1' && (
+            <>
+              <CustomInput
+                type="date"
+                label="Future Start Date"
+                name="future_start_date"
+                value={NewRowData.future_start_date}
+                onChange={(value) => handleDateChange('future_start_date', value)}
+                error={validationErrors?.future_start_date}
+                sx={{ m: 1, minWidth: 150 }}
+                variant="outlined"
+              />
+
+              <CustomInput
+                type="date"
+                label="Future Expire Date"
+                name="future_expire_date"
+                value={NewRowData.future_expire_date}
+                onChange={(value) => handleDateChange('future_expire_date', value)}
+                error={validationErrors?.future_expire_date}
+                sx={{ m: 1, minWidth: 150 }}
+                variant="outlined"
+              />
+            </>
+          )}
 
         </DialogContent>
         <DialogActions>

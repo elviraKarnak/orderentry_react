@@ -35,6 +35,8 @@ import ProductEntry from './components/ProductEntry';
 
 function SatagingInventory() {
 
+  const [rowSelection, setRowSelection] = useState({});
+
   // const queryClient = new Q
 
 
@@ -60,6 +62,7 @@ function SatagingInventory() {
     isLoading: stagingInventoryIsLoading,
     refetch: stagingInventoryRefetch,
   } = UsefetchStagingInventoryList();
+
 
 
 
@@ -146,7 +149,8 @@ function SatagingInventory() {
     enableColumnPinning: true,
     enableFacetedValues: true,
     enableRowActions: false,
-    enableRowSelection: true,
+    getRowId: (row) => row.id,
+    enableRowSelection: (row) => (row.original.status !== "transferred"),
     initialState: {
       showColumnFilters: true,
       showGlobalFilter: true,
@@ -171,18 +175,43 @@ function SatagingInventory() {
       isLoading: stagingInventoryIsLoading,
       showAlertBanner: stagingInventoryisError,
       showProgressBars: stagingInventoryIsFetching,
+      rowSelection: rowSelection
     },
     initialState: {
       columnVisibility: {
         id: false, // Hide the 'id' column initially
       },
     },
+
+    onRowSelectionChange: (newSelection) => {
+      setRowSelection(newSelection);
+    },
+
+    // muiTableBodyRowProps: ({ row }) => ({
+    //   sx: {
+    //     pointerEvents: row.original.status === "transferred" ? "none" : "auto",
+    //     opacity: row.original.status === "transferred" ? 0.5 : 1,
+    //   },
+    // }),
+
+    muiTableBodyCellProps: ({ cell, row }) => ({
+      ...(cell.column.id === "mrt-row-select" &&
+        row.original.status === "transferred" && {
+        onClick: (e) => e.stopPropagation(),
+      }),
+    }),
+
     renderDetailPanel: ({ row }) => (
       <SatagingInventoryItemDetails row={row} stagingInventoryRefetch={stagingInventoryRefetch} />
     ),
+
     renderTopToolbar: ({ table }) => {
 
       const handleStatus = async (status) => {
+
+
+        console.log("rowSelection: ", rowSelection)
+
 
         var temp_id_array = [];
         table.getSelectedRowModel().flatRows.map((row) => {
@@ -213,7 +242,7 @@ function SatagingInventory() {
         }
 
 
-
+        setRowSelection({});
         stagingInventoryRefetch();
 
       };
@@ -229,6 +258,8 @@ function SatagingInventory() {
       //     alert('contact ' + row.getValue('name'));
       //   });
       // };
+
+   
 
       return (
         <Box
@@ -277,6 +308,8 @@ function SatagingInventory() {
       );
 
     }
+
+
   });
 
 

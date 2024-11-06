@@ -1,6 +1,6 @@
 import moment from "moment";
 import dayjs from "dayjs";
-import { boxTypeOptions } from "../../../utils/Constant";
+import { boxTypeOptions } from "../../utils/Constant";
 
 export const newRowData = {
   awb: '',
@@ -32,7 +32,7 @@ export const newRowData = {
   shop_by_branch: '',
   future_start_date: null, // if pre_order is yes then future_start_date is required
   future_expire_date: null, // if pre_order is yes then future_expire_date is required
-  
+
 
   cat_id: [],
   product_color: '',
@@ -87,24 +87,24 @@ export const disableRows = {
 };
 
 export const inputFields = [
-  // {label: 'AWB', name: 'awb', type: 'text'},
-  { label: 'Vendor Name', name: 'vendor_name', type: 'text' },
-  { label: 'Farm Invoice#', name: 'farm_invoice', type: 'number' },
-  { label: 'Date Received', name: 'received_date', type: 'date' },
-  { label: 'Product Name', name: 'product_name', type: 'text' },
-  // {label: 'PO#', name: 'po', type: 'number'},
-  { label: 'SKU', name: 'sku', type: 'number' },
+  // {label: 'AWB', name: 'awb', type: 'text',sx:{ m: 1, minWidth: 150 }},
+  { label: 'Product Name', name: 'product_name', type: 'text', sx: { m: 1, minWidth: 410 } },
+  { label: 'Vendor Name', name: 'vendor_name', type: 'text', sx: { m: 1, minWidth: 200 } },
+  { label: 'Farm Invoice#', name: 'farm_invoice', type: 'number', sx: { m: 1, minWidth: 200 } },
+  { label: 'Date Received', name: 'received_date', type: 'date', sx: { m: 1, minWidth: 200 } },
+  // {label: 'PO#', name: 'po', type: 'number',sx:{ m: 1, minWidth: 150 }},
+  { label: 'SKU', name: 'sku', type: 'number', sx: { m: 1, minWidth: 200 } },
 
-  { label: 'BOXES', name: 'boxes', type: 'number' },
-  { label: 'Box Type', name: 'boxtype', type: 'select', options: boxTypeOptions },
-  { label: 'Units/Box', name: 'unit_per_box', type: 'number' },
-  { label: 'Units/Bunch', name: 'unit_per_bunch', type: 'number' },
-  { label: 'Units/Cost', name: 'cost_per_unit', type: 'number' },
-  { label: 'Sale Price', name: 'sale_price', type: 'number' },
-  // { label: 'SO#', name: 'so', type: 'number' },
+  { label: 'BOXES', name: 'boxes', type: 'number', sx: { m: 1, minWidth: 200 } },
+  { label: 'Box Type', name: 'boxtype', type: 'select', options: boxTypeOptions, sx: { m: 1, minWidth: 174 } },
+  { label: 'Units/Box', name: 'unit_per_box', type: 'number', sx: { m: 1, minWidth: 200 } },
+  { label: 'Units/Bunch', name: 'unit_per_bunch', type: 'number', sx: { m: 1, minWidth: 200 } },
+  { label: 'Units/Cost', name: 'cost_per_unit', type: 'number', sx: { m: 1, minWidth: 255 } },
+  { label: 'Sale Price', name: 'sale_price', type: 'number', sx: { m: 1, minWidth: 200 } },
+  // { label: 'SO#', name: 'so', type: 'number',sx:{ m: 1, minWidth: 200 } },
 
-  { label: 'Category', name: 'cat_id', type: 'multiple_select', options: [] },
-  { label: 'Color', name: 'product_color', type: 'select', options: [] },
+  { label: 'Category', name: 'cat_id', type: 'multiple_select', options: [], sx: { m: 1, minWidth: 220 } },
+  { label: 'Color', name: 'product_color', type: 'select', options: [], sx: { m: 1, minWidth: 170 } },
 
 
   {
@@ -112,7 +112,8 @@ export const inputFields = [
       { label: '', value: '' },
       { label: 'Yes', value: '1' },
       { label: 'No', value: '0' },
-    ]
+    ],
+    sx: { m: 1, minWidth: 220 }
   },
 
   {
@@ -120,11 +121,12 @@ export const inputFields = [
       { label: '', value: '' },
       { label: 'Yes', value: '1' },
       { label: 'No', value: '0' },
-    ]
+    ],
+    sx: { m: 1, minWidth: 220 }
   },
 
-  // { label: 'Publish Start Date', name: 'feature_1', type: 'date' },
-  // { label: 'Publish Expire Date', name: 'feature_2', type: 'date' },
+  // { label: 'Publish Start Date', name: 'feature_1', type: 'date',sx:{ m: 1, minWidth: 150 } },
+  // { label: 'Publish Expire Date', name: 'feature_2', type: 'date',sx:{ m: 1, minWidth: 150 } },
 ];
 
 export const editFields = [
@@ -141,7 +143,7 @@ export const editFields = [
   { label: 'SKU', name: 'sku', type: 'number' },
 
   { label: 'BOXES', name: 'boxes', type: 'number' },
-  { label: 'Box Type', name: 'boxtype', type: 'select', options: boxTypeOptions},
+  { label: 'Box Type', name: 'boxtype', type: 'select', options: boxTypeOptions },
   { label: 'Units/Box', name: 'unit_per_box', type: 'number' },
   { label: 'Units/Bunch', name: 'unit_per_bunch', type: 'number' },
   { label: 'Units/Cost', name: 'cost_per_unit', type: 'number' },
@@ -178,7 +180,7 @@ export const editFields = [
     ]
   },
 
-  
+
 
   // //////////// margin //////////////////
   { label: 'Margin Manager', type: 'label_p' },
