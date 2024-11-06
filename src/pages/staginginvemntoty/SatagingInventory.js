@@ -182,7 +182,7 @@ function SatagingInventory() {
     ),
     renderTopToolbar: ({ table }) => {
 
-      const handleStatus = async(status) => {
+      const handleStatus = async (status) => {
 
         var temp_id_array = [];
         table.getSelectedRowModel().flatRows.map((row) => {
@@ -191,12 +191,28 @@ function SatagingInventory() {
         console.log(temp_id_array)
         // alert(status)
 
-        const response=await SatagingInventoryItemBlukStatusChange({
+        const response = await SatagingInventoryItemBlukStatusChange({
           "item_ids": temp_id_array,
           "status": status
         });
 
         console.log(response);
+
+        if (response.result.status) {
+          Swal.fire({
+            text: "Status Change successfully.",
+            icon: "success",
+          });
+        } else {
+
+          Swal.fire({
+            text: response.result.status.msg,
+            icon: "error",
+          });
+
+        }
+
+
 
         stagingInventoryRefetch();
 

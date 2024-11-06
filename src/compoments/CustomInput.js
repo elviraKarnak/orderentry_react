@@ -66,9 +66,10 @@ const CustomInput = ({
       return (
         <>
           <FormControl sx={sx} margin="normal">
-            <InputLabel>{label}</InputLabel>
+            <InputLabel id={`${name}-label`}>{label}</InputLabel>
             <Select
               disabled={disabled}
+              label={label}
               labelId={`${name}-label`}
               value={value}
               name={name}
@@ -91,9 +92,10 @@ const CustomInput = ({
       return (
         <>
           <FormControl sx={sx} margin="normal">
-            <InputLabel>{label}</InputLabel>
+            <InputLabel id={`${name}-label`}>{label}</InputLabel>
             <Select
               disabled={disabled}
+              label={label}
               labelId={`${name}-label`}
               value={value}
               name={name}

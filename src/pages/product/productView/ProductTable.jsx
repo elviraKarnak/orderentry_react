@@ -795,7 +795,7 @@ function ProductTable() {
 
     muiTableBodyRowProps: ({ row }) => ({
       sx: {
-        backgroundColor: row.original.status === "new" ? "lightblue" : (row.original.status === "transferred" ? "lightgreen" : "white"),
+        backgroundColor: row.original.status === "new" ? "#eded" : "#ffff",
       },
     }),
 
