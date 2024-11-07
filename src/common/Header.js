@@ -1,4 +1,4 @@
-import React,{useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { styled, useTheme } from '@mui/material/styles';
 import { useNavigate } from 'react-router-dom';
@@ -49,9 +49,10 @@ const DrawerHeader = styled('div')(({ theme }) => ({
   justifyContent: 'flex-end',
 }));
 
- function Header({title}) {
+function Header({ title }) {
   const theme = useTheme();
   const [open, setOpen] = useState(false);
+  const drawerRef = useRef(null);
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -63,68 +64,83 @@ const DrawerHeader = styled('div')(({ theme }) => ({
 
   const navigate = useNavigate();
 
-    const handleLogout = () => {
-        // Clear session storage
-        sessionStorage.clear();
-        // Redirect to the login screen
-        // navigate('/');
-        window.location.replace('/');
-        
+  const handleLogout = () => {
+    // Clear session storage
+    sessionStorage.clear();
+    // Redirect to the login screen
+    // navigate('/');
+    window.location.replace('/');
+
+  };
+
+  const location = useLocation();
+
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (drawerRef.current && !drawerRef.current.contains(event.target)) {
+        setOpen(false);
+      }
     };
 
-    const location = useLocation();
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   return (
     <Box sx={{ display: 'flex' }}>
       <AppBar className="fmi_ordersystem_header" position="relative" color="transparent" open={open}>
         <Toolbar>
           <div className="menue_box">
-          <IconButton
+            <IconButton
               color="inherit"
               aria-label="open drawer"
               onClick={handleDrawerOpen}
               edge="rounded"
-              
+
               sx={{ mr: 2, ...(open && { display: 'none' }) }}
             >
-              <MenuIcon className='menu_icon'/>
+              <MenuIcon className='menu_icon' />
             </IconButton>
             <Typography variant="h6" noWrap component="div">
               Menu
             </Typography>
           </div>
-          {(location.pathname === '/' ||
-           location.pathname === '/order-entry'||
-           location.pathname === '/order-list' ||
-           location.pathname === '/order-view' ||
-           location.pathname === '/buyer-dashbord'||
-          location.pathname === '/order-details'
-           
-            )&& (
-            <>
-              <div className="menuitem">
-                <GridViewSharpIcon className='menu_icon'/>
-                <Typography variant="h6" noWrap component="div">
-                <Link to="/order-view">Order View</Link>
-                 </Typography>
-              </div>
-              <div className="menuitem">
-              <FormatListBulletedSharpIcon className='menu_icon'/>
-              <Typography variant="h6" noWrap component="div">
-              <Link to="/buyer-dashbord">Order List</Link>
-              </Typography>
-            </div>
-            </>
-          )}
-  
+          
+          {/* {(location.pathname === '/' ||
+            location.pathname === '/order-entry' ||
+            location.pathname === '/order-list' ||
+            location.pathname === '/buyer-dashboard' ||
+            location.pathname === '/order-details'
+
+          ) && (
+              <>
+                <div className="menuitem">
+                  <GridViewSharpIcon className='menu_icon' />
+                  <Typography variant="h6" noWrap component="div">
+                    <Link to="/">Order View</Link>
+                  </Typography>
+                </div>
+                <div className="menuitem">
+                  <FormatListBulletedSharpIcon className='menu_icon' />
+                  <Typography variant="h6" noWrap component="div">
+                    <Link to="/buyer-dashboard">Order List</Link>
+                  </Typography>
+                </div>
+              </>
+            )} */}
+
         </Toolbar>
         <div className="d-flex justify-content-center w-100">
-        <Typography className="fmi_farms_pagetitle title" variant="h3" noWrap component="div">{title}</Typography>
-       </div>
-       
+          <Typography className="fmi_farms_pagetitle title" variant="h3" noWrap component="div">{title}</Typography>
+        </div>
+
       </AppBar>
-      
+
       <Drawer
+        ref={drawerRef}
         sx={{
           width: drawerWidth,
           flexShrink: 0,
@@ -148,19 +164,19 @@ const DrawerHeader = styled('div')(({ theme }) => ({
           {menueDataAdmin.map((item, index) => (
             <ListItem key={index} disablePadding>
               <ListItemButton>
-              <Link to={item.path}>{item.menuName}</Link>
+                <Link to={item.path}>{item.menuName}</Link>
               </ListItemButton>
             </ListItem>
           ))}
           <ListItem disablePadding>
-              <ListItemButton>
+            <ListItemButton>
               <Link onClick={handleLogout}>Logout</Link>
-              </ListItemButton>
-            </ListItem>
+            </ListItemButton>
+          </ListItem>
         </List>
       </Drawer>
     </Box>
   );
 }
 
-export default Header
+export default Header;
