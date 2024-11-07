@@ -18,6 +18,9 @@ import {
   lighten,
 } from '@mui/material';
 
+import { Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
+
+
 
 
 import { AccountCircle, Send } from '@mui/icons-material';
@@ -31,14 +34,26 @@ import Swal from 'sweetalert2';
 import { SatagingInventoryDefaultStatus } from '../../utils/Constant';
 import SatagingInventoryItemDetails from './components/SatagingInventoryItemDetails';
 import ProductEntry from './components/ProductEntry';
+import { object } from 'yup';
 // import { QueryClient } from 'react-query';
 
 function SatagingInventory() {
 
   const [rowSelection, setRowSelection] = useState({});
+  const [allSelectCheckboxSelect, setAllSelectCheckboxSelect] = useState(false);
+  const [dialogShow, setDialogShow] = useState(false);
+  const [chooseStatus, setChooseStatus] = useState('');
 
   // const queryClient = new Q
 
+  const handleOpenModal = (rowId) => {
+    // setSelectedRowId(rowId);
+    setDialogShow(true);
+  };
+
+  const handleDialogClose = () => {
+    setDialogShow(false);
+  };
 
 
   /**
@@ -64,7 +79,34 @@ function SatagingInventory() {
   } = UsefetchStagingInventoryList();
 
 
+  const rowCheckBoxSelect = (orderListTable, status) => {
 
+    var selectedRowsOnPage = orderListTable.getPaginationRowModel().rows.reduce((acc, row) => {
+      if (row.original.status === status) {
+        acc[row.original.id] = true;
+      }
+      return acc;
+    }, {});
+
+
+    // console.log("selectedRowsOnPage(received) ", selectedRowsOnPage);
+
+    if (Object.keys(selectedRowsOnPage).length === 0) {
+      Swal.fire({
+        icon: "error",
+        title: `No entries found that has status "${status}".`,
+      });
+
+    } else {
+      setRowSelection(selectedRowsOnPage);
+      setAllSelectCheckboxSelect(true);
+
+      setChooseStatus(status);
+
+    }
+
+
+  }
 
 
   const columns = useMemo(
@@ -141,7 +183,7 @@ function SatagingInventory() {
 
 
   const orderListTable = useMaterialReactTable({
-    columns,
+    columns:columns,
     data: stagingInventoryData,
     enableColumnFilterModes: true,
     enableColumnOrdering: true,
@@ -149,8 +191,17 @@ function SatagingInventory() {
     enableColumnPinning: true,
     enableFacetedValues: true,
     enableRowActions: false,
+    enableSelectAll: true,
+    selectAllMode: 'page',
     getRowId: (row) => row.id,
-    enableRowSelection: (row) => (row.original.status !== "transferred"),
+    enableRowSelection: (row) => {
+      if (chooseStatus === '') {
+        return row.original.status !== "transferred";
+      } else {
+        return row.original.status !== "transferred" && row.original.status === chooseStatus;
+      }
+    },
+    // enableBatchRowSelection: true,
     initialState: {
       showColumnFilters: true,
       showGlobalFilter: true,
@@ -175,7 +226,9 @@ function SatagingInventory() {
       isLoading: stagingInventoryIsLoading,
       showAlertBanner: stagingInventoryisError,
       showProgressBars: stagingInventoryIsFetching,
-      rowSelection: rowSelection
+      rowSelection: rowSelection,
+      chooseStatus: chooseStatus,
+      allSelectCheckboxSelect: allSelectCheckboxSelect
     },
     initialState: {
       columnVisibility: {
@@ -183,9 +236,79 @@ function SatagingInventory() {
       },
     },
 
-    onRowSelectionChange: (newSelection) => {
-      setRowSelection(newSelection);
+    onRowSelectionChange: setRowSelection,
+
+    muiSelectCheckboxProps: ({ row }) => ({
+      // Only allow selection if the row status matches the chosen status
+      checked: rowSelection[row.id] || false,
+
+      disabled: ((chooseStatus === "")
+        ? (row.original.status === "transferred")
+        : (row.original.status !== chooseStatus)),
+
+      onChange: (event) => {
+
+        if (event.target.checked) {
+
+          setRowSelection((prevSelection) => ({
+            ...prevSelection,
+            [row.id]: true,
+          }));
+
+          setChooseStatus(row.original.status);
+
+        } else {
+
+          setRowSelection((prevSelection) => {
+            const updatedSelection = { ...prevSelection };
+            delete updatedSelection[row.id];
+            return updatedSelection;
+          });
+
+        }
+      },
+    }),
+
+    muiSelectAllCheckboxProps: {
+      checked: allSelectCheckboxSelect,
+      onChange: (event) => {
+        if (event.target.checked) {
+          // console.log("Select All checked", event.target.checked);
+
+          ///////////////////////////////////////
+          Swal.fire({
+            icon: "question",
+            title: "Please click Pending or Received button to select all the Pending or Received entries.",
+            showDenyButton: true,
+            showCancelButton: true,
+            confirmButtonText: "Pending",
+            denyButtonText: "Received"
+          }).then((result) => {
+            /* received result */
+            if (result.isConfirmed) {
+
+              rowCheckBoxSelect(orderListTable, "pending");
+
+            }
+            /* transferred result */
+            else if (result.isDenied) {
+
+              rowCheckBoxSelect(orderListTable, "received");
+
+            }
+          });
+          /////////////////////////////////////////
+
+
+        } else {
+          console.log("Select All unchecked", event.target.checked);
+          setRowSelection({});
+          setAllSelectCheckboxSelect(false);
+          setChooseStatus('');
+        }
+      },
     },
+
 
     // muiTableBodyRowProps: ({ row }) => ({
     //   sx: {
@@ -204,6 +327,7 @@ function SatagingInventory() {
     renderDetailPanel: ({ row }) => (
       <SatagingInventoryItemDetails row={row} stagingInventoryRefetch={stagingInventoryRefetch} />
     ),
+
 
     renderTopToolbar: ({ table }) => {
 
@@ -247,19 +371,6 @@ function SatagingInventory() {
 
       };
 
-      // const handleActivate = () => {
-      //   table.getSelectedRowModel().flatRows.map((row) => {
-      //     alert('activating ' + row.getValue('name'));
-      //   });
-      // };
-
-      // const handleContact = () => {
-      //   table.getSelectedRowModel().flatRows.map((row) => {
-      //     alert('contact ' + row.getValue('name'));
-      //   });
-      // };
-
-   
 
       return (
         <Box
@@ -278,30 +389,25 @@ function SatagingInventory() {
           </Box>
           <Box>
             <Box sx={{ display: 'flex', gap: '0.5rem' }}>
-              <Button
-                color="error"
-                disabled={!table.getIsSomeRowsSelected()}
-                onClick={() => handleStatus('received')}
-                variant="contained"
-              >
-                Received
-              </Button>
-              <Button
-                color="success"
-                disabled={!table.getIsSomeRowsSelected()}
-                onClick={() => handleStatus('transferred')}
-                variant="contained"
-              >
-                Transfered
-              </Button>
-              {/* <Button
-                color="info"
-                disabled={!table.getIsSomeRowsSelected()}
-                onClick={handleContact}
-                variant="contained"
-              >
-                Contact
-              </Button> */}
+
+              {chooseStatus === 'pending' &&
+                <Button
+                  color="error"
+                  onClick={() => handleStatus('received')}
+                  variant="contained"
+                >
+                  Received
+                </Button>}
+
+              {chooseStatus === 'received' &&
+                <Button
+                  color="success"
+                  onClick={() => handleStatus('transferred')}
+                  variant="contained"
+                >
+                  Transferred
+                </Button>}
+
             </Box>
           </Box>
         </Box>
@@ -313,7 +419,26 @@ function SatagingInventory() {
   });
 
 
-  return (
+  useEffect(() => {
+
+    // console.log("rowSelection: ", rowSelection);
+    // console.log("allSelectCheckboxSelect: ", allSelectCheckboxSelect);
+    // console.log("Object.keys(rowSelection).length ",Object.keys(rowSelection).length );
+
+    /** when all rows are unselected, then use this (CLEAR SECTION) button hit */
+    if (Object.keys(rowSelection).length === 0) {
+      setChooseStatus('');
+      setAllSelectCheckboxSelect(false);
+    }
+
+    if (Object.keys(rowSelection).length > 1) {
+      setAllSelectCheckboxSelect(true);
+    }
+
+  }, [rowSelection])
+
+
+  return (<>
     <div className='container'>
       <div className='row'>
 
@@ -338,7 +463,22 @@ function SatagingInventory() {
         </div>
       </div>
     </div>
-  );
+
+    {/* Dialog for Editing Product */}
+    <Dialog open={dialogShow} onClose={handleDialogClose} maxWidth="md" fullWidth>
+      <DialogTitle>Edit Product</DialogTitle>
+      <DialogContent>
+        {/* Render product details or form fields */}
+        hiiii
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={handleDialogClose}>Cancel</Button>
+        <Button variant="contained" color="primary" onClick={handleDialogClose}>
+          Save
+        </Button>
+      </DialogActions>
+    </Dialog>
+  </>);
 }
 
 export default SatagingInventory;
