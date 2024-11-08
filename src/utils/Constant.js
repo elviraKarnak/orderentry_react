@@ -1,11 +1,12 @@
 import { TbLayoutDashboardFilled } from "react-icons/tb";
 import { TfiWrite } from "react-icons/tfi";
 import { LuView } from "react-icons/lu";
-import { CiViewList } from "react-icons/ci";
 import { MdOutlineViewInAr } from "react-icons/md";
 import { MdOutlineInventory2 } from "react-icons/md";
 import { GrUserAdmin } from "react-icons/gr";
-import { CiViewTable } from "react-icons/ci";
+// import { CiViewTable } from "react-icons/ci";
+import { IoListSharp } from "react-icons/io5";
+import { GiNotebook } from "react-icons/gi";
 
 export const menueDataAdmin = [
   {
@@ -26,7 +27,7 @@ export const menueDataAdmin = [
   {
     menuName: "Order List",
     path: "/buyer-dashboard",
-    icon: <CiViewList />,
+    icon: <IoListSharp />,
   },
   {
     menuName: "Product View",
@@ -54,7 +55,7 @@ export const menueDataAdmin = [
   {
     menuName: "Accounting",
     path: "/",
-    icon: <CiViewTable />,
+    icon: <GiNotebook />,
   },
 ];
 
