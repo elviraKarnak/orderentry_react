@@ -91,6 +91,7 @@ function Header({ title }) {
 
   return (
     <Box sx={{ display: 'flex' }}>
+
       <AppBar className="fmi_ordersystem_header" position="relative" color="transparent" open={open}>
         <Toolbar>
           <div className="menue_box">
@@ -175,6 +176,7 @@ function Header({ title }) {
           </ListItem>
         </List>
       </Drawer>
+      
     </Box>
   );
 }
