@@ -23,24 +23,43 @@ import { menueDataAdmin } from "../utils/Constant";
 
 //icon
 import { SlLogout } from "react-icons/sl";
+import { RxCross2 } from "react-icons/rx";
 
 const drawerWidth = 240;
+
+// const AppBar = styled(MuiAppBar, {
+//   shouldForwardProp: (prop) => prop !== "open",
+// })(({ theme, open }) => ({
+//   transition: theme.transitions.create(["margin", "width"], {
+//     easing: theme.transitions.easing.sharp,
+//     duration: theme.transitions.duration.leavingScreen,
+//   }),
+//   ...(open && {
+//     width: `calc(100% - ${drawerWidth}px)`,
+//     marginLeft: `${drawerWidth}px`,
+//     transition: theme.transitions.create(["margin", "width"], {
+//       easing: theme.transitions.easing.easeOut,
+//       duration: theme.transitions.duration.enteringScreen,
+//     }),
+//   }),
+// }));
 
 const AppBar = styled(MuiAppBar, {
   shouldForwardProp: (prop) => prop !== "open",
 })(({ theme, open }) => ({
-  transition: theme.transitions.create(["margin", "width"], {
+  transition: theme.transitions.create(["width"], {
     easing: theme.transitions.easing.sharp,
     duration: theme.transitions.duration.leavingScreen,
   }),
   ...(open && {
-    width: `calc(100% - ${drawerWidth}px)`,
-    marginLeft: `${drawerWidth}px`,
-    transition: theme.transitions.create(["margin", "width"], {
+    width: `calc(100% - ${drawerWidth}px)`, // Keep the app bar width fixed
+    transition: theme.transitions.create(["width"], {
       easing: theme.transitions.easing.easeOut,
       duration: theme.transitions.duration.enteringScreen,
     }),
   }),
+  position: "fixed", // Make the AppBar fixed
+  zIndex: theme.zIndex.drawer + 1, // Ensure it stays above the drawer
 }));
 
 const DrawerHeader = styled("div")(({ theme }) => ({
@@ -109,7 +128,12 @@ function Header({ title }) {
             >
               <MenuIcon className="menu_icon" />
             </IconButton>
-            <Typography variant="h6" noWrap component="div">
+            <Typography
+              variant="h6"
+              noWrap
+              component="div"
+              hidden={open ? true : false}
+            >
               Menu
             </Typography>
           </div>
@@ -143,6 +167,7 @@ function Header({ title }) {
             variant="h3"
             noWrap
             component="div"
+            sx={{ flexGrow: 1, textAlign: "center" }}
           >
             {title}
           </Typography>
@@ -166,11 +191,7 @@ function Header({ title }) {
       >
         <DrawerHeader>
           <IconButton onClick={handleDrawerClose}>
-            {theme.direction === "ltr" ? (
-              <ChevronLeftIcon />
-            ) : (
-              <ChevronRightIcon />
-            )}
+            {theme.direction === "ltr" ? <RxCross2 /> : <ChevronRightIcon />}
           </IconButton>
         </DrawerHeader>
         <Divider />
