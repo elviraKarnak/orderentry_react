@@ -1,52 +1,55 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { styled, useTheme } from '@mui/material/styles';
-import { useNavigate } from 'react-router-dom';
-import Box from '@mui/material/Box';
-import Drawer from '@mui/material/Drawer';
-import MuiAppBar from '@mui/material/AppBar';
-import Toolbar from '@mui/material/Toolbar';
-import List from '@mui/material/List';
-import Typography from '@mui/material/Typography';
-import Divider from '@mui/material/Divider';
-import IconButton from '@mui/material/IconButton';
-import MenuIcon from '@mui/icons-material/Menu';
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import ListItem from '@mui/material/ListItem';
-import ListItemButton from '@mui/material/ListItemButton';
-import GridViewSharpIcon from '@mui/icons-material/GridViewSharp';
-import FormatListBulletedSharpIcon from '@mui/icons-material/FormatListBulletedSharp';
+import React, { useEffect, useRef, useState } from "react";
+import { Link, useLocation } from "react-router-dom";
+import { styled, useTheme } from "@mui/material/styles";
+import { useNavigate } from "react-router-dom";
+import Box from "@mui/material/Box";
+import Drawer from "@mui/material/Drawer";
+import MuiAppBar from "@mui/material/AppBar";
+import Toolbar from "@mui/material/Toolbar";
+import List from "@mui/material/List";
+import Typography from "@mui/material/Typography";
+import Divider from "@mui/material/Divider";
+import IconButton from "@mui/material/IconButton";
+import MenuIcon from "@mui/icons-material/Menu";
+import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
+import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import ListItem from "@mui/material/ListItem";
+import ListItemButton from "@mui/material/ListItemButton";
+import GridViewSharpIcon from "@mui/icons-material/GridViewSharp";
+import FormatListBulletedSharpIcon from "@mui/icons-material/FormatListBulletedSharp";
+import { ListItemIcon } from "@mui/material";
 
-import { menueDataAdmin } from '../utils/Constant';
+import { menueDataAdmin } from "../utils/Constant";
 
+//icon
+import { SlLogout } from "react-icons/sl";
 
 const drawerWidth = 240;
 
 const AppBar = styled(MuiAppBar, {
-  shouldForwardProp: (prop) => prop !== 'open',
+  shouldForwardProp: (prop) => prop !== "open",
 })(({ theme, open }) => ({
-  transition: theme.transitions.create(['margin', 'width'], {
+  transition: theme.transitions.create(["margin", "width"], {
     easing: theme.transitions.easing.sharp,
     duration: theme.transitions.duration.leavingScreen,
   }),
   ...(open && {
     width: `calc(100% - ${drawerWidth}px)`,
     marginLeft: `${drawerWidth}px`,
-    transition: theme.transitions.create(['margin', 'width'], {
+    transition: theme.transitions.create(["margin", "width"], {
       easing: theme.transitions.easing.easeOut,
       duration: theme.transitions.duration.enteringScreen,
     }),
   }),
 }));
 
-const DrawerHeader = styled('div')(({ theme }) => ({
-  display: 'flex',
-  alignItems: 'center',
+const DrawerHeader = styled("div")(({ theme }) => ({
+  display: "flex",
+  alignItems: "center",
   padding: theme.spacing(0, 1),
   // necessary for content to be below app bar
   ...theme.mixins.toolbar,
-  justifyContent: 'flex-end',
+  justifyContent: "flex-end",
 }));
 
 function Header({ title }) {
@@ -69,12 +72,10 @@ function Header({ title }) {
     sessionStorage.clear();
     // Redirect to the login screen
     // navigate('/');
-    window.location.replace('/');
-
+    window.location.replace("/");
   };
 
   const location = useLocation();
-
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -83,16 +84,20 @@ function Header({ title }) {
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
 
   return (
-    <Box sx={{ display: 'flex' }}>
-
-      <AppBar className="fmi_ordersystem_header" position="relative" color="transparent" open={open}>
+    <Box sx={{ display: "flex" }}>
+      <AppBar
+        className="fmi_ordersystem_header"
+        position="relative"
+        color="transparent"
+        open={open}
+      >
         <Toolbar>
           <div className="menue_box">
             <IconButton
@@ -100,16 +105,15 @@ function Header({ title }) {
               aria-label="open drawer"
               onClick={handleDrawerOpen}
               edge="rounded"
-
-              sx={{ mr: 2, ...(open && { display: 'none' }) }}
+              sx={{ mr: 2, ...(open && { display: "none" }) }}
             >
-              <MenuIcon className='menu_icon' />
+              <MenuIcon className="menu_icon" />
             </IconButton>
             <Typography variant="h6" noWrap component="div">
               Menu
             </Typography>
           </div>
-          
+
           {/* {(location.pathname === '/' ||
             location.pathname === '/order-entry' ||
             location.pathname === '/order-list' ||
@@ -132,12 +136,17 @@ function Header({ title }) {
                 </div>
               </>
             )} */}
-
         </Toolbar>
         <div className="d-flex justify-content-center w-100">
-          <Typography className="fmi_farms_pagetitle title" variant="h3" noWrap component="div">{title}</Typography>
+          <Typography
+            className="fmi_farms_pagetitle title"
+            variant="h3"
+            noWrap
+            component="div"
+          >
+            {title}
+          </Typography>
         </div>
-
       </AppBar>
 
       <Drawer
@@ -145,9 +154,9 @@ function Header({ title }) {
         sx={{
           width: drawerWidth,
           flexShrink: 0,
-          '& .MuiDrawer-paper': {
+          "& .MuiDrawer-paper": {
             width: drawerWidth,
-            boxSizing: 'border-box',
+            boxSizing: "border-box",
           },
         }}
         variant="persistent"
@@ -157,26 +166,59 @@ function Header({ title }) {
       >
         <DrawerHeader>
           <IconButton onClick={handleDrawerClose}>
-            {theme.direction === 'ltr' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
+            {theme.direction === "ltr" ? (
+              <ChevronLeftIcon />
+            ) : (
+              <ChevronRightIcon />
+            )}
           </IconButton>
         </DrawerHeader>
         <Divider />
-        <List className='page_navigation sidebar-scroll'>
+        <List className="page_navigation sidebar-scroll">
           {menueDataAdmin.map((item, index) => (
-            <ListItem key={index} disablePadding>
+            <ListItem
+              key={index}
+              disablePadding
+              sx={{
+                padding: 0,
+                margin: 0,
+              }}
+            >
               <ListItemButton>
-                <Link to={item.path}>{item.menuName}</Link>
+                <Link
+                  to={item.path}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    textDecoration: "none",
+                  }}
+                >
+                  {" "}
+                  <ListItemIcon>{item.icon}</ListItemIcon>{" "}
+                  <Typography>{item.menuName}</Typography>
+                </Link>
               </ListItemButton>
             </ListItem>
           ))}
           <ListItem disablePadding>
             <ListItemButton>
-              <Link onClick={handleLogout}>Logout</Link>
+              <Link
+                onClick={handleLogout}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  textDecoration: "none",
+                }}
+              >
+                <ListItemIcon>
+                  <SlLogout />
+                </ListItemIcon>
+                <Typography>Logout</Typography>
+              </Link>
             </ListItemButton>
           </ListItem>
         </List>
       </Drawer>
-      
     </Box>
   );
 }
