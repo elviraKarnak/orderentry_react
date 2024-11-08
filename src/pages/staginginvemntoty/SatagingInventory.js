@@ -282,7 +282,8 @@ function SatagingInventory() {
             showDenyButton: true,
             showCancelButton: true,
             confirmButtonText: "Pending",
-            denyButtonText: "Received"
+            denyButtonText: "Received",
+            denyButtonColor:"#FFA500"
           }).then((result) => {
             /* received result */
             if (result.isConfirmed) {
@@ -392,7 +393,9 @@ function SatagingInventory() {
 
               {chooseStatus === 'pending' &&
                 <Button
-                  color="error"
+                  sx={{
+                    backgroundColor:"#FFA500"
+                  }}
                   onClick={() => handleStatus('received')}
                   variant="contained"
                 >
