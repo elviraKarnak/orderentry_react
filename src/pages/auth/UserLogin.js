@@ -1,153 +1,160 @@
 // components
 import React, { useState } from "react";
+import { useForm, Controller } from "react-hook-form";
 import Container from "@mui/material/Container";
-import Box from "@mui/material/Box";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
-import Grid from "@mui/material/Unstable_Grid2";
+import Grid from "@mui/material/Grid";
 import Button from "@mui/material/Button";
-import FormGroup from "@mui/material/FormGroup";
-import FormControl from "@mui/material/FormControl";
-import InputLabel from "@mui/material/InputLabel";
-import Input from "@mui/material/Input";
-import FormHelperText from "@mui/material/FormHelperText";
 import Typography from "@mui/material/Typography";
+import TextField from "@mui/material/TextField";
+import CircularProgress from "@mui/material/CircularProgress";
 
-// files
-import loginimage from "../../assests/images/login.png";
+
 import logo from "../../assests/images/logo-img.jpeg";
+import loginimage from "../../assests/images/login.png";
 
-// functions
+
 import { fmiOrderSystemAppAppLogin } from "../../utils/fetch";
 
 function UserLogin(props) {
-  const requiredErrorMessage = "Please Fill Out This Feild";
 
-  const [requiredLoginEmail, setrequiredLoginEmail] = useState("hidden");
-  const [requiredLoginPassword, setrequiredLoginPassword] = useState("hidden");
-  const [emailValidatorText, setemailValidatorText] = useState("hidden");
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
 
-  const [loginEmail, setloginEmail] = useState("");
-  const [loginPasswoard, setloginPasswoard] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  //login functions
-  const loginEmaiHandaler = (e) => {
-    setloginEmail(e.target.value);
-    setemailValidatorText("hidden");
-    setrequiredLoginEmail("hidden");
-  };
-  const loginPasswoardHandaler = (e) => {
-    setloginPasswoard(e.target.value);
-    setrequiredLoginPassword("hidden");
-  };
-  // login submit
-  const onLoginFormSubmit = (e) => {
-    const loginEmailPattern = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+  const onSubmit = async (data) => {
+    setLoading(true);
+    const { loginEmail, loginPassword } = data;
 
-    if (loginEmail === "") {
-      setrequiredLoginEmail("visiable");
+    const fetcLoginResponse = await fmiOrderSystemAppAppLogin(
+      loginEmail,
+      loginPassword
+    );
+
+    if (fetcLoginResponse) {
+      props.getLoginResponse(true);
     } else {
-      setrequiredLoginEmail("hidden");
-      if (!loginEmailPattern.test(loginEmail)) {
-        setemailValidatorText("visiable");
-      } else {
-        setemailValidatorText("hidden");
-      }
+      alert("Error: Something went wrong");
     }
-    loginPasswoard === ""
-      ? setrequiredLoginPassword("visiable")
-      : setrequiredLoginPassword("hidden");
-
-    if (
-      loginEmail === "" ||
-      !loginEmailPattern.test(loginEmail) ||
-      loginPasswoard === ""
-    ) {
-      return;
-    }
-    async function getLoginResponse() {
-      const fetcLoginResponse = await fmiOrderSystemAppAppLogin(
-        loginEmail,
-        loginPasswoard
-      );
-      if (fetcLoginResponse) {
-        props.getLoginResponse(true);
-      } else {
-        alert(`Error: Something went wrong`);
-      }
-    }
-    getLoginResponse();
+    setLoading(false);
   };
+
   return (
-    <Container maxWidth="ex">
-      <Card sx={{ display: "flex" }}>
-        <Grid
-          container
-          spacing={0}
-          alignItems="center"
-          justifyContent="center"
-          sx={{ minHeight: "100vh" }}
+
+    <Grid
+      container
+      spacing={0}
+      sx={{
+        minHeight: "100vh",
+        backgroundImage: `url(${loginimage})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
+        backgroundAttachment: "fixed",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        padding: 5,
+        minWidth: "100vw",
+      }}
+    >
+      <Grid item xs={12} sm={8} md={3}>
+        <Card
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            padding: "2rem",
+            boxShadow: 3,
+            borderRadius: 2,
+            textAlign: "center",
+          }}
         >
-          <Grid md={6}>
-            <CardContent className="form_container">
-              <CardMedia component="img" image={logo} alt="FlowerMarketPlace" />
-              <Typography component="h2">Login</Typography>
-              <FormGroup className="logoin-form">
-                <FormControl className="formControl">
-                  <InputLabel htmlFor="tickets">Username</InputLabel>
-                  <Input
-                    id="loginemail"
-                    type="text"
-                    value={loginEmail}
-                    onChange={loginEmaiHandaler}
-                  />
-                  <FormHelperText className={requiredLoginEmail}>
-                    <span className="requiredError">
-                      {requiredErrorMessage}
-                    </span>
-                  </FormHelperText>
-                  <FormHelperText className={emailValidatorText}>
-                    <span className="validationError">Enter Valid Email</span>
-                  </FormHelperText>
-                </FormControl>
-                <br />
-                <FormControl className="formControl">
-                  <InputLabel htmlFor="tickets">Password</InputLabel>
-                  <Input
-                    id="loginpass"
-                    value={loginPasswoard}
-                    type="password"
-                    onChange={loginPasswoardHandaler}
-                  />
-                  <FormHelperText className={requiredLoginPassword}>
-                    <span className="requiredError">
-                      {requiredErrorMessage}
-                    </span>
-                  </FormHelperText>
-                </FormControl>
-              </FormGroup>
-              <br /> <br />
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={onLoginFormSubmit}
-                className="loginlogoutbtn"
-              >
-                LOGIN
-              </Button>
-            </CardContent>
-          </Grid>
-          <Grid md={6}>
-            <CardMedia
-              component="img"
-              image={loginimage}
-              alt="FlowerMarketPlace"
+          <CardMedia
+            component="img"
+            image={logo}
+            alt="Logo"
+            sx={{ maxWidth: 250, maxHeight: 250, marginBottom: 2 }}
+          />
+          <Typography variant="h5" component="h2" gutterBottom>
+            Login
+          </Typography>
+
+          <CardContent sx={{ width: "100%" }}>
+            {/* Username field with validation */}
+            <Controller
+              name="loginEmail"
+              control={control}
+              rules={{
+                required: "Please fill out this field",
+                pattern: {
+                  value: /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
+                  message: "Enter a valid email",
+                },
+              }}
+              render={({ field }) => (
+                <TextField
+                  {...field}
+                  fullWidth
+                  margin="normal"
+                  label="Username"
+                  variant="outlined"
+                  error={!!errors.loginEmail}
+                  helperText={errors.loginEmail ? errors.loginEmail.message : ""}
+                  autoComplete="off"
+                />
+              )}
             />
-          </Grid>
-        </Grid>
-      </Card>
-    </Container>
+
+            {/* Password field with validation */}
+            <Controller
+              name="loginPassword"
+              control={control}
+              rules={{
+                required: "Please fill out this field",
+              }}
+              render={({ field }) => (
+                <TextField
+                  {...field}
+                  fullWidth
+                  margin="normal"
+                  label="Password"
+                  variant="outlined"
+                  type="password"
+                  error={!!errors.loginPassword}
+                  helperText={errors.loginPassword ? errors.loginPassword.message : ""}
+                  autoComplete="off"
+                />
+              )}
+            />
+
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handleSubmit(onSubmit)}
+              fullWidth
+              sx={{ marginTop: 2 }}
+              disabled={loading}
+              startIcon={(loading && <CircularProgress size={24} sx={{ color: "white" }} />)}
+            >
+              LOGIN
+            </Button>
+
+            {loading && (
+              <CircularProgress size={24} sx={{ color: "white" }} />
+            )}
+
+          </CardContent>
+        </Card>
+      </Grid>
+    </Grid>
+
   );
 }
 

@@ -1,11 +1,11 @@
 //Dependencies
 import React from 'react'
-import {BrowserRouter, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import Container from '@mui/material/Container';
 import OderDetails from './pages/oderview/OderDetails';
 import ProductView from './pages/product/ProductView';
 import BuyerOrderList from './pages/buyer/BuyerOrderList';
-import {QueryClient,QueryClientProvider,useQuery} from '@tanstack/react-query';
+import { QueryClient, QueryClientProvider, useQuery } from '@tanstack/react-query';
 
 //css 
 import './assests/css/theme.default.css';
@@ -42,25 +42,22 @@ function App() {
   return (
     // Create react-query client
     <QueryClientProvider client={queryClient}>
-      <Container maxWidth="ex" className='fmi_oder_syetem_main'>
-        <div className='fmi_order_system_wrap'>
-        <Store>
-            <BrowserRouter>
-              <Routes>
-                <Route path='/' element={<Dashboard />} />
-                <Route path='/order-view' element={<Dashboard />} />
-                <Route path='/order-entry' element={<SimpleSearchNew />} />
-                <Route path='/order-details' element={<OderDetails />} />
-                <Route path='/order-list_new' element={<OrderListto />} />
-                <Route path='/product-view' element={<ProductView />} />
-                <Route path='/new-order' element={<RequireAuth><NewOrder /></RequireAuth>} />
-                <Route path='/staging-inventory' element={<SatagingInventory />} />
-                <Route path='/buyer-dashbord' element={<BuyerOrderList />} />
-              </Routes>
-            </BrowserRouter>
-          </Store>
-      </div>
-      </Container>
+      <Store>
+        <BrowserRouter>
+          <Routes>
+            <Route path='/' element={<Dashboard />} >
+              <Route index element={<Dashboard />} />
+              <Route path='order-entry' element={<SimpleSearchNew />} />
+              <Route path='order-details' element={<OderDetails />} />
+              <Route path='order-list_new' element={<OrderListto />} />
+              <Route path='product-view' element={<ProductView />} />
+              <Route path='new-order' element={<RequireAuth><NewOrder /></RequireAuth>} />
+              <Route path='staging-inventory' element={<SatagingInventory />} />
+              <Route path='buyer-dashboard' element={<BuyerOrderList />} />
+            </Route>
+          </Routes>
+        </BrowserRouter>
+      </Store>
     </QueryClientProvider>
   )
 }

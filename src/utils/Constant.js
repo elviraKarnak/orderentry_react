@@ -9,11 +9,11 @@ export const menueDataAdmin = [
   },
   {
     menuName: 'Order View',
-    path: '/order-view',
+    path: '/',
   },
   {
     menuName: 'Order List',
-    path: '/buyer-dashbord',
+    path: '/buyer-dashboard',
   },
   {
     menuName: 'Product View',
