@@ -927,7 +927,7 @@ function NewOrder() {
     if ((DeliveryDate != undefined) || (DeliveryDate != null)) {
       ProductList();
     }
-  }, [ProductDataSearch,DeliveryDate])
+  }, [ProductDataSearch, DeliveryDate])
 
   return (
     <>
@@ -1202,79 +1202,79 @@ function NewOrder() {
 
           <br />
           {/* /////////////////////////// product list //////////////////////////// */}
-          {userState.ProductData.length > 0 && (
-            <div className="order-tabletwo">
-              <table className="table">
-                <thead>
-                  <tr>
-                    <th>Product</th>
-                    <th>Image</th>
-                    <th>Category</th>
-                    <th>Color</th>
-                    <th>Source</th>
-                    <th>Quantity</th>
-                    <th>Cost Price</th>
-                    <th>Sale Price</th>
-                    <th>Total</th>
-                    <th>Margin</th>
-                    <th>Action</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {userState.ProductData.length > 0 &&
-                    userState.ProductData.map((item, index) => (
-                      <>
-                        <tr key={index}>
-                          <td>
-                            {parse(item.product_details.product_name)}
-                          </td>
-                          <td>
-                            <img
-                              src={item.product_details.image_url}
-                              alt=""
-                              style={{ cursor: "pointer" }}
-                              onClick={() =>
-                                setImageShowModalUrl(
-                                  item.product_details.image_url
-                                )
-                              }
-                            />
-                          </td>
-                          <td>{item.product_details.category_string}</td>
-                          <td>{item.product_details.color_string}</td>
-                          <td>{item.product_details.source}</td>
 
-                          <td>
-                            <Form.Select
-                              onChange={(e) =>
-                                quantityListValueset_2(
-                                  index,
-                                  item.temp_product_id,
-                                  e.target.value,
-                                  item.product_details.cost_price,
-                                  item.product_details.cost_price,
-                                  item.product_details.margin_data
-                                )
-                              }
-                              value={item.quantity}
-                            >
-                              {quantityList(
-                                item.product_details.minqty,
-                                item.product_details.stock
-                              )}
-                            </Form.Select>
-                          </td>
+          <div className="order-tabletwo">
+            <table className="table">
+              <thead>
+                <tr>
+                  <th>Product</th>
+                  <th>Image</th>
+                  <th>Category</th>
+                  <th>Color</th>
+                  <th>Source</th>
+                  <th>Quantity</th>
+                  <th>Cost Price</th>
+                  <th>Sale Price</th>
+                  <th>Total</th>
+                  <th>Margin</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {userState.ProductData.length > 0 &&
+                  userState.ProductData.map((item, index) => (
+                    <>
+                      <tr key={index}>
+                        <td>
+                          {parse(item.product_details.product_name)}
+                        </td>
+                        <td>
+                          <img
+                            src={item.product_details.image_url}
+                            alt=""
+                            style={{ cursor: "pointer" }}
+                            onClick={() =>
+                              setImageShowModalUrl(
+                                item.product_details.image_url
+                              )
+                            }
+                          />
+                        </td>
+                        <td>{item.product_details.category_string}</td>
+                        <td>{item.product_details.color_string}</td>
+                        <td>{item.product_details.source}</td>
 
-                          {/*  <td>{item.product_details.fob_price}</td> */}
+                        <td>
+                          <Form.Select
+                            onChange={(e) =>
+                              quantityListValueset_2(
+                                index,
+                                item.temp_product_id,
+                                e.target.value,
+                                item.product_details.cost_price,
+                                item.product_details.cost_price,
+                                item.product_details.margin_data
+                              )
+                            }
+                            value={item.quantity}
+                          >
+                            {quantityList(
+                              item.product_details.minqty,
+                              item.product_details.stock
+                            )}
+                          </Form.Select>
+                        </td>
 
-                          <td>{item.product_details.cost_price}</td>
+                        {/*  <td>{item.product_details.fob_price}</td> */}
 
-                          <td>
-                            {/* {item.product_details.productMeta.sale_price} */}
+                        <td>{item.product_details.cost_price}</td>
 
-                            {item.product_details.real_price}
+                        <td>
+                          {/* {item.product_details.productMeta.sale_price} */}
 
-                            {/* <input
+                          {item.product_details.real_price}
+
+                          {/* <input
                                   type="number"
                                   value={
                                     item.product_details.real_price
@@ -1289,51 +1289,51 @@ function NewOrder() {
                                     )
                                   }
                                 /> */}
-                          </td>
+                        </td>
 
-                          <td>{item.total}</td>
-                          <td>{item.margin}</td>
+                        <td>{item.total}</td>
+                        <td>{item.margin}</td>
 
-                          <td>
-                            {item.status === 'order' ? (
-                              <>
-                                <Button
-                                  onClick={() =>
-                                    NewOrderAdd_2(
-                                      index,
-                                      item.product_details.id,
-                                      item.quantity
-                                    )
-                                  }
-                                  variant={"success"}
-                                >
-                                  Save
-                                </Button>
-                              </>
-                            ) : (
-                              <>
-                                <Button
-                                  onClick={() =>
-                                    NewOrderAdd_2(
-                                      index,
-                                      item.product_details.id,
-                                      item.quantity
-                                    )
-                                  }
-                                  variant="secondary"
-                                >
-                                  Add
-                                </Button>
-                              </>
-                            )}
-                          </td>
-                        </tr>
-                      </>
-                    ))}
-                </tbody>
-              </table>
+                        <td>
+                          {item.status === 'order' ? (
+                            <>
+                              <Button
+                                onClick={() =>
+                                  NewOrderAdd_2(
+                                    index,
+                                    item.product_details.id,
+                                    item.quantity
+                                  )
+                                }
+                                variant={"success"}
+                              >
+                                Save
+                              </Button>
+                            </>
+                          ) : (
+                            <>
+                              <Button
+                                onClick={() =>
+                                  NewOrderAdd_2(
+                                    index,
+                                    item.product_details.id,
+                                    item.quantity
+                                  )
+                                }
+                                variant="secondary"
+                              >
+                                Add
+                              </Button>
+                            </>
+                          )}
+                        </td>
+                      </tr>
+                    </>
+                  ))}
+              </tbody>
+            </table>
 
-              {/* <div className="order-total">
+            {/* <div className="order-total">
                         <p>
                             <span className="subtotal">Subtotal $0.00</span>
                         </p>
@@ -1346,8 +1346,8 @@ function NewOrder() {
                         </p>
                         <p />
                     </div> */}
-            </div>
-          )}
+          </div>
+
         </div>
       </Container>
 

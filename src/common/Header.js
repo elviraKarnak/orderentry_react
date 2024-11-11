@@ -128,14 +128,14 @@ function Header({ title }) {
             >
               <MenuIcon className="menu_icon" />
             </IconButton>
-            <Typography
+            {/* <Typography
               variant="h6"
               noWrap
               component="div"
               hidden={open ? true : false}
             >
               Menu
-            </Typography>
+            </Typography> */}
           </div>
 
           {/* {(location.pathname === '/' ||
