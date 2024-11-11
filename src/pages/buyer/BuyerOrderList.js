@@ -164,7 +164,7 @@ function BuyerOrderList() {
         enableColumnPinning: true,
         enableFacetedValues: true,
         enableRowActions: false,
-        enableRowSelection: true,
+        enableRowSelection: false,
         manualPagination: false,
         initialState: {
             showColumnFilters: true,

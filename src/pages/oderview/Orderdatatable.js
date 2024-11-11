@@ -13,6 +13,7 @@ import Swal from 'sweetalert2'
 import { useNavigate } from 'react-router-dom';
 
 import moment from "moment";
+import { Typography } from '@mui/material';
 
 //nested data is ok, see accessorKeys in ColumnDef below
 // const data = [
@@ -71,7 +72,7 @@ function Orderdatatable() {
         // var status_selected_obj = orderDefaultStatus.filter((item) => item.label === e.target.value);
         // status_selected_obj = status_selected_obj[0];
         console.log(e.target.value);
-      
+
         const payload = {
           "orderId": id,
           "wp_order": "no",
@@ -92,7 +93,7 @@ function Orderdatatable() {
     });
 
   };
-  
+
 
 
   const columns = useMemo(
@@ -116,6 +117,17 @@ function Orderdatatable() {
         accessorKey: 'price',
         header: 'Amount',
         size: 150,
+      },
+      {
+        accessorKey: 'order_from_status',
+        header: 'Order From ',
+        size: 150,
+        Cell: ({ renderedCellValue, row }) => (<>
+          {renderedCellValue === "live" ?
+            <Typography variant="h7" className="text-warning">LIVE</Typography>
+            : <Typography variant="h7" className="text-primary">IN-HOUSE</Typography>
+          }
+        </>)
       },
       {
         accessorKey: 'status',
@@ -174,7 +186,7 @@ function Orderdatatable() {
     enableColumnPinning: true,
     enableFacetedValues: true,
     enableRowActions: false,
-    enableRowSelection: true,
+    enableRowSelection: false,
     manualPagination: false,
     initialState: {
       showColumnFilters: true,
@@ -197,9 +209,9 @@ function Orderdatatable() {
       variant: 'outlined',
     },
     state: {
-			isLoading:isLoading,
+      isLoading: isLoading,
       showProgressBars: isLoading,
-		},
+    },
   });
 
 
@@ -220,7 +232,8 @@ function Orderdatatable() {
       orderNumber: `#${item.order_number}`,
       customerName: item.customer_name,
       price: `$${item.amount}`,
-      status: item.order_status
+      order_from_status: item.order_from_status,
+      status: item.order_status,
     }))
 
 

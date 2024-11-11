@@ -2,6 +2,7 @@ import moment from "moment";
 import dayjs from "dayjs";
 import { boxTypeOptions } from "../../utils/Constant";
 
+
 export const newRowData = {
   awb: '',
   vendor_name: '',
@@ -30,8 +31,8 @@ export const newRowData = {
 
   pre_order: '',
   shop_by_branch: '',
-  future_start_date: null, // if pre_order is yes then future_start_date is required
-  future_expire_date: null, // if pre_order is yes then future_expire_date is required
+  future_start_date: null, // set current date
+  future_expire_date: null, // set current date to 2 years
 
 
   cat_id: [],

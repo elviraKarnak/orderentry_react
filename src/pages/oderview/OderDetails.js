@@ -123,7 +123,7 @@ function OderDetails() {
 			},
 			{
 				accessorKey: 'item_quantity',
-				header: 'OTY',
+				header: 'QTY',
 				// size: 150,
 			},
 			{
@@ -187,7 +187,7 @@ function OderDetails() {
 		enableColumnPinning: true,
 		enableFacetedValues: true,
 		enableRowActions: false,
-		enableRowSelection: true,
+		enableRowSelection: false,
 		manualPagination: false,
 		initialState: {
 			showColumnFilters: true,

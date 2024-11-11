@@ -112,7 +112,21 @@ function ProductTable() {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setNewRowData((prevData) => ({ ...prevData, [name]: value }));
+
+    var temp = {
+      [name]: value
+    };
+
+    if (name === "pre_order" && value === '1') {
+      temp.future_start_date = dayjs(dayjs().format('YYYY-MM-DD'));
+      temp.future_expire_date = dayjs(dayjs().add(2, 'year').format('YYYY-MM-DD'));
+    }
+    else if (name === "pre_order" && value === '0') {
+      temp.future_start_date = null;
+      temp.future_expire_date = null;
+    }
+
+    setNewRowData((prevData) => ({ ...prevData, ...temp }));
   };
 
   const handleDateChange = (name, value) => {
