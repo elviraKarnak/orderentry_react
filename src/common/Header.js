@@ -128,6 +128,7 @@ function Header({ title }) {
             >
               <MenuIcon className="menu_icon" />
             </IconButton>
+
             {/* <Typography
               variant="h6"
               noWrap
@@ -136,30 +137,32 @@ function Header({ title }) {
             >
               Menu
             </Typography> */}
+
+
+            {/* {(location.pathname === '/' ||
+              location.pathname === '/order-entry' ||
+              location.pathname === '/order-list' ||
+              location.pathname === '/buyer-dashboard' ||
+              location.pathname === '/order-details'
+
+            ) && (
+                <>
+                  <div className="menuitem">
+                    <GridViewSharpIcon className='menu_icon' />
+                    <Typography variant="h6" noWrap component="div">
+                      <Link to="/">Order View</Link>
+                    </Typography>
+                  </div>
+                  <div className="menuitem">
+                    <FormatListBulletedSharpIcon className='menu_icon' />
+                    <Typography variant="h6" noWrap component="div">
+                      <Link to="/buyer-dashboard">Order List</Link>
+                    </Typography>
+                  </div>
+                </>
+              )} */}
+              
           </div>
-
-          {/* {(location.pathname === '/' ||
-            location.pathname === '/order-entry' ||
-            location.pathname === '/order-list' ||
-            location.pathname === '/buyer-dashboard' ||
-            location.pathname === '/order-details'
-
-          ) && (
-              <>
-                <div className="menuitem">
-                  <GridViewSharpIcon className='menu_icon' />
-                  <Typography variant="h6" noWrap component="div">
-                    <Link to="/">Order View</Link>
-                  </Typography>
-                </div>
-                <div className="menuitem">
-                  <FormatListBulletedSharpIcon className='menu_icon' />
-                  <Typography variant="h6" noWrap component="div">
-                    <Link to="/buyer-dashboard">Order List</Link>
-                  </Typography>
-                </div>
-              </>
-            )} */}
         </Toolbar>
         <div className="d-flex justify-content-center w-100">
           <Typography
