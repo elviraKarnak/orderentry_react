@@ -34,55 +34,56 @@ function OderDetails() {
 	// const orderDefaultStatus = ['New order', 'Processing', 'Purchased', 'Confirmed', 'Printed', 'Canceled']
 	const orderDefaultStatus = [
 		{ label: "New Order", value: "new_order" },
+		{ label: "Processing", value: "processing" },
 		{ label: "Purchased", value: "purchased" },
 		{ label: "Canceled", value: "canceled" },
 	]
 
 	const orderStatusChange = (id, e) => {
 		// console.log(id, e.target.value);
-	
+
 		// const newData = data.map(item =>
 		//   item.id === id ? { ...item, status: e.target.value } : item
 		// );
 		// setorderData(newData);
-	
-		Swal.fire({
-		  title: "Are you sure?",
-		  text: "You wan't to change order status!",
-		  icon: "warning",
-		  showCancelButton: true,
-		  confirmButtonColor: "#5936eb",
-		  cancelButtonColor: "#d33",
-		  confirmButtonText: "Yes"
-		}).then(async (result) => {
-	
-		  if (result.isConfirmed) {
-			// var status_selected_obj = orderDefaultStatus.filter((item) => item.label === e.target.value);
-			// status_selected_obj = status_selected_obj[0];
-			console.log(e.target.value);
-		  
-			const payload = {
-			  "orderItemId": id,
-			  "status_val": e.target.value
-			};
 
-			// console.log(payload);
-			// return;
-	
-			var response = await fmiOrderSystemAppOrderItemStatusChange(payload);
-	
-			Swal.fire({
-			  text: "Order item status change successfully.",
-			  icon: "success"
-			});
-	
-			getOrderList();
-	
-		  }
-	
+		Swal.fire({
+			title: "Are you sure?",
+			text: "You wan't to change order status!",
+			icon: "warning",
+			showCancelButton: true,
+			confirmButtonColor: "#5936eb",
+			cancelButtonColor: "#d33",
+			confirmButtonText: "Yes"
+		}).then(async (result) => {
+
+			if (result.isConfirmed) {
+				// var status_selected_obj = orderDefaultStatus.filter((item) => item.label === e.target.value);
+				// status_selected_obj = status_selected_obj[0];
+				console.log(e.target.value);
+
+				const payload = {
+					"orderItemId": id,
+					"status_val": e.target.value
+				};
+
+				// console.log(payload);
+				// return;
+
+				var response = await fmiOrderSystemAppOrderItemStatusChange(payload);
+
+				Swal.fire({
+					text: "Order item status change successfully.",
+					icon: "success"
+				});
+
+				getOrderList();
+
+			}
+
 		});
-	
-	  };
+
+	};
 
 	const columns = useMemo(
 		() => [
@@ -161,7 +162,7 @@ function OderDetails() {
 						<Select
 							labelId="demo-simple-select-helper-label"
 							id="demo-simple-select-helper"
-							className={`dropdown ${renderedCellValue !== "new_order" && "prevent_click"} ` + (renderedCellValue.toLowerCase()).replace(/\s/g, '') }
+							className={`dropdown ${renderedCellValue !== "new_order" && "prevent_click"} ` + (renderedCellValue.toLowerCase()).replace(/\s/g, '')}
 							value={renderedCellValue}
 							onChange={e => orderStatusChange(row.original.item_tbl_id, e)}
 						>
@@ -173,7 +174,7 @@ function OderDetails() {
 					</>
 				),
 			},
-			
+
 		],
 		[],);
 
@@ -210,7 +211,7 @@ function OderDetails() {
 			variant: 'outlined',
 		},
 		state: {
-			isLoading:isLoading,
+			isLoading: isLoading,
 			showProgressBars: isLoading,
 		},
 	});
@@ -281,7 +282,7 @@ function OderDetails() {
 
 	return (
 		<>
-			<Header title='Order Details'/>
+			<Header title='Order Details' />
 			<div><Typography variant="h3" className="title">Order Details</Typography></div>
 			<div className="data_table-head">
 				<div className="container-fluid">

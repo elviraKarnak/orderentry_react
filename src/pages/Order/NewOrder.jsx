@@ -171,6 +171,13 @@ function NewOrder() {
 
     // });
 
+    var OrderItemsData = userState.ProductData.filter((item) => item.status === 'order');
+
+    if (OrderItemsData.length === 0) {
+      toast.warning('Please select product at frist');
+      return
+    }
+
     //  =========== modal open ========
     setCheckOutModal(true);
   };

@@ -39,6 +39,7 @@ function BuyerOrderList() {
 
     const orderDefaultStatus = [
         { label: "New Order", value: "new_order" },
+        { label: "Processing", value: "processing" },
         { label: "Purchased", value: "purchased" },
         { label: "Canceled", value: "canceled" },
     ]
@@ -197,7 +198,7 @@ function BuyerOrderList() {
 
         const payload = {
             "customerId": "",
-            "search_status": "",
+            "search_status": "processing,purchased,cancelled",
             "order_from_date": "",
             "order_to_date": "",
             "page": "",

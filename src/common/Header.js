@@ -161,7 +161,7 @@ function Header({ title }) {
                   </div>
                 </>
               )} */}
-              
+
           </div>
         </Toolbar>
         <div className="d-flex justify-content-center w-100">
@@ -208,20 +208,21 @@ function Header({ title }) {
                 margin: 0,
               }}
             >
-              <ListItemButton>
-                <Link
-                  to={item.path}
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    textDecoration: "none",
-                  }}
-                >
+
+              <Link
+                to={item.path}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  textDecoration: "none",
+                }}
+              >
+                <ListItemButton>
                   {" "}
                   <ListItemIcon>{item.icon}</ListItemIcon>{" "}
                   <Typography>{item.menuName}</Typography>
-                </Link>
-              </ListItemButton>
+                </ListItemButton>
+              </Link>
             </ListItem>
           ))}
           <ListItem disablePadding>

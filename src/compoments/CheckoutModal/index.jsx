@@ -18,6 +18,7 @@ import Swal from "sweetalert2";
 import customerService from "../../services/customer.service";
 import Loader from "../../pages/Loader/CommonLoader";
 import { fmiOrderSystemAppOrderAdd } from "../../utils/fetch";
+import { set } from "react-hook-form";
 
 function Index(props) {
   const { userState, dispatch } = useContext(userContext);
@@ -32,6 +33,7 @@ function Index(props) {
   const [payment_type, setPaytemt_type] = useState("");
   const [payment_type_value, setPaytemt_type_value] = useState("");
   const [loader, setLoader] = useState(false);
+  const [awbNumber, setAwbNumber] = useState("");
 
   const billingactive = () => {
     var dataadded = document.getElementsByClassName("dataadded");
@@ -68,6 +70,13 @@ function Index(props) {
 
   const CheckOutConfirm = () => {
 
+    var OrderItemsData = userState.ProductData.filter((item) => item.status === 'order');
+
+    if (OrderItemsData.length === 0) {
+      toast.warning('Please select product at frist');
+      return
+    }
+
     props.setCheckOutModal(false);
     setShippingModal(true);
   };
@@ -100,6 +109,11 @@ function Index(props) {
 
     if (payment_type === "" && payment_type_value === "") {
       toast.warning("Please select payment type!");
+      return;
+    }
+
+    if (awbNumber === "") {
+      toast.warning("Please enter AWB Number!");
       return;
     }
 
@@ -137,10 +151,10 @@ function Index(props) {
     }
 
     var new_payload = {
-      awb: "AWB-9988713",
+      // awb_number: awbNumber,
       customer_id: props.SelectCustomerData.id,
       wp_order_id: "",
-      order_type: "in-house", // in-house or website
+      order_from_status: "in_house", // in_house or live
       packing_charge: "0.00",
       fuel_charge: "0.00",
       order_truckid: 123,
@@ -361,14 +375,14 @@ function Index(props) {
                     ))}
 
                   {/* <tr>
-                                    <td className="company_name">Freedom 50CM</td>
-                                    <td>$0.65</td>
-                                    <td>25 ST</td>
-                                    <td className="amount-col">$34.50</td>
-                                    <td>
-                                        <img src={Delete} alt="" />
-                                    </td>
-                                </tr> */}
+                      <td className="company_name">Freedom 50CM</td>
+                      <td>$0.65</td>
+                      <td>25 ST</td>
+                      <td className="amount-col">$34.50</td>
+                      <td>
+                          <img src={Delete} alt="" />
+                      </td>
+                  </tr> */}
                 </tbody>
               </table>
             </div>
@@ -693,6 +707,10 @@ function Index(props) {
               </div>
               <div className="modal-footer">
                 <div className="order-total">
+                  <p className="mb-3">
+                    <h6>Enter Awb Number</h6>
+                    <input type="text" placeholder="AWB Number" onChange={(e) => setAwbNumber(e.target.value.trim())} />
+                  </p>
                   <p>
                     <span className="subtotal">
                       Subtotal ${userState.TotalPM.total}
