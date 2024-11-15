@@ -55,6 +55,7 @@ function BuyerOrderList() {
 
     const orderDefaultStatus = [
         { label: "New Order", value: "new_order" },
+        { label: "Processing", value: "processing" },
         { label: "Purchased", value: "purchased" },
         { label: "Canceled", value: "canceled" },
     ]
@@ -160,7 +161,7 @@ function BuyerOrderList() {
                 accessorKey: 'order_item_status',
                 header: 'Status',
                 size: 150,
-               
+
                 Cell: ({ renderedCellValue, row }) => (
 
                     <>

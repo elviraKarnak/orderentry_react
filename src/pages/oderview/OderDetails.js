@@ -34,6 +34,7 @@ function OderDetails() {
 	// const orderDefaultStatus = ['New order', 'Processing', 'Purchased', 'Confirmed', 'Printed', 'Canceled']
 	const orderDefaultStatus = [
 		{ label: "New Order", value: "new_order" },
+		{ label: "Processing", value: "processing" },
 		{ label: "Purchased", value: "purchased" },
 		{ label: "Canceled", value: "canceled" },
 	]
@@ -57,7 +58,7 @@ function OderDetails() {
 		}).then(async (result) => {
 
 			if (result.isConfirmed) {
-				
+
 				// var status_selected_obj = orderDefaultStatus.filter((item) => item.label === e.target.value);
 				// status_selected_obj = status_selected_obj[0];
 				// console.log(e.target.value);

@@ -112,10 +112,10 @@ function Index(props) {
       return;
     }
 
-    if (awbNumber === "") {
-      toast.warning("Please enter AWB Number!");
-      return;
-    }
+    // if (awbNumber === "") {
+    //   toast.warning("Please enter AWB Number!");
+    //   return;
+    // }
 
     props.setCheckOutModal(false);
     setShippingModal(false);
@@ -707,10 +707,10 @@ function Index(props) {
               </div>
               <div className="modal-footer">
                 <div className="order-total">
-                  <p className="mb-3">
+                  {/* <p className="mb-3">
                     <h6>Enter Awb Number</h6>
                     <input type="text" placeholder="AWB Number" onChange={(e) => setAwbNumber(e.target.value.trim())} />
-                  </p>
+                  </p> */}
                   <p>
                     <span className="subtotal">
                       Subtotal ${userState.TotalPM.total}
