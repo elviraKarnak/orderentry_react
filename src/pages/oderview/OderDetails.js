@@ -13,7 +13,8 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2'
 import { Typography } from '@mui/material';
 
-
+const disabledStatus = ["purchased", "canceled"];
+const notSelectedStatus = ["new_order", "processing"];
 
 function OderDetails() {
 
@@ -163,12 +164,12 @@ function OderDetails() {
 						<Select
 							labelId="demo-simple-select-helper-label"
 							id="demo-simple-select-helper"
-							className={`dropdown ${(['new_oreder'].includes(row.original.order_item_status)) && "prevent_click"} ` + (row.original.order_item_status?.toLowerCase())?.replace(/\s/g, '')}
+							className={`dropdown ${(disabledStatus.includes(row.original.order_item_status)) && "prevent_click"} ` + (row.original.order_item_status?.toLowerCase())?.replace(/\s/g, '')}
 							value={row.original.order_item_status}
 							onChange={e => orderStatusChange(row.original.item_tbl_id, e.target.value)}
 						>
 							{orderDefaultStatus.map((v, i) => (
-								<MenuItem key={i} value={v.value}>{v.label}</MenuItem>
+								<MenuItem key={i} value={v.value} disabled={notSelectedStatus.includes(v.value)}  >{v.label}</MenuItem>
 							))}
 
 						</Select>

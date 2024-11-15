@@ -26,8 +26,11 @@ import {
     Typography,
     lighten,
 } from '@mui/material';
+import { validateRequired } from './validation';
+import { orderItemUpdate } from './hooks';
 
 const disabledStatus = ["purchased", "canceled"];
+const notSelectedStatus = ["new_order", "processing"];
 
 
 function BuyerOrderList() {
@@ -45,6 +48,9 @@ function BuyerOrderList() {
     const [data, setorderData] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [rowCount, setRowCount] = useState(0);
+
+    const [validationErrors, setValidationErrors] = useState({});
+    const [editedUsers, setEditedUsers] = useState({});
 
     //table state
     const [pagination, setPagination] = useState({
@@ -108,59 +114,120 @@ function BuyerOrderList() {
             {
                 accessorKey: 'order_date', //access nested data with dot notation
                 header: 'Shipping Date',
+                enableEditing:false
             },
             {
                 accessorKey: 'order_number',
                 header: 'SO#',
+                enableEditing:false
             },
             {
                 accessorKey: 'company',
                 header: 'Company',
+                enableEditing:false
             },
             {
                 accessorKey: 'productTitle',
                 header: 'Product Description',
+                muiEditTextFieldProps: ({ cell, row }) => ({
+                    type: 'text',
+                    required: true,
+                    onBlur: (event) => {
+                        // const validationError = !validateRequired(event.currentTarget.value)
+                        //     ? 'Required'
+                        //     : undefined;
+                        // setValidationErrors({
+                        //     ...validationErrors,
+                        //     [cell.id]: validationError,
+                        // });
+                        setEditedUsers({ ...editedUsers, [row.id]: row.original });
+                    },
+                }),
             },
             {
                 accessorKey: 'category',
                 header: 'Category',
+                enableEditing:false
             },
             {
                 accessorKey: 'color',
                 header: 'Color',
+                enableEditing:false
             },
             {
                 accessorKey: 'sale_price',
                 header: 'Sale Price',
+                enableEditing:false
             },
             {
                 accessorKey: 'item_quantity',
                 header: 'QTY',
+                enableEditing:false
             },
             {
                 accessorKey: 'uom',
                 header: 'UOM',
+                enableEditing:false
             },
             {
                 accessorKey: 'total_price',
                 header: 'Total',
+                enableEditing:false
             },
             {
                 accessorKey: 'farm',
                 header: 'Farm',
+                muiEditTextFieldProps: ({ cell, row }) => ({
+                    type: 'text',
+                    required: true,
+                    onBlur: async(event) => {
+                        // const validationError = !validateRequired(event.currentTarget.value)
+                        //     ? 'Required'
+                        //     : undefined;
+                        // setValidationErrors({
+                        //     ...validationErrors,
+                        //     [cell.id]: validationError,
+                        // });
+
+                        // await orderItemUpdate({
+                        //     order_item_id:row.id,
+                        //     farm: event.currentTarget.value,
+                        // });
+
+                        // getOrderList();
+
+                        // setEditedUsers({ ...editedUsers, [row.id]: row.original });
+                    },
+                }),
             },
             {
                 accessorKey: 'cost_price',
                 header: 'Cost',
+                muiEditTextFieldProps: ({ cell, row }) => ({
+                    type: 'text',
+                    required: true,
+                    onBlur: (event) => {
+                        // const validationError = !validateRequired(event.currentTarget.value)
+                        //     ? 'Required'
+                        //     : undefined;
+                        // setValidationErrors({
+                        //     ...validationErrors,
+                        //     [cell.id]: validationError,
+                        // });
+                        setEditedUsers({ ...editedUsers, [row.id]: row.original });
+                    },
+                }),
             },
             {
                 accessorKey: 'margin',
                 header: 'Margin',
+                enableEditing:false
             },
             {
                 accessorKey: 'order_item_status',
                 header: 'Status',
                 size: 150,
+                enableEditing:false,
 
                 Cell: ({ renderedCellValue, row }) => (
 
@@ -176,7 +243,7 @@ function BuyerOrderList() {
                             onChange={e => orderStatusChange(row.original.item_tbl_id, e.target.value)}
                         >
                             {orderDefaultStatus.map((v, i) => (
-                                <MenuItem key={i} value={v.value}>{v.label}</MenuItem>
+                                <MenuItem key={i} value={v.value} disabled={notSelectedStatus.includes(v.value)} >{v.label}</MenuItem>
                             ))}
                         </Select>
                     </>
@@ -187,6 +254,8 @@ function BuyerOrderList() {
     const table = useMaterialReactTable({
         columns,
         data,
+        editDisplayMode: 'table',
+        enableEditing: true,
         enableColumnFilterModes: true,
         enableColumnOrdering: true,
         enableColumnPinning: true,
@@ -379,6 +448,11 @@ function BuyerOrderList() {
         getOrderList();
         // console.log(orderData)
     }, []);
+
+    useEffect(() => {
+        console.log("editedUsers: ", editedUsers);
+        console.log("validationErrors: ", validationErrors);
+    }, [editedUsers, validationErrors])
 
 
     return (

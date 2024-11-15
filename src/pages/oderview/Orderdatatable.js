@@ -45,7 +45,7 @@ function Orderdatatable() {
     { label: "New Order", value: "new_order" },
     { label: "Processing", value: "processing" },
     { label: "Purchased", value: "purchased" },
-    { label: "Confirmed", value: "confirmed" },
+    { label: "Received", value: "received" },
     { label: "Printed", value: "printed" },
     { label: "Canceled", value: "canceled" },
   ]
