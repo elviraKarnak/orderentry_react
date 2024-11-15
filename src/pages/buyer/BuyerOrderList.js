@@ -73,7 +73,7 @@ function BuyerOrderList() {
             if (result.isConfirmed) {
                 // var status_selected_obj = orderDefaultStatus.filter((item) => item.label === e.target.value);
                 // status_selected_obj = status_selected_obj[0];
-                
+
 
                 const payload = {
                     "orderItemId": [id],
@@ -160,6 +160,7 @@ function BuyerOrderList() {
                 accessorKey: 'order_item_status',
                 header: 'Status',
                 size: 150,
+               
                 Cell: ({ renderedCellValue, row }) => (
 
                     <>
@@ -169,6 +170,7 @@ function BuyerOrderList() {
                             labelId="demo-simple-select-helper-label"
                             id="demo-simple-select-helper"
                             className={`dropdown  ${(row.original.order_item_status?.toLowerCase())?.replace(/\s/g, '')} ${(disabledStatus.includes(row.original.order_item_status)) && "prevent_click"}`}
+                            // value={row.original.order_item_status}
                             value={row.original.order_item_status}
                             onChange={e => orderStatusChange(row.original.item_tbl_id, e.target.value)}
                         >
