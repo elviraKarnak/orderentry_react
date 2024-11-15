@@ -203,7 +203,7 @@ function SatagingInventory() {
     },
     // enableBatchRowSelection: true,
     initialState: {
-      showColumnFilters: true,
+      showColumnFilters: false,
       showGlobalFilter: true,
       //   columnPinning: {
       //     left: ['mrt-row-expand', 'mrt-row-select'],
@@ -232,14 +232,14 @@ function SatagingInventory() {
     },
     initialState: {
       columnVisibility: {
-        id: false, // Hide the 'id' column initially
+        id: false,
       },
     },
 
     onRowSelectionChange: setRowSelection,
 
     muiSelectCheckboxProps: ({ row }) => ({
-      // Only allow selection if the row status matches the chosen status
+      
       checked: rowSelection[row.id] || false,
 
       disabled: ((chooseStatus === "")

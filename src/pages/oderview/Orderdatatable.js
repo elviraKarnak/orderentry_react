@@ -189,7 +189,7 @@ function Orderdatatable() {
     enableRowSelection: false,
     manualPagination: false,
     initialState: {
-      showColumnFilters: true,
+      showColumnFilters: false,
       showGlobalFilter: true,
       //   columnPinning: {
       //     left: ['mrt-row-expand', 'mrt-row-select'],

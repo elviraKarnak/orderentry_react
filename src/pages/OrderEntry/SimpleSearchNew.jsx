@@ -106,7 +106,7 @@ function SimpleSearchNew() {
         enableRowActions: false,
         enableEditing: true,
         initialState: {
-            showColumnFilters: true,
+            showColumnFilters: false,
             showGlobalFilter: true,
         },
         paginationDisplayMode: 'pages',

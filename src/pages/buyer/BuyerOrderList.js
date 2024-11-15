@@ -4,21 +4,37 @@ import DatePicker from 'react-datepicker';
 import Header from '../../common/Header';
 
 import { Link, useEffect, useMemo, useState } from 'react';
-import { MaterialReactTable, useMaterialReactTable, } from 'material-react-table';
-import MenuItem from '@mui/material/MenuItem';
+import {
+    MaterialReactTable,
+    useMaterialReactTable,
+    MRT_GlobalFilterTextField,
+    MRT_ToggleFiltersButton
+} from 'material-react-table';
 import Select from '@mui/material/Select';
-import { fmiOrderSystemAppCustomerOrderList, fmiOrderSystemAppCustomerOrderStatusChange, fmiOrderSystemAppOrderItemStatusChange } from '../../utils/fetch';
+import { fmiOrderSystemAppCustomerOrderList, fmiOrderSystemAppCustomerOrderStatusChange, fmiOrderSystemAppOrderDetailsList, fmiOrderSystemAppOrderItemStatusChange } from '../../utils/fetch';
 
 import Swal from 'sweetalert2'
 import { useNavigate } from 'react-router-dom';
 //import { useSelector } from 'react-redux';
 import moment from "moment";
 
+import {
+    Box,
+    Button,
+    ListItemIcon,
+    MenuItem,
+    Typography,
+    lighten,
+} from '@mui/material';
+
+const disabledStatus = ["purchased", "canceled"];
 
 
 function BuyerOrderList() {
 
     // const { userData } = useSelector(state => state.Auth);
+
+    const [rowSelection, setRowSelection] = useState({});
 
     const navigate = useNavigate();
 
@@ -39,12 +55,11 @@ function BuyerOrderList() {
 
     const orderDefaultStatus = [
         { label: "New Order", value: "new_order" },
-        { label: "Processing", value: "processing" },
         { label: "Purchased", value: "purchased" },
         { label: "Canceled", value: "canceled" },
     ]
 
-    const orderStatusChange = (id, e) => {
+    const orderStatusChange = (id, status) => {
         Swal.fire({
             title: "Are you sure?",
             text: "You wan't to change order status!",
@@ -58,11 +73,11 @@ function BuyerOrderList() {
             if (result.isConfirmed) {
                 // var status_selected_obj = orderDefaultStatus.filter((item) => item.label === e.target.value);
                 // status_selected_obj = status_selected_obj[0];
-                console.log(e.target.value);
+                
 
                 const payload = {
-                    "orderItemId": id,
-                    "status_val": e.target.value
+                    "orderItemId": [id],
+                    "status_val": status
                 };
 
                 var response = await fmiOrderSystemAppOrderItemStatusChange(payload);
@@ -72,11 +87,20 @@ function BuyerOrderList() {
                     icon: "success"
                 });
 
+                setRowSelection((prevSelection) => {
+                    const updatedSelection = { ...prevSelection };
+                    delete updatedSelection[id];
+                    return updatedSelection;
+                });
+
                 getOrderList();
 
             }
         });
     };
+
+
+
 
     const columns = useMemo(
         () => [
@@ -139,13 +163,14 @@ function BuyerOrderList() {
                 Cell: ({ renderedCellValue, row }) => (
 
                     <>
-                        {console.log(row.original.id, renderedCellValue)}
+                        {/* {console.log(row.original.item_tbl_id, " ", renderedCellValue, " :renderedCellValue")} */}
+
                         <Select
                             labelId="demo-simple-select-helper-label"
                             id="demo-simple-select-helper"
-                            className={`dropdown  ${(renderedCellValue.toLowerCase()).replace(/\s/g, '')} ${renderedCellValue !== "new_order" && "prevent_click"}`}
-                            value={renderedCellValue}
-                            onChange={e => orderStatusChange(row.original.item_tbl_id, e)}
+                            className={`dropdown  ${(row.original.order_item_status?.toLowerCase())?.replace(/\s/g, '')} ${(disabledStatus.includes(row.original.order_item_status)) && "prevent_click"}`}
+                            value={row.original.order_item_status}
+                            onChange={e => orderStatusChange(row.original.item_tbl_id, e.target.value)}
                         >
                             {orderDefaultStatus.map((v, i) => (
                                 <MenuItem key={i} value={v.value}>{v.label}</MenuItem>
@@ -161,16 +186,143 @@ function BuyerOrderList() {
         data,
         enableColumnFilterModes: true,
         enableColumnOrdering: true,
-        enableGrouping: true,
         enableColumnPinning: true,
+        enableGrouping: true,
         enableFacetedValues: true,
         enableRowActions: false,
-        enableRowSelection: false,
         manualPagination: false,
+
+        getRowId: (row) => row.item_tbl_id,
+        enableRowSelection: (row) => !(disabledStatus.includes(row.original.order_item_status)),
+        enableSelectAll: true,
+        selectAllMode: 'page',
+        onRowSelectionChange: setRowSelection,
+        muiSelectCheckboxProps: ({ row }) => ({
+
+            checked: rowSelection[row.id] || false,
+
+            disabled: disabledStatus.includes(row.original.order_item_status),
+
+            onChange: (event) => {
+
+                if (event.target.checked) {
+
+                    setRowSelection((prevSelection) => ({
+                        ...prevSelection,
+                        [row.id]: true,
+                    }));
+
+                } else {
+
+                    setRowSelection((prevSelection) => {
+                        const updatedSelection = { ...prevSelection };
+                        delete updatedSelection[row.id];
+                        return updatedSelection;
+                    });
+
+                }
+            },
+        }),
+        muiTableBodyCellProps: ({ cell, row }) => ({
+            ...(cell.column.id === "mrt-row-select" &&
+                disabledStatus.includes(row.original.order_item_status) && {
+                onClick: (e) => e.stopPropagation(),
+            }),
+        }),
+        renderTopToolbar: ({ table }) => {
+
+
+            const handleStatus = async (status) => {
+                console.log("rowSelection: ", rowSelection)
+
+                var temp_id_array = [];
+                table.getSelectedRowModel().flatRows.map((row) => {
+                    temp_id_array.push(row.original.item_tbl_id)
+                });
+
+                console.log(temp_id_array)
+
+                Swal.fire({
+                    title: "Are you sure?",
+                    text: "You wan't to change order status!",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#5936eb",
+                    cancelButtonColor: "#d33",
+                    confirmButtonText: "Yes"
+                }).then(async (result) => {
+
+                    if (result.isConfirmed) {
+
+                        const payload = {
+                            "orderItemId": temp_id_array,
+                            "status_val": status
+                        };
+
+                        var response = await fmiOrderSystemAppOrderItemStatusChange(payload);
+
+                        Swal.fire({
+                            text: "Order item status change successfully.",
+                            icon: "success"
+                        });
+
+                        getOrderList();
+
+                    }
+                });
+            }
+
+            return (
+                <Box
+                    sx={(theme) => ({
+                        backgroundColor: lighten(theme.palette.background.default, 0.05),
+                        display: 'flex',
+                        gap: '0.5rem',
+                        p: '8px',
+                        justifyContent: 'space-between',
+                    })}
+                >
+                    <Box sx={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                        <MRT_GlobalFilterTextField table={table} />
+                        <MRT_ToggleFiltersButton table={table} />
+                    </Box>
+                    <Box>
+                        <Box sx={{ display: 'flex', gap: '0.5rem' }}>
+
+
+                            <Button
+                                sx={{
+                                    backgroundColor: "#a54ccb"
+                                }}
+                                disabled={!table.getIsSomeRowsSelected()}
+                                onClick={() => handleStatus('purchased')}
+                                variant="contained"
+                            >
+                                Purchased
+                            </Button>
+
+
+                            <Button
+                                color="error"
+                                disabled={!table.getIsSomeRowsSelected()}
+                                onClick={() => handleStatus('cancelled')}
+                                variant="contained"
+                            >
+                                Canceled
+                            </Button>
+
+
+                        </Box>
+                    </Box>
+                </Box>
+            );
+        },
+
         initialState: {
-            showColumnFilters: true,
+            showColumnFilters: false,
             showGlobalFilter: true,
         },
+
         paginationDisplayMode: 'pages',
         positionToolbarAlertBanner: 'bottom',
         muiSearchTextFieldProps: {
@@ -186,6 +338,7 @@ function BuyerOrderList() {
         state: {
             isLoading,
             showProgressBars: isLoading,
+            rowSelection
         },
     });
 
@@ -197,19 +350,24 @@ function BuyerOrderList() {
         console.log("pagination.pageSize ", pagination.pageSize)
 
         const payload = {
-            "customerId": "",
-            "search_status": "processing,purchased,cancelled",
+            "orderId": "",
+            "category_name": "",
+            "product_name": "",
+            "farm_name": "",
+            "customer_name": "",
+            "search_order_status": "processing",
+            "search_order_item_status": "",
             "order_from_date": "",
             "order_to_date": "",
             "page": "",
-            "limit": "",
+            "limit": ""
         };
 
-        var response = await fmiOrderSystemAppCustomerOrderList(payload);
+        var response = await fmiOrderSystemAppOrderDetailsList(payload);
         //console.log(response)
 
-        setorderData(response.result.results);
-        setRowCount(response.result.totalRecord);
+        setorderData(response.results);
+        // setRowCount(response.result.totalRecord);
         setIsLoading(false);
 
     }
