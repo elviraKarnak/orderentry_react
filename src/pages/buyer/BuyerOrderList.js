@@ -201,7 +201,7 @@ function BuyerOrderList() {
                     type: 'text',
                     required: true,
                     onBlur: async(event) => {
-                        
+
                         var payload = {
                             order_item_id: row.original.item_tbl_id,
                             item_price: event.currentTarget.value
@@ -264,6 +264,7 @@ function BuyerOrderList() {
         enableSelectAll: true,
         selectAllMode: 'page',
         onRowSelectionChange: setRowSelection,
+
         muiSelectCheckboxProps: ({ row }) => ({
 
             checked: rowSelection[row.id] || false,
@@ -290,12 +291,14 @@ function BuyerOrderList() {
                 }
             },
         }),
+
         muiTableBodyCellProps: ({ cell, row }) => ({
             ...(cell.column.id === "mrt-row-select" &&
                 disabledStatus.includes(row.original.order_item_status) && {
                 onClick: (e) => e.stopPropagation(),
             }),
         }),
+
         renderTopToolbar: ({ table }) => {
 
 
@@ -385,6 +388,12 @@ function BuyerOrderList() {
             );
         },
 
+        muiTableBodyRowProps: ({ row }) => ({
+            sx: {
+              backgroundColor: row.original.order_item_status === "processing" ? "#eded" : "#ffff",
+            },
+          }),
+
         initialState: {
             showColumnFilters: false,
             showGlobalFilter: true,
@@ -396,12 +405,14 @@ function BuyerOrderList() {
             size: 'small',
             variant: 'outlined',
         },
+
         muiPaginationProps: {
             color: 'secondary',
             rowsPerPageOptions: [10, 20, 30],
             shape: 'rounded',
             variant: 'outlined',
         },
+
         state: {
             isLoading,
             showProgressBars: isLoading,
