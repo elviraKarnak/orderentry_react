@@ -114,17 +114,17 @@ function BuyerOrderList() {
             {
                 accessorKey: 'order_date', //access nested data with dot notation
                 header: 'Shipping Date',
-                enableEditing:false
+                enableEditing: false
             },
             {
                 accessorKey: 'order_number',
                 header: 'SO#',
-                enableEditing:false
+                enableEditing: false
             },
             {
                 accessorKey: 'company',
                 header: 'Company',
-                enableEditing:false
+                enableEditing: false
             },
             {
                 accessorKey: 'productTitle',
@@ -132,47 +132,48 @@ function BuyerOrderList() {
                 muiEditTextFieldProps: ({ cell, row }) => ({
                     type: 'text',
                     required: true,
-                    onBlur: (event) => {
-                        // const validationError = !validateRequired(event.currentTarget.value)
-                        //     ? 'Required'
-                        //     : undefined;
-                        // setValidationErrors({
-                        //     ...validationErrors,
-                        //     [cell.id]: validationError,
-                        // });
-                        setEditedUsers({ ...editedUsers, [row.id]: row.original });
+                    onBlur: async (event) => {
+                        
+                        var payload = {
+                            order_item_id: row.original.item_tbl_id,
+                            item_description: event.currentTarget.value
+                        }
+                        // console.log(row.original)
+                        // console.log(event.currentTarget.value);
+
+                        await orderItemUpdate(payload);
                     },
                 }),
             },
             {
                 accessorKey: 'category',
                 header: 'Category',
-                enableEditing:false
+                enableEditing: false
             },
             {
                 accessorKey: 'color',
                 header: 'Color',
-                enableEditing:false
+                enableEditing: false
             },
             {
                 accessorKey: 'sale_price',
                 header: 'Sale Price',
-                enableEditing:false
+                enableEditing: false
             },
             {
                 accessorKey: 'item_quantity',
                 header: 'QTY',
-                enableEditing:false
+                enableEditing: false
             },
             {
                 accessorKey: 'uom',
                 header: 'UOM',
-                enableEditing:false
+                enableEditing: false
             },
             {
                 accessorKey: 'total_price',
                 header: 'Total',
-                enableEditing:false
+                enableEditing: false
             },
             {
                 accessorKey: 'farm',
@@ -180,23 +181,16 @@ function BuyerOrderList() {
                 muiEditTextFieldProps: ({ cell, row }) => ({
                     type: 'text',
                     required: true,
-                    onBlur: async(event) => {
-                        // const validationError = !validateRequired(event.currentTarget.value)
-                        //     ? 'Required'
-                        //     : undefined;
-                        // setValidationErrors({
-                        //     ...validationErrors,
-                        //     [cell.id]: validationError,
-                        // });
+                    onBlur: async (event) => {
 
-                        // await orderItemUpdate({
-                        //     order_item_id:row.id,
-                        //     farm: event.currentTarget.value,
-                        // });
+                        var payload = {
+                            order_item_id: row.original.item_tbl_id,
+                            farm: event.currentTarget.value
+                        }
+                        // console.log(row.original)
+                        // console.log(event.currentTarget.value);
 
-                        // getOrderList();
-
-                        // setEditedUsers({ ...editedUsers, [row.id]: row.original });
+                        await orderItemUpdate(payload);
                     },
                 }),
             },
@@ -206,28 +200,29 @@ function BuyerOrderList() {
                 muiEditTextFieldProps: ({ cell, row }) => ({
                     type: 'text',
                     required: true,
-                    onBlur: (event) => {
-                        // const validationError = !validateRequired(event.currentTarget.value)
-                        //     ? 'Required'
-                        //     : undefined;
-                        // setValidationErrors({
-                        //     ...validationErrors,
-                        //     [cell.id]: validationError,
-                        // });
-                        setEditedUsers({ ...editedUsers, [row.id]: row.original });
+                    onBlur: async(event) => {
+                        
+                        var payload = {
+                            order_item_id: row.original.item_tbl_id,
+                            item_price: event.currentTarget.value
+                        }
+                        // console.log(row.original)
+                        // console.log(event.currentTarget.value);
+
+                        await orderItemUpdate(payload);
                     },
                 }),
             },
             {
                 accessorKey: 'margin',
                 header: 'Margin',
-                enableEditing:false
+                enableEditing: false
             },
             {
                 accessorKey: 'order_item_status',
                 header: 'Status',
                 size: 150,
-                enableEditing:false,
+                enableEditing: false,
 
                 Cell: ({ renderedCellValue, row }) => (
 

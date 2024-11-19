@@ -40,8 +40,8 @@ export async function fmiOrderSystemAppAppLogin(userEmail, UserPasswoard) {
     window.sessionStorage.setItem('useremail', fmiOrderSystemAppResult.email);
     window.sessionStorage.setItem('login', true);
     window.sessionStorage.setItem(
-      'user_type',
-      fmiOrderSystemAppResult.user_type
+      'role_id',
+      fmiOrderSystemAppResult.role_id
     );
     return true;
   } else {

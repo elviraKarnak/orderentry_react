@@ -9,7 +9,7 @@ import { Container } from '@mui/material';
 
 function Dashboard() {
     var loginVal = sessionStorage.getItem('login') ? sessionStorage.getItem('login') : false;
-    var getUserType = sessionStorage.getItem('user_type') ? sessionStorage.getItem('user_type') : '';
+    var getUserType = sessionStorage.getItem('role_id') ? sessionStorage.getItem('role_id') : '';
 
     const location = useLocation();
 
