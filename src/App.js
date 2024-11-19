@@ -28,6 +28,8 @@ import { RequireAuth } from './middleware/ReruireAuth';
 import Store from './Store';
 
 import OrderListto from './pages/oderview/OrderList2';
+import UserManagement from './pages/UserManagement';
+import FarmPurchase from './pages/FarmPurchase';
 
 
 const queryClient = new QueryClient();
@@ -53,7 +55,9 @@ function App() {
               <Route path='product-view' element={<ProductView />} />
               <Route path='new-order' element={<RequireAuth><NewOrder /></RequireAuth>} />
               <Route path='staging-inventory' element={<SatagingInventory />} />
-              <Route path='buyer-dashboard' element={<BuyerOrderList />} />
+              <Route path='buyer-dashboard' element={<BuyerOrderList />} />'
+              <Route path='admin' element={<UserManagement />} />
+              <Route path='farm-purchase' element={<FarmPurchase />} />
             </Route>
           </Routes>
         </BrowserRouter>

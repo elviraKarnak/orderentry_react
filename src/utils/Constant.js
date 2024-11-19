@@ -8,31 +8,49 @@ import { GrUserAdmin } from "react-icons/gr";
 import { IoListSharp } from "react-icons/io5";
 import { GiNotebook } from "react-icons/gi";
 
+
+export const PageModuleData = {
+  "orderEntry": "MODULE_001",
+  "orderView": "MODULE_002",
+  "orderList": "MODULE_003",
+  "productView": "MODULE_004",
+  "stagingInventory": "MODULE_005",
+  "admin": "MODULE_006",
+  "accounting": "MODULE_007",
+  "reporting": "MODULE_008",
+  "farmPurchase": "MODULE_009",
+}
+
 export const menueDataAdmin = [
   {
     menuName: "Dashboard",
     path: "/",
     icon: <TbLayoutDashboardFilled />,
+    code: "",
   },
   {
     menuName: "Order Entry",
     path: "/order-entry",
     icon: <TfiWrite />,
+    code: PageModuleData.orderEntry,
   },
   {
     menuName: "Order View",
     path: "/",
     icon: <LuView />,
+    code: PageModuleData.orderView,
   },
   {
     menuName: "Order List",
     path: "/buyer-dashboard",
     icon: <IoListSharp />,
+    code: PageModuleData.orderList,
   },
   {
     menuName: "Product View",
     path: "/product-view",
     icon: <MdOutlineViewInAr />,
+    code: PageModuleData.productView,
   },
   // {
   //   menuName: 'Product Entry',
@@ -42,6 +60,7 @@ export const menueDataAdmin = [
     menuName: "Staging Inventory",
     path: "/staging-inventory",
     icon: <MdOutlineInventory2 />,
+    code: PageModuleData.stagingInventory,
   },
   //    {menuName:'Product Entry',
   //    path:'/product-entry'
@@ -49,14 +68,30 @@ export const menueDataAdmin = [
 
   {
     menuName: "Admin",
-    path: "/",
+    path: "/admin",
     icon: <GrUserAdmin />,
+    code: PageModuleData.admin,
   },
+
   {
     menuName: "Accounting",
     path: "/",
     icon: <GiNotebook />,
+    code: PageModuleData.accounting,
   },
+
+  {
+    menuName: "Reporting",
+    path: "/",
+    icon: <GiNotebook />,
+    code: PageModuleData.reporting,
+  },
+  {
+    menuName: "Farm Purchase",
+    path: "/farm-purchase",
+    icon: <GiNotebook />,
+    code: PageModuleData.farmPurchase,
+  }
 ];
 
 export const SatagingInventoryData = [
@@ -237,3 +272,6 @@ export const boxTypeOptions = [
   { value: "KG", label: "KG - Kilogram" },
   { value: "LB", label: "LB - Pounds" },
 ];
+
+
+

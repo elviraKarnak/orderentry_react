@@ -43,6 +43,7 @@ export async function fmiOrderSystemAppAppLogin(userEmail, UserPasswoard) {
       'role_id',
       fmiOrderSystemAppResult.role_id
     );
+    window.sessionStorage.setItem('permisionData', JSON.stringify(fmiOrderSystemAppResult.permisionData));
     return true;
   } else {
     const error = new Error();
@@ -899,6 +900,188 @@ export async function orderItemUpdateApi(payload) {
         'Content-Type': 'application/json',
       },
       data: JSON.stringify(payload),
+    };
+
+    const fmiOrderSystemAppResponse = await axios.request(config);
+
+    if (fmiOrderSystemAppResponse.status === 200) {
+      const fmiOrderSystemAppResult = await fmiOrderSystemAppResponse.data;
+      // Success
+      return { status: true, result: fmiOrderSystemAppResult };
+    } else {
+      // Server-side error
+      console.log('Server error:', fmiOrderSystemAppResponse.status);
+      const errorData = await fmiOrderSystemAppResponse.data;
+      console.log('Server errorData ', errorData);
+      return { status: false, error: errorData };
+    }
+  }
+  catch (error) {
+    // Network error
+    console.log('Network error:', error);
+    return { status: 'error', error: 'Network error' };
+  }
+}
+
+
+export async function getUserRolesApi() {
+
+  try {
+    let config = {
+      method: 'GET',
+      maxBodyLength: Infinity,
+      url: `${REACT_APP_API_SERVICE_URL}/api/v1/admin/role-list`,
+      headers: {
+        'x-api-key': 'b1d1I0p7A2Er2n0eD2b0As8c0kT8p2M9',
+        token: window.sessionStorage.getItem('access-token'),
+        'Content-Type': 'application/json',
+      },
+    };
+
+    const fmiOrderSystemAppResponse = await axios.request(config);
+
+    if (fmiOrderSystemAppResponse.status === 200) {
+      const fmiOrderSystemAppResult = await fmiOrderSystemAppResponse.data;
+      // Success
+      return { status: true, result: fmiOrderSystemAppResult };
+    } else {
+      // Server-side error
+      console.log('Server error:', fmiOrderSystemAppResponse.status);
+      const errorData = await fmiOrderSystemAppResponse.data;
+      console.log('Server errorData ', errorData);
+      return { status: false, error: errorData };
+    }
+  }
+  catch (error) {
+    // Network error
+    console.log('Network error:', error);
+    return { status: 'error', error: 'Network error' };
+  }
+}
+
+
+
+export async function getUserListApi() {
+
+  try {
+    let config = {
+      method: 'GET',
+      maxBodyLength: Infinity,
+      url: `${REACT_APP_API_SERVICE_URL}/api/v1/admin/user-list`,
+      headers: {
+        'x-api-key': 'b1d1I0p7A2Er2n0eD2b0As8c0kT8p2M9',
+        token: window.sessionStorage.getItem('access-token'),
+        'Content-Type': 'application/json',
+      },
+    };
+
+    const fmiOrderSystemAppResponse = await axios.request(config);
+
+    if (fmiOrderSystemAppResponse.status === 200) {
+      const fmiOrderSystemAppResult = await fmiOrderSystemAppResponse.data;
+      // Success
+      return { status: true, result: fmiOrderSystemAppResult };
+    } else {
+      // Server-side error
+      console.log('Server error:', fmiOrderSystemAppResponse.status);
+      const errorData = await fmiOrderSystemAppResponse.data;
+      console.log('Server errorData ', errorData);
+      return { status: false, error: errorData };
+    }
+  }
+  catch (error) {
+    // Network error
+    console.log('Network error:', error);
+    return { status: 'error', error: 'Network error' };
+  }
+
+}
+
+
+export async function createUserApi(payload) {
+
+  try {
+    let config = {
+      method: 'POST',
+      maxBodyLength: Infinity,
+      url: `${REACT_APP_API_SERVICE_URL}/api/v1/admin/user-add`,
+      headers: {
+        'x-api-key': 'b1d1I0p7A2Er2n0eD2b0As8c0kT8p2M9',
+        token: window.sessionStorage.getItem('access-token'),
+        'Content-Type': 'application/json',
+      },
+      data: JSON.stringify(payload),
+    };
+
+    const fmiOrderSystemAppResponse = await axios.request(config);
+
+    if (fmiOrderSystemAppResponse.status === 200) {
+      const fmiOrderSystemAppResult = await fmiOrderSystemAppResponse.data;
+      // Success
+      return { status: true, result: fmiOrderSystemAppResult };
+    } else {
+      // Server-side error
+      console.log('Server error:', fmiOrderSystemAppResponse.status);
+      const errorData = await fmiOrderSystemAppResponse.data;
+      console.log('Server errorData ', errorData);
+      return { status: false, error: errorData };
+    }
+  }
+  catch (error) {
+    // Network error
+    console.log('Network error:', error);
+    return { status: 'error', error: 'Network error' };
+  }
+}
+
+export async function editUserApi(userId, payload) {
+
+  try {
+    let config = {
+      method: 'PUT',
+      maxBodyLength: Infinity,
+      url: `${REACT_APP_API_SERVICE_URL}/api/v1/admin/user-edit/${userId}`,
+      headers: {
+        'x-api-key': 'b1d1I0p7A2Er2n0eD2b0As8c0kT8p2M9',
+        token: window.sessionStorage.getItem('access-token'),
+        'Content-Type': 'application/json',
+      },
+      data: JSON.stringify(payload),
+    };
+
+    const fmiOrderSystemAppResponse = await axios.request(config);
+
+    if (fmiOrderSystemAppResponse.status === 200) {
+      const fmiOrderSystemAppResult = await fmiOrderSystemAppResponse.data;
+      // Success
+      return { status: true, result: fmiOrderSystemAppResult };
+    } else {
+      // Server-side error
+      console.log('Server error:', fmiOrderSystemAppResponse.status);
+      const errorData = await fmiOrderSystemAppResponse.data;
+      console.log('Server errorData ', errorData);
+      return { status: false, error: errorData };
+    }
+  }
+  catch (error) {
+    // Network error
+    console.log('Network error:', error);
+    return { status: 'error', error: 'Network error' };
+  }
+}
+
+export async function deleteUserApi(userId) {
+
+  try {
+    let config = {
+      method: 'DELETE',
+      maxBodyLength: Infinity,
+      url: `${REACT_APP_API_SERVICE_URL}/api/v1/admin/user-del/${userId}`,
+      headers: {
+        'x-api-key': 'b1d1I0p7A2Er2n0eD2b0As8c0kT8p2M9',
+        token: window.sessionStorage.getItem('access-token'),
+        'Content-Type': 'application/json',
+      },
     };
 
     const fmiOrderSystemAppResponse = await axios.request(config);

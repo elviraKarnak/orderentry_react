@@ -14,6 +14,8 @@ import { useNavigate } from 'react-router-dom';
 
 import moment from "moment";
 import { Typography } from '@mui/material';
+import CheckCRUDPermission from '../../utils/commnFnc/ChecCRUDPermission';
+import { PageModuleData } from '../../utils/Constant';
 
 //nested data is ok, see accessorKeys in ColumnDef below
 // const data = [
@@ -21,6 +23,8 @@ import { Typography } from '@mui/material';
 // ];
 
 function Orderdatatable() {
+
+  const permisionData = CheckCRUDPermission(PageModuleData.orderView);
 
   const [FromDate, setFromDate] = useState(null);
   const [ToDate, setToDate] = useState(null);
@@ -143,6 +147,7 @@ function Orderdatatable() {
               className={'dropdown ' + renderedCellValue.toLowerCase()}
               value={renderedCellValue}
               onChange={e => orderStatusChange(row.original.id, e)}
+              disabled={!permisionData.edit_access}
             >
               {orderDefaultStatus.map((v, i) => (
                 <MenuItem key={i} value={v.value}>{v.label}</MenuItem>
@@ -165,9 +170,19 @@ function Orderdatatable() {
               gap: '1rem',
             }}
           >
-            <Button variant="text" value={renderedCellValue}>Edit</Button>|
-            <Button variant="text" value={renderedCellValue}>Cancel</Button>
-            <Button variant="text" onClick={() => navigate("/order-details", { state: { order_id: row.original.id } })}>View</Button>
+            <Button 
+            variant="text" 
+            value={renderedCellValue} 
+            disabled={!permisionData.edit_access} >Edit</Button>|
+
+            <Button variant="text" 
+            value={renderedCellValue} 
+            disabled={!permisionData.delete_access} >Cancel</Button>
+
+            <Button 
+            variant="text" 
+            disabled={!permisionData.view_access}
+            onClick={() => navigate("/order-details", { state: { order_id: row.original.id } })}>View</Button>
           </Box>
 
 

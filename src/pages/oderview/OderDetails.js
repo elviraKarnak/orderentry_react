@@ -12,11 +12,15 @@ import { fmiOrderSystemAppOrderDetailsList, fmiOrderSystemAppOrderItemStatusChan
 import { useLocation, useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2'
 import { Typography } from '@mui/material';
+import CheckCRUDPermission from '../../utils/commnFnc/ChecCRUDPermission';
+import { PageModuleData } from '../../utils/Constant';
 
 const disabledStatus = ["purchased", "canceled"];
 const notSelectedStatus = ["new_order", "processing"];
 
 function OderDetails() {
+
+	const permisionData = CheckCRUDPermission(PageModuleData.orderView);
 
 	const navigate = useNavigate();
 	const location = useLocation();
@@ -167,6 +171,7 @@ function OderDetails() {
 							className={`dropdown ${(disabledStatus.includes(row.original.order_item_status)) && "prevent_click"} ` + (row.original.order_item_status?.toLowerCase())?.replace(/\s/g, '')}
 							value={row.original.order_item_status}
 							onChange={e => orderStatusChange(row.original.item_tbl_id, e.target.value)}
+							disabled={!permisionData.edit_access}
 						>
 							{orderDefaultStatus.map((v, i) => (
 								<MenuItem key={i} value={v.value} disabled={notSelectedStatus.includes(v.value)}  >{v.label}</MenuItem>

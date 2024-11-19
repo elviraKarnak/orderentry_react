@@ -28,12 +28,16 @@ import {
 } from '@mui/material';
 import { validateRequired } from './validation';
 import { orderItemUpdate } from './hooks';
+import CheckCRUDPermission from '../../utils/commnFnc/ChecCRUDPermission';
+import { PageModuleData } from '../../utils/Constant';
 
 const disabledStatus = ["purchased", "canceled"];
 const notSelectedStatus = ["new_order", "processing"];
 
 
 function BuyerOrderList() {
+
+    const permisionData = CheckCRUDPermission(PageModuleData.orderList);
 
     // const { userData } = useSelector(state => state.Auth);
 
@@ -129,11 +133,12 @@ function BuyerOrderList() {
             {
                 accessorKey: 'productTitle',
                 header: 'Product Description',
+                enableEditing: permisionData.edit_access,
                 muiEditTextFieldProps: ({ cell, row }) => ({
                     type: 'text',
                     required: true,
                     onBlur: async (event) => {
-                        
+
                         var payload = {
                             order_item_id: row.original.item_tbl_id,
                             item_description: event.currentTarget.value
@@ -178,6 +183,7 @@ function BuyerOrderList() {
             {
                 accessorKey: 'farm',
                 header: 'Farm',
+                enableEditing: permisionData.edit_access,
                 muiEditTextFieldProps: ({ cell, row }) => ({
                     type: 'text',
                     required: true,
@@ -197,10 +203,11 @@ function BuyerOrderList() {
             {
                 accessorKey: 'cost_price',
                 header: 'Cost',
+                enableEditing: permisionData.edit_access,
                 muiEditTextFieldProps: ({ cell, row }) => ({
                     type: 'text',
                     required: true,
-                    onBlur: async(event) => {
+                    onBlur: async (event) => {
 
                         var payload = {
                             order_item_id: row.original.item_tbl_id,
@@ -236,6 +243,7 @@ function BuyerOrderList() {
                             // value={row.original.order_item_status}
                             value={row.original.order_item_status}
                             onChange={e => orderStatusChange(row.original.item_tbl_id, e.target.value)}
+                            disabled={!permisionData.edit_access}
                         >
                             {orderDefaultStatus.map((v, i) => (
                                 <MenuItem key={i} value={v.value} disabled={notSelectedStatus.includes(v.value)} >{v.label}</MenuItem>
@@ -260,8 +268,18 @@ function BuyerOrderList() {
         manualPagination: false,
 
         getRowId: (row) => row.item_tbl_id,
-        enableRowSelection: (row) => !(disabledStatus.includes(row.original.order_item_status)),
-        enableSelectAll: true,
+        enableRowSelection: (row) => {
+            if (permisionData.edit_access) {
+                if (!(disabledStatus.includes(row.original.order_item_status))) {
+                    return true;
+                } else {
+                    return false;
+                }
+            } else {
+                return false;
+            }
+        },
+        enableSelectAll: permisionData.edit_access,
         selectAllMode: 'page',
         onRowSelectionChange: setRowSelection,
 
@@ -343,6 +361,7 @@ function BuyerOrderList() {
             }
 
             return (
+
                 <Box
                     sx={(theme) => ({
                         backgroundColor: lighten(theme.palette.background.default, 0.05),
@@ -359,28 +378,28 @@ function BuyerOrderList() {
                     <Box>
                         <Box sx={{ display: 'flex', gap: '0.5rem' }}>
 
+                            {(permisionData.edit_access) && (<>
+                                <Button
+                                    sx={{
+                                        backgroundColor: "#a54ccb"
+                                    }}
+                                    disabled={!table.getIsSomeRowsSelected()}
+                                    onClick={() => handleStatus('purchased')}
+                                    variant="contained"
+                                >
+                                    Purchased
+                                </Button>
 
-                            <Button
-                                sx={{
-                                    backgroundColor: "#a54ccb"
-                                }}
-                                disabled={!table.getIsSomeRowsSelected()}
-                                onClick={() => handleStatus('purchased')}
-                                variant="contained"
-                            >
-                                Purchased
-                            </Button>
 
-
-                            <Button
-                                color="error"
-                                disabled={!table.getIsSomeRowsSelected()}
-                                onClick={() => handleStatus('cancelled')}
-                                variant="contained"
-                            >
-                                Canceled
-                            </Button>
-
+                                <Button
+                                    color="error"
+                                    disabled={!table.getIsSomeRowsSelected()}
+                                    onClick={() => handleStatus('cancelled')}
+                                    variant="contained"
+                                >
+                                    Canceled
+                                </Button>
+                            </>)}
 
                         </Box>
                     </Box>
@@ -390,9 +409,9 @@ function BuyerOrderList() {
 
         muiTableBodyRowProps: ({ row }) => ({
             sx: {
-              backgroundColor: row.original.order_item_status === "processing" ? "#eded" : "#ffff",
+                backgroundColor: row.original.order_item_status === "processing" ? "#eded" : "#ffff",
             },
-          }),
+        }),
 
         initialState: {
             showColumnFilters: false,

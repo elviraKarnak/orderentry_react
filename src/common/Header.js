@@ -24,6 +24,7 @@ import { menueDataAdmin } from "../utils/Constant";
 //icon
 import { SlLogout } from "react-icons/sl";
 import { RxCross2 } from "react-icons/rx";
+import checkMenuPermission from "../utils/commnFnc/CheckMenuPermission";
 
 const drawerWidth = 240;
 
@@ -71,10 +72,15 @@ const DrawerHeader = styled("div")(({ theme }) => ({
   justifyContent: "flex-end",
 }));
 
+
+//////////////////////// main header //////////////////////////
 function Header({ title }) {
+
   const theme = useTheme();
   const [open, setOpen] = useState(false);
   const drawerRef = useRef(null);
+
+
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -86,6 +92,7 @@ function Header({ title }) {
 
   const navigate = useNavigate();
 
+  
   const handleLogout = () => {
     // Clear session storage
     sessionStorage.clear();
@@ -199,8 +206,9 @@ function Header({ title }) {
         </DrawerHeader>
         <Divider />
         <List className="page_navigation sidebar-scroll">
+
           {menueDataAdmin.map((item, index) => (
-            <ListItem
+            checkMenuPermission(item.code) && <ListItem
               key={index}
               disablePadding
               sx={{
@@ -208,7 +216,6 @@ function Header({ title }) {
                 margin: 0,
               }}
             >
-
               <Link
                 to={item.path}
                 style={{
@@ -225,6 +232,7 @@ function Header({ title }) {
               </Link>
             </ListItem>
           ))}
+
           <ListItem disablePadding>
             <ListItemButton>
               <Link
