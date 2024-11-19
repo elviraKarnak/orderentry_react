@@ -1,5 +1,5 @@
+import React from 'react';
 import { Grid, Typography } from '@mui/material';
-import React from 'react'
 import Header from '../../common/Header';
 import UserList from './component/UserList';
 

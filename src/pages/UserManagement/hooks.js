@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
-import { getUserRolesApi, getUserListApi, createUserApi, deleteUserApi } from "../../utils/fetch";
+import { getUserRolesApi, getUserListApi, createUserApi, deleteUserApi, editUserApi, getMenuModulesApi } from "../../utils/fetch";
+import Swal from 'sweetalert2';
 
 
 /////////////////////// Query //////////////////////////
@@ -62,6 +63,37 @@ function GetUserListHook() {
 
 
 
+/**
+ *
+ * @returns {Object}
+ * - `data` {Object} {roleData,rolePermissionData, menuData}
+ * - `isError` {boolean}
+ * - `isFetching` {boolean}
+ * - `isLoading` {boolean}
+ * - `refetch` {Function}
+ */
+function GetMenuModulesHook() {
+    return useQuery({
+        queryKey: ['menu_list'],
+        queryFn: async () => {
+            const response = await getMenuModulesApi();
+            console.log("GetMenuModulesHook", response)
+            return {
+                roleData: response.result.roleData,
+                rolePermissionData: response.result.rolePermissionData,
+                menuData: response.result.menuData
+            };
+            // return [];
+        },
+    });
+}
+
+
+
+
+
+
+
 ////////////////////// mutation /////////////////////////////////
 
 // mutateAsync: createUser, 
@@ -81,7 +113,8 @@ function CreateUserHook() {
     const queryClient = useQueryClient();
     return useMutation({
         mutationFn: async (paylaod) => {
-            await createUserApi(paylaod);
+            const response = await createUserApi(paylaod);
+            return response;
         },
         onMutate: (newUserInfo) => {
             console.log("newUserInfo: ", newUserInfo);
@@ -101,6 +134,55 @@ function CreateUserHook() {
 
 
 
+/**
+ *
+ * @returns {Object}
+ * - `mutateAsync` {Array}
+ * - `isPending` {boolean}
+ * - `isSuccess` {Function}
+ * - `isError` {boolean}
+ * - `error` {object}
+ */
+function EditUserHook() {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: async (paylaod) => {
+
+            let userId = paylaod.userId;
+            delete paylaod.userId;
+            delete paylaod.email;
+
+            const response = await editUserApi(userId, paylaod);
+
+            return response;
+        },
+        onMutate: (newUserInfo) => {
+            console.log("newUserInfo: ", newUserInfo);
+
+            // queryClient.invalidateQueries('user_list');
+        },
+        onSuccess: (response) => {
+            console.log(response)
+
+            if (response.status) {
+                Swal.fire("Updated!", "User has been updated.", "success");
+            } else {
+                Swal.fire("Warning!", response.error.message, "warning");
+            }
+        },
+        onError: (error) => {
+            console.error(error)
+        }
+
+    });
+
+}
+
+
+/**
+ *
+ * @param {number} userId
+ */
 function DeleteUserHook() {
     const queryClient = useQueryClient();
     return useMutation({
@@ -128,5 +210,7 @@ export {
     GetUserRolesHook,
     GetUserListHook,
     CreateUserHook,
+    EditUserHook,
     DeleteUserHook,
+    GetMenuModulesHook,
 };

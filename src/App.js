@@ -30,6 +30,7 @@ import Store from './Store';
 import OrderListto from './pages/oderview/OrderList2';
 import UserManagement from './pages/UserManagement';
 import FarmPurchase from './pages/FarmPurchase';
+import ChangeRolePermission from './pages/UserManagement/ChangeRolePermission';
 
 
 const queryClient = new QueryClient();
@@ -58,6 +59,7 @@ function App() {
               <Route path='buyer-dashboard' element={<BuyerOrderList />} />'
               <Route path='admin' element={<UserManagement />} />
               <Route path='farm-purchase' element={<FarmPurchase />} />
+              <Route path='change-role-permission' element={<ChangeRolePermission />} />
             </Route>
           </Routes>
         </BrowserRouter>
