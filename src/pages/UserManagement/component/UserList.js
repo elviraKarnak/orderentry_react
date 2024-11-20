@@ -9,8 +9,9 @@ import {
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import IconButton from '@mui/material/IconButton';
-import CloseIcon from '@mui/icons-material/Close';
 import KeyIcon from '@mui/icons-material/Key';
+import CloseIcon from '@mui/icons-material/Close';
+
 import HourglassTopOutlinedIcon from '@mui/icons-material/HourglassTopOutlined';
 
 import { GetUserListHook, GetUserRolesHook, CreateUserHook, DeleteUserHook, EditUserHook } from '../hooks';

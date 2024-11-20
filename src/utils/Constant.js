@@ -280,3 +280,8 @@ export const UserStatus=[
   { value: "in-active", label: "Inactive" },
 ]
 
+export const FARM_PURCHASE_STATUS=[
+  { value: "new_order", label: "New Order" },
+  { value: "accepted", label: "Accepted" },
+  { value: "cancelled", label: "Cancelled" },
+]
