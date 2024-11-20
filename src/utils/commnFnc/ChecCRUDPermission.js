@@ -15,7 +15,7 @@ const CheckCRUDPermission = (code) => {
 
     const menuPermission = permisionData.find(item => item.menuModule.code == code);
 
-    console.log("menuPermission: ", menuPermission);
+    // console.log("menuPermission: ", menuPermission);
 
 
     if (menuPermission.add_access == 1) {

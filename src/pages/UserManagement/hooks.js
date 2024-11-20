@@ -1,7 +1,16 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import Swal from "sweetalert2";
+import { toast } from "react-toastify";
 
-import { getUserRolesApi, getUserListApi, createUserApi, deleteUserApi, editUserApi, getMenuModulesApi } from "../../utils/fetch";
-import Swal from 'sweetalert2';
+import {
+    getUserRolesApi,
+    getUserListApi,
+    createUserApi,
+    deleteUserApi,
+    editUserApi,
+    getMenuModulesApi,
+    editRolePermissionApi,
+} from "../../utils/fetch";
 
 
 /////////////////////// Query //////////////////////////
@@ -11,7 +20,6 @@ import Swal from 'sweetalert2';
 // isFetching: stagingInventoryIsFetching,
 // isLoading: stagingInventoryIsLoading,
 // refetch: stagingInventoryRefetch,
-
 
 /**
  *
@@ -24,12 +32,14 @@ import Swal from 'sweetalert2';
  */
 function GetUserRolesHook() {
     return useQuery({
-        queryKey: ['user_roles'],
+        queryKey: ["user_roles"],
         queryFn: async () => {
             const response = await getUserRolesApi();
-            console.log("user roles", response)
+            console.log("user roles", response);
 
-            var temp = response.result.data.filter((item) => ![1, 5].includes(item.id));
+            var temp = response.result.data.filter(
+                (item) => ![1, 5].includes(item.id)
+            );
 
             // console.log("dddddddddddd",temp)
 
@@ -38,7 +48,6 @@ function GetUserRolesHook() {
         },
     });
 }
-
 
 /**
  *
@@ -51,17 +60,15 @@ function GetUserRolesHook() {
  */
 function GetUserListHook() {
     return useQuery({
-        queryKey: ['user_list'],
+        queryKey: ["user_list"],
         queryFn: async () => {
             const response = await getUserListApi();
-            console.log("user list", response)
+            console.log("user list", response);
             return response.result.userData;
             // return [];
         },
     });
 }
-
-
 
 /**
  *
@@ -74,31 +81,24 @@ function GetUserListHook() {
  */
 function GetMenuModulesHook() {
     return useQuery({
-        queryKey: ['menu_list'],
+        queryKey: ["menu_list"],
         queryFn: async () => {
             const response = await getMenuModulesApi();
-            console.log("GetMenuModulesHook", response)
+            console.log("GetMenuModulesHook", response);
             return {
                 roleData: response.result.roleData,
                 rolePermissionData: response.result.rolePermissionData,
-                menuData: response.result.menuData
+                menuData: response.result.menuData,
             };
             // return [];
         },
     });
 }
 
-
-
-
-
-
-
 ////////////////////// mutation /////////////////////////////////
 
-// mutateAsync: createUser, 
+// mutateAsync: createUser,
 // isPending: isCreatingUser
-
 
 /**
  *
@@ -122,17 +122,14 @@ function CreateUserHook() {
             // queryClient.invalidateQueries('user_list');
         },
         onSuccess: (responce) => {
-            console.log(responce)
+            console.log(responce);
+            queryClient.invalidateQueries('user_list');
         },
         onError: (error) => {
-            console.error(error)
-        }
-
+            console.error(error);
+        },
     });
-
 }
-
-
 
 /**
  *
@@ -147,7 +144,6 @@ function EditUserHook() {
     const queryClient = useQueryClient();
     return useMutation({
         mutationFn: async (paylaod) => {
-
             let userId = paylaod.userId;
             delete paylaod.userId;
             delete paylaod.email;
@@ -162,22 +158,21 @@ function EditUserHook() {
             // queryClient.invalidateQueries('user_list');
         },
         onSuccess: (response) => {
-            console.log(response)
+            console.log(response);
 
             if (response.status) {
                 Swal.fire("Updated!", "User has been updated.", "success");
             } else {
                 Swal.fire("Warning!", response.error.message, "warning");
             }
+
+            queryClient.invalidateQueries('user_list');
         },
         onError: (error) => {
-            console.error(error)
-        }
-
+            console.error(error);
+        },
     });
-
 }
-
 
 /**
  *
@@ -187,7 +182,8 @@ function DeleteUserHook() {
     const queryClient = useQueryClient();
     return useMutation({
         mutationFn: async (userId) => {
-            await deleteUserApi(userId);
+           const responce = await deleteUserApi(userId);
+            return responce;
         },
         onMutate: (newUserInfo) => {
             console.log("newUserInfo: ", newUserInfo);
@@ -195,16 +191,57 @@ function DeleteUserHook() {
             // queryClient.invalidateQueries('user_list');
         },
         onSuccess: (responce) => {
-            console.log(responce)
+            console.log(responce);
+            queryClient.invalidateQueries('user_list');
         },
         onError: (error) => {
-            console.error(error)
-        }
-
+            console.error(error);
+        },
     });
-
 }
 
+/**
+ *
+ * @returns {Object}
+ * - `mutateAsync` {Array}
+ * - `isPending` {boolean}
+ * - `isSuccess` {Function}
+ * - `isError` {boolean}
+ * - `error` {object}
+ */
+function EditRolePermissionHook() {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: async (paylaod) => {
+            let id = paylaod.id;
+            delete paylaod.id;
+
+            const response = await editRolePermissionApi(id, paylaod);
+
+            return response;
+        },
+        onMutate: (newUserInfo) => {
+            console.log("newUserInfo: ", newUserInfo);
+
+            // queryClient.invalidateQueries('user_list');
+        },
+        onSuccess: (response) => {
+            console.log(response);
+            
+
+            if (response.status) {
+                toast.success("Change role permission successfully");
+            } else {
+                Swal.fire("Warning!", response.error.message, "warning");
+            }
+
+             queryClient.invalidateQueries('menu_list');
+        },
+        onError: (error) => {
+            console.error(error);
+        },
+    });
+}
 
 export {
     GetUserRolesHook,
@@ -213,4 +250,5 @@ export {
     EditUserHook,
     DeleteUserHook,
     GetMenuModulesHook,
+    EditRolePermissionHook,
 };

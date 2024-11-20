@@ -1142,3 +1142,39 @@ export async function getMenuModulesApi() {
   }
 
 }
+
+export async function editRolePermissionApi(id, payload) {
+
+  try {
+    let config = {
+      method: 'PUT',
+      maxBodyLength: Infinity,
+      url: `${REACT_APP_API_SERVICE_URL}/api/v1/admin/update-role-permission/${id}`,
+      headers: {
+        'x-api-key': 'b1d1I0p7A2Er2n0eD2b0As8c0kT8p2M9',
+        token: window.sessionStorage.getItem('access-token'),
+        'Content-Type': 'application/json',
+      },
+      data: JSON.stringify(payload),
+    };
+
+    const fmiOrderSystemAppResponse = await axios.request(config);
+
+    if (fmiOrderSystemAppResponse.status === 200) {
+      const fmiOrderSystemAppResult = await fmiOrderSystemAppResponse.data;
+      // Success
+      return { status: true, result: fmiOrderSystemAppResult };
+    } else {
+      // Server-side error
+      console.log('Server error:', fmiOrderSystemAppResponse.status);
+      const errorData = await fmiOrderSystemAppResponse.data;
+      console.log('Server errorData ', errorData);
+      return { status: false, error: errorData };
+    }
+  }
+  catch (error) {
+    // Network error
+    console.log('Network error:', error);
+    return { status: 'error', error: 'Network error' };
+  }
+}

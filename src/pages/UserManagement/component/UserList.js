@@ -10,6 +10,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
+import KeyIcon from '@mui/icons-material/Key';
 
 import { GetUserListHook, GetUserRolesHook, CreateUserHook, DeleteUserHook, EditUserHook } from '../hooks';
 import {
@@ -32,10 +33,11 @@ import {
 
 import { useForm, Controller, set } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { CreateSchema, EditSchema } from './ValidationSchema';
+import { CreateSchema, EditSchema, PasswordChangeSchema } from './ValidationSchema';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import Swal from 'sweetalert2';
 import { useNavigate } from 'react-router-dom';
+import { UserStatus } from '../../../utils/Constant';
 
 
 function UserList() {
@@ -43,6 +45,7 @@ function UserList() {
     const navigate = useNavigate();
     const [CreateDialog, setCreateDialog] = useState(false);
     const [EditDialog, setEditDialog] = useState(false);
+    const [PasswordDialog, setPasswordDialog] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
@@ -66,6 +69,19 @@ function UserList() {
     } = useForm({
         resolver: yupResolver(EditSchema),
     });
+
+
+    const {
+        control: passFormControl,
+        handleSubmit: handlePassSubmit,
+        setValue: setPassValue,
+        getValues: getPassValues,
+        reset: resetPassForm,
+        formState: { errors: passFormErrors },
+    } = useForm({
+        resolver: yupResolver(PasswordChangeSchema),
+    });
+
 
     /// query hook ///
     const { data: userRoles = [] } = GetUserRolesHook();
@@ -127,6 +143,19 @@ function UserList() {
         setEditDialog(false);
     };
 
+    const handlePasswordDialogOpen = (data) => {
+        resetPassForm();
+        setPassValue('userId', data.id);
+        setPasswordDialog(true);
+    };
+
+    const handlePasswordDialogClose = () => {
+        resetPassForm();
+        setShowPassword(false);
+        setShowConfirmPassword(false);
+        setPasswordDialog(false);
+    };
+
 
     //// table functions ///////////
     const handleCreateUser = async (data) => {
@@ -141,7 +170,7 @@ function UserList() {
 
         handleCreateDialogClose();
 
-        userListRefetch();
+        // userListRefetch();
     }
 
     const handleEditUser = async (data) => {
@@ -154,7 +183,7 @@ function UserList() {
 
         handleEditDialogClose();
 
-        userListRefetch();
+        // userListRefetch();
     }
 
 
@@ -170,11 +199,37 @@ function UserList() {
             if (result.isConfirmed) {
 
                 await deleteUser(data.id);
-                userListRefetch();
+                // userListRefetch();
 
                 Swal.fire("Deleted!", "User has been deleted.", "success");
             }
         });
+    }
+
+    const handlePasswordChange = async (data) => {
+
+        console.log("handlePasswordChange: ", data)
+
+        // table.setEditingRow(null); //exit editing mode
+
+        await editUser(data);
+
+        handlePasswordDialogClose();
+
+        // userListRefetch();
+    }
+
+    const handleUserStatusChange=async (userId,status)=>{
+
+        console.log("handleUserStatusChange: ", userId,status)
+
+        const payload = {
+            userId: userId,
+            status: status
+        };
+
+        await editUser(payload);
+
     }
 
     /// table column ///
@@ -211,6 +266,22 @@ function UserList() {
         {
             accessorKey: 'status',
             header: 'Status',
+            Cell: ({ renderedCellValue, row }) => {
+                return (<>
+                    <Select
+                        className={`dropdown ${(row.original.status?.toLowerCase())?.replace(/\s/g, '')} `}
+                        style={{
+                            minWidth:100,
+                        }}
+                        value={row.original.status}
+                        onChange={(e) => handleUserStatusChange(row.original.id, e.target.value)}
+                    >
+                        {UserStatus.map((v, i) => (
+                            <MenuItem key={i} value={v.value}>{v.label}</MenuItem>
+                        ))}
+                    </Select>
+                </>);
+            }
         },
 
     ], [userRoles]);
@@ -272,18 +343,23 @@ function UserList() {
                         Create New User
                     </Button>
                 </Grid>
-                {/* <Grid item>
+                <Grid item>
                     <Button
                         variant="contained"
-                        onClick={()=>navigate('/change-role-permission')}
+                        onClick={() => navigate('/change-role-permission')}
                     >
                         Change Role Permission
                     </Button>
-                </Grid> */}
+                </Grid>
             </Grid>
         </>),
         renderRowActions: ({ row, table }) => (
             <Box sx={{ display: 'flex', gap: '1rem' }}>
+                <Tooltip title="Password Change">
+                    <IconButton onClick={() => handlePasswordDialogOpen(row.original)}>
+                        <KeyIcon />
+                    </IconButton>
+                </Tooltip>
                 <Tooltip title="Edit">
                     <IconButton onClick={() => handleEditDialogOpen(row.original)}>
                         <EditIcon />
@@ -294,6 +370,7 @@ function UserList() {
                         <DeleteIcon />
                     </IconButton>
                 </Tooltip>
+
             </Box>
         ),
 
@@ -407,7 +484,7 @@ function UserList() {
                         />
 
                         {/* Password Field */}
-                        <Controller
+                        {/* <Controller
                             name="user_pass"
                             control={createFormControl}
                             render={({ field }) => (
@@ -436,10 +513,10 @@ function UserList() {
 
                                 />
                             )}
-                        />
+                        /> */}
 
                         {/* Confirm Password Field */}
-                        <Controller
+                        {/* <Controller
                             name="user_pass_confirm"
                             control={createFormControl}
                             render={({ field }) => (
@@ -467,7 +544,7 @@ function UserList() {
                                     }}
                                 />
                             )}
-                        />
+                        /> */}
 
                     </DialogContent>
                     <DialogActions>
@@ -585,7 +662,7 @@ function UserList() {
                         />
 
                         {/* Password Field */}
-                        <Controller
+                        {/* <Controller
                             name="user_pass"
                             control={editFormControl}
                             render={({ field }) => (
@@ -614,10 +691,10 @@ function UserList() {
 
                                 />
                             )}
-                        />
+                        /> */}
 
                         {/* Confirm Password Field */}
-                        <Controller
+                        {/* <Controller
                             name="user_pass_confirm"
                             control={editFormControl}
                             render={({ field }) => (
@@ -645,11 +722,93 @@ function UserList() {
                                     }}
                                 />
                             )}
-                        />
+                        /> */}
 
                     </DialogContent>
                     <DialogActions>
                         <Button type='button' onClick={handleEditDialogClose} color="secondary" variant="contained">
+                            Cancel
+                        </Button>
+                        <Button type='submit' color="primary" variant="contained">
+                            Update
+                        </Button>
+                    </DialogActions>
+                </form>
+            </Dialog>
+
+
+            {/* Dialog for Password Change */}
+            <Dialog open={PasswordDialog} onClose={handlePasswordDialogClose} maxWidth="md" fullWidth>
+                <DialogTitle>Change Password</DialogTitle>
+                <form onSubmit={handlePassSubmit(handlePasswordChange)}>
+                    <DialogContent>
+
+                        {/* Password Field */}
+                        <Controller
+                            name="user_pass"
+                            control={passFormControl}
+                            render={({ field }) => (
+                                <TextField
+                                    {...field}
+                                    label="Password"
+                                    variant="outlined"
+                                    fullWidth
+                                    margin="normal"
+                                    error={!!passFormErrors.user_pass}
+                                    helperText={passFormErrors.user_pass?.message}
+                                    type={showPassword ? "text" : "password"}
+                                    InputProps={{
+                                        endAdornment: (
+                                            <InputAdornment position="end">
+                                                <IconButton
+                                                    aria-label="toggle password visibility"
+                                                    onClick={() => setShowPassword(!showPassword)}
+                                                    onMouseDown={(event) => event.preventDefault()}
+                                                >
+                                                    {showPassword ? <Visibility /> : <VisibilityOff />}
+                                                </IconButton>
+                                            </InputAdornment>
+                                        ),
+                                    }}
+
+                                />
+                            )}
+                        />
+
+                        {/* Confirm Password Field */}
+                        <Controller
+                            name="user_pass_confirm"
+                            control={passFormControl}
+                            render={({ field }) => (
+                                <TextField
+                                    {...field}
+                                    label="Confirm Password"
+                                    variant="outlined"
+                                    fullWidth
+                                    margin="normal"
+                                    type={showConfirmPassword ? "text" : "password"}
+                                    error={!!passFormErrors.user_pass_confirm}
+                                    helperText={passFormErrors.user_pass_confirm?.message}
+                                    InputProps={{
+                                        endAdornment: (
+                                            <InputAdornment position="end">
+                                                <IconButton
+                                                    aria-label="toggle password visibility"
+                                                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                                                    onMouseDown={(event) => event.preventDefault()}
+                                                >
+                                                    {showConfirmPassword ? <Visibility /> : <VisibilityOff />}
+                                                </IconButton>
+                                            </InputAdornment>
+                                        ),
+                                    }}
+                                />
+                            )}
+                        />
+
+                    </DialogContent>
+                    <DialogActions>
+                        <Button type='button' onClick={handlePasswordDialogClose} color="secondary" variant="contained">
                             Cancel
                         </Button>
                         <Button type='submit' color="primary" variant="contained">

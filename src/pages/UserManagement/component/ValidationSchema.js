@@ -1,9 +1,4 @@
-import { Password } from '@mui/icons-material';
 import * as yup from 'yup';
-
-
-
-
 
 const CreateSchema = yup.object().shape({
     user_first_name: yup
@@ -32,18 +27,18 @@ const CreateSchema = yup.object().shape({
     role_id: yup
         .string()
         .required('User Role is required'),
-    user_pass: yup
-        .string()
-        .required('Password is required')
-        .min(8, 'Password must be at least 8 characters long')
-        .matches(/[A-Z]/, 'Password must contain at least one uppercase letter')
-        .matches(/[a-z]/, 'Password must contain at least one lowercase letter')
-        .matches(/[0-9]/, 'Password must contain at least one number')
-        .matches(/[@$!%*?&#]/, 'Password must contain at least one special character'),
-    user_pass_confirm: yup
-        .string()
-        .required('Confirm Password is required')
-        .oneOf([yup.ref('user_pass'), null], 'Passwords must match'),
+    // user_pass: yup
+    //     .string()
+    //     .required('Password is required')
+    //     .min(8, 'Password must be at least 8 characters long')
+    //     .matches(/[A-Z]/, 'Password must contain at least one uppercase letter')
+    //     .matches(/[a-z]/, 'Password must contain at least one lowercase letter')
+    //     .matches(/[0-9]/, 'Password must contain at least one number')
+    //     .matches(/[@$!%*?&#]/, 'Password must contain at least one special character'),
+    // user_pass_confirm: yup
+    //     .string()
+    //     .required('Confirm Password is required')
+    //     .oneOf([yup.ref('user_pass'), null], 'Passwords must match'),
 });
 
 const EditSchema = yup.object().shape({
@@ -73,9 +68,25 @@ const EditSchema = yup.object().shape({
     role_id: yup
         .string()
         .required('User Role is required'),
+    // user_pass: yup
+    //     .string()
+    //     .notRequired()
+    //     .min(8, 'Password must be at least 8 characters long')
+    //     .matches(/[A-Z]/, 'Password must contain at least one uppercase letter')
+    //     .matches(/[a-z]/, 'Password must contain at least one lowercase letter')
+    //     .matches(/[0-9]/, 'Password must contain at least one number')
+    //     .matches(/[@$!%*?&#]/, 'Password must contain at least one special character'),
+    // user_pass_confirm: yup
+    //     .string()
+    //     .notRequired()
+    //     .oneOf([yup.ref('user_pass'), null], 'Passwords must match'),
+});
+
+
+const PasswordChangeSchema = yup.object().shape({
     user_pass: yup
         .string()
-        .notRequired()
+        .required('Password is required')
         .min(8, 'Password must be at least 8 characters long')
         .matches(/[A-Z]/, 'Password must contain at least one uppercase letter')
         .matches(/[a-z]/, 'Password must contain at least one lowercase letter')
@@ -83,9 +94,9 @@ const EditSchema = yup.object().shape({
         .matches(/[@$!%*?&#]/, 'Password must contain at least one special character'),
     user_pass_confirm: yup
         .string()
-        .notRequired()
+        .required('Confirm Password is required')
         .oneOf([yup.ref('user_pass'), null], 'Passwords must match'),
 });
 
 
-export { CreateSchema,EditSchema };
+export { CreateSchema, EditSchema, PasswordChangeSchema };

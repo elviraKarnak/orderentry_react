@@ -9,7 +9,7 @@ const checkMenuPermission = (code) => {
     if (permisionData && permisionData.length > 0) {
         
       const menuPermission = permisionData.find(item => item.menuModule.code == code);
-      console.log("menuPermission: ", menuPermission);
+      // console.log("menuPermission: ", menuPermission);
 
       if(menuPermission.full_access==1){
         return true;

@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { FormControl, Grid, InputLabel, MenuItem, Select, Typography, Box, FormControlLabel, Checkbox } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
+import { FormControl, Grid, InputLabel, MenuItem, Select, Typography, Box, FormControlLabel, Checkbox, Button } from '@mui/material';
 import Header from '../../common/Header';
-import { GetMenuModulesHook } from './hooks';
+import { GetMenuModulesHook, EditRolePermissionHook } from './hooks';
 
 function ChangeRolePermission() {
 
+  const navigate = useNavigate();
 
   /// query hook ///
   const { data: responseData = {
@@ -12,6 +14,12 @@ function ChangeRolePermission() {
     rolePermissionData: [],
     menuData: []
   } } = GetMenuModulesHook();
+
+
+  /// mutation hook ///
+  const {
+    mutateAsync: updateRolePermission,
+  } = EditRolePermissionHook();
 
 
   const [selectedRoleId, setSelectedRoleId] = useState(null);
@@ -50,7 +58,7 @@ function ChangeRolePermission() {
             updatedPermission.edit_access &&
             updatedPermission.delete_access &&
             updatedPermission.view_access;
-  
+
           return {
             ...updatedPermission,
             full_access: allPermissionsSelected ? 1 : 0,
@@ -58,7 +66,7 @@ function ChangeRolePermission() {
         }
         return perm;
       });
-  
+
       // API call
       saveRolePermissions(moduleId, updatedPermissions.find((perm) => perm.module_id === moduleId));
       return updatedPermissions;
@@ -67,13 +75,26 @@ function ChangeRolePermission() {
 
 
   const saveRolePermissions = async (moduleId, updatedPermission) => {
-    try{
-      console.log("saveRolePermissions: ",moduleId, updatedPermission);
-    }catch(error){
+    try {
+      console.log("saveRolePermissions: ", moduleId, updatedPermission);
+
+      const payload = {
+        id: updatedPermission.id,
+        // module_id: updatedPermission.module_id,
+        full_access: updatedPermission.full_access,
+        add_access: updatedPermission.add_access,
+        edit_access: updatedPermission.edit_access,
+        delete_access: updatedPermission.delete_access,
+        view_access: updatedPermission.view_access,
+      };
+
+      await updateRolePermission(payload);
+
+    } catch (error) {
       console.error(error);
     }
   }
-  
+
 
   // useEffect(() => {
   //   console.log("selectedRoleId", selectedRoleId)
@@ -90,10 +111,13 @@ function ChangeRolePermission() {
         <Grid item sm={12}>
           <Typography variant="h4" className="title">
             Change Role Permission
+
+            <Button type="submit" marginLeft={2} variant="contained" color="primary" onClick={() => navigate(-1)}>Back</Button>
           </Typography>
+
         </Grid>
 
-        <Grid item sm={2}>
+        <Grid item sm={3}>
           <Typography variant="h6" className="title">
             <FormControl fullWidth margin="normal">
               <InputLabel id="user_role_list">User Role List</InputLabel>

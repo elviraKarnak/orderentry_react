@@ -273,5 +273,8 @@ export const boxTypeOptions = [
   { value: "LB", label: "LB - Pounds" },
 ];
 
-
+export const UserStatus=[
+  { value: "active", label: "Active" },
+  { value: "in-active", label: "Inactive" },
+]
 

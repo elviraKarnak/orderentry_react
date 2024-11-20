@@ -156,6 +156,19 @@ html {
   color: #fff;
 }
 
+.active {
+  background: #62bdde;
+  border: 1px solid #707070;
+  color: #fff !important;
+}
+
+.in-active {
+  background: #d11919;
+  border: 1px solid #707070;
+  color: #fff !important;
+}
+
+
 /* .saved {
   background: #5936eb;
   border: 1px solid #707070;
