@@ -205,6 +205,9 @@ function SatagingInventory() {
     initialState: {
       showColumnFilters: false,
       showGlobalFilter: true,
+      columnVisibility: {
+        id: false,
+      },
       //   columnPinning: {
       //     left: ['mrt-row-expand', 'mrt-row-select'],
       //     right: ['mrt-row-actions'],
@@ -230,11 +233,7 @@ function SatagingInventory() {
       chooseStatus: chooseStatus,
       allSelectCheckboxSelect: allSelectCheckboxSelect
     },
-    initialState: {
-      columnVisibility: {
-        id: false,
-      },
-    },
+    
 
     onRowSelectionChange: setRowSelection,
 

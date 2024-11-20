@@ -11,6 +11,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import KeyIcon from '@mui/icons-material/Key';
+import HourglassTopOutlinedIcon from '@mui/icons-material/HourglassTopOutlined';
 
 import { GetUserListHook, GetUserRolesHook, CreateUserHook, DeleteUserHook, EditUserHook } from '../hooks';
 import {
@@ -43,6 +44,7 @@ import { UserStatus } from '../../../utils/Constant';
 function UserList() {
 
     const navigate = useNavigate();
+    const [Loading, setLoading] = useState(false);
     const [CreateDialog, setCreateDialog] = useState(false);
     const [EditDialog, setEditDialog] = useState(false);
     const [PasswordDialog, setPasswordDialog] = useState(false);
@@ -160,6 +162,7 @@ function UserList() {
     //// table functions ///////////
     const handleCreateUser = async (data) => {
         // console.log("handleCreateUser: ", data);
+        setLoading(true);
         await createUser(data);
 
         Swal.fire({
@@ -168,6 +171,8 @@ function UserList() {
             icon: "success"
         });
 
+        setLoading(false);
+
         handleCreateDialogClose();
 
         // userListRefetch();
@@ -175,11 +180,15 @@ function UserList() {
 
     const handleEditUser = async (data) => {
 
+        setLoading(true);
+
         console.log("handleEditUser: ", data)
 
         // table.setEditingRow(null); //exit editing mode
 
         await editUser(data);
+
+        setLoading(false);
 
         handleEditDialogClose();
 
@@ -208,6 +217,8 @@ function UserList() {
 
     const handlePasswordChange = async (data) => {
 
+        setLoading(true);
+
         console.log("handlePasswordChange: ", data)
 
         // table.setEditingRow(null); //exit editing mode
@@ -217,11 +228,13 @@ function UserList() {
         handlePasswordDialogClose();
 
         // userListRefetch();
+
+        setLoading(false);
     }
 
-    const handleUserStatusChange=async (userId,status)=>{
+    const handleUserStatusChange = async (userId, status) => {
 
-        console.log("handleUserStatusChange: ", userId,status)
+        console.log("handleUserStatusChange: ", userId, status)
 
         const payload = {
             userId: userId,
@@ -269,9 +282,11 @@ function UserList() {
             Cell: ({ renderedCellValue, row }) => {
                 return (<>
                     <Select
+                        labelId="demo-simple-select-helper-label"
+                        id="demo-simple-select-helper"
                         className={`dropdown ${(row.original.status?.toLowerCase())?.replace(/\s/g, '')} `}
                         style={{
-                            minWidth:100,
+                            minWidth: 100,
                         }}
                         value={row.original.status}
                         onChange={(e) => handleUserStatusChange(row.original.id, e.target.value)}
@@ -548,10 +563,10 @@ function UserList() {
 
                     </DialogContent>
                     <DialogActions>
-                        <Button type='button' onClick={handleCreateDialogClose} color="secondary" variant="contained">
+                        <Button type='button' onClick={handleCreateDialogClose} color="secondary" variant="contained" disabled={Loading} >
                             Cancel
                         </Button>
-                        <Button type='submit' color="primary" variant="contained">
+                        <Button type='submit' color="primary" variant="contained" disabled={Loading} startIcon={Loading && <HourglassTopOutlinedIcon />}>
                             Submit
                         </Button>
                     </DialogActions>
@@ -726,10 +741,10 @@ function UserList() {
 
                     </DialogContent>
                     <DialogActions>
-                        <Button type='button' onClick={handleEditDialogClose} color="secondary" variant="contained">
+                        <Button type='button' onClick={handleEditDialogClose} color="secondary" variant="contained" disabled={Loading} >
                             Cancel
                         </Button>
-                        <Button type='submit' color="primary" variant="contained">
+                        <Button type='submit' color="primary" variant="contained" disabled={Loading} startIcon={Loading && <HourglassTopOutlinedIcon />}>
                             Update
                         </Button>
                     </DialogActions>
@@ -808,10 +823,10 @@ function UserList() {
 
                     </DialogContent>
                     <DialogActions>
-                        <Button type='button' onClick={handlePasswordDialogClose} color="secondary" variant="contained">
+                        <Button type='button' disabled={Loading} onClick={handlePasswordDialogClose} color="secondary" variant="contained">
                             Cancel
                         </Button>
-                        <Button type='submit' color="primary" variant="contained">
+                        <Button type='submit' disabled={Loading} startIcon={Loading && <HourglassTopOutlinedIcon />} color="primary" variant="contained">
                             Update
                         </Button>
                     </DialogActions>

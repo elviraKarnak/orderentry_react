@@ -4,6 +4,8 @@ import { LuView } from "react-icons/lu";
 import { MdOutlineViewInAr } from "react-icons/md";
 import { MdOutlineInventory2 } from "react-icons/md";
 import { GrUserAdmin } from "react-icons/gr";
+import AgricultureOutlinedIcon from '@mui/icons-material/AgricultureOutlined';
+import ReportGmailerrorredOutlinedIcon from '@mui/icons-material/ReportGmailerrorredOutlined';
 // import { CiViewTable } from "react-icons/ci";
 import { IoListSharp } from "react-icons/io5";
 import { GiNotebook } from "react-icons/gi";
@@ -83,13 +85,13 @@ export const menueDataAdmin = [
   {
     menuName: "Reporting",
     path: "/",
-    icon: <GiNotebook />,
+    icon: <ReportGmailerrorredOutlinedIcon />,
     code: PageModuleData.reporting,
   },
   {
     menuName: "Farm Purchase",
     path: "/farm-purchase",
-    icon: <GiNotebook />,
+    icon: <AgricultureOutlinedIcon />,
     code: PageModuleData.farmPurchase,
   }
 ];

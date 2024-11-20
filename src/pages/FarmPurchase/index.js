@@ -1,17 +1,28 @@
 import React from 'react'
 import Header from '../../common/Header';
-import { Typography } from '@mui/material';
+import { Grid, Typography } from '@mui/material';
+import FarmOrderList from './component/FarmOrderList';
 
 function FarmPurchase() {
     return (
         <>
-            <Header title='Order Details' />
-            <div><Typography variant="h3" className="title">Farm Purchase Order</Typography></div>
-            <div className="data_table-head">
-                <div className="container-fluid">
-                    {/* <div className="view_order_table"><MaterialReactTable table={table} /></div> */}
-                </div>
-            </div>
+            <Grid container>
+                <Grid item sm={12}>
+                    <Header />
+                </Grid>
+
+                <Grid item sm={12}>
+                    <Typography variant="h4" className="title">
+                        Farm Purchase Order
+                    </Typography>
+                </Grid>
+
+                <Grid item sm={12}>
+                    <Typography variant="h6" className="title">
+                        <FarmOrderList />
+                    </Typography>
+                </Grid>
+            </Grid>
         </>
     )
 }
