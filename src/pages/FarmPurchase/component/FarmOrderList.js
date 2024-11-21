@@ -6,7 +6,7 @@ import {
     MRT_ToggleFiltersButton,
 } from "material-react-table";
 import FarmOrderItemList from "./FarmOrderItemList";
-import { Box, IconButton, MenuItem, Select, Tooltip } from "@mui/material";
+import { Box, IconButton, MenuItem, Select, Tooltip,Typography } from "@mui/material";
 
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -16,17 +16,31 @@ import FileUploadOutlinedIcon from '@mui/icons-material/FileUploadOutlined';
 import FileDownloadOutlinedIcon from '@mui/icons-material/FileDownloadOutlined';
 import { FARM_PURCHASE_STATUS } from "../../../utils/Constant";
 
+import TimerIcon from '@mui/icons-material/Timer';
+
 const dummyData = [{
+    id:1,
     checkout_cut_off_time: "12hrs 0 mins 0 secs",
     po_date: '20/11/2024',
     po_number: 1213434,
     awb_number: "",
     inv_number: "",
     inv_date: "",
-    total_price: "",
+    total_price: 960,
     status: "new_order",
     orderItemDetails: [
-
+        {
+            id:1,
+            product_image: "https://via.placeholder.com/870x580.png?text=Placeholder+Image",
+            product_name: "Freedom 50cm",
+            product_category: "Rose",
+            product_color: "Red",
+            boxes: 25,
+            box_type: "ST",
+            cost_per_unit: 0.39,
+            total_price:16.25,
+            status: "Acepted",
+        }
     ]
 }]
 
@@ -38,7 +52,14 @@ function FarmOrderList() {
             {
                 accessorKey: "checkout_cut_off_time",
                 header: "Checkout Cut Off",
-                enableEditing: false
+                enableEditing: false,
+                cell: ({ row }) => {
+                    return (
+                        <Typography variant="body2" color="text.secondary">
+                            <TimerIcon/> {row.original.checkout_cut_off_time}
+                        </Typography>
+                    );
+                }
             },
             {
                 accessorKey: "po_date",
@@ -92,7 +113,7 @@ function FarmOrderList() {
             {
                 accessorKey: "total_price",
                 header: "Total Price",
-                enableEditing: false
+                enableEditing: false,
             },
             {
                 accessorKey: "status",
@@ -124,13 +145,14 @@ function FarmOrderList() {
     const farmListTable = useMaterialReactTable({
         columns: columns,
         data: dummyData,
-        editDisplayMode: 'table',
         enableColumnFilterModes: true,
         enableColumnOrdering: true,
         enableGrouping: true,
         enableColumnPinning: true,
         enableFacetedValues: true,
-        enableRowActions: false,
+        positionActionsColumn:"last",
+        enableRowActions: true,
+        editDisplayMode: 'table',
         enableEditing: true,
         // editDisplayMode: 'row',
         // enableSelectAll: true,
@@ -166,6 +188,7 @@ function FarmOrderList() {
         renderDetailPanel: ({ row }) => (
             <FarmOrderItemList row={row} />
         ),
+
         renderRowActions: ({ row, table }) => (
             <Box sx={{ display: 'flex', gap: '1rem' }}>
                 <Tooltip title="Upload Invoice">

@@ -12,7 +12,7 @@ import IconButton from '@mui/material/IconButton';
 import KeyIcon from '@mui/icons-material/Key';
 import CloseIcon from '@mui/icons-material/Close';
 
-import HourglassTopOutlinedIcon from '@mui/icons-material/HourglassTopOutlined';
+import CircularProgress from "@mui/material/CircularProgress";
 
 import { GetUserListHook, GetUserRolesHook, CreateUserHook, DeleteUserHook, EditUserHook } from '../hooks';
 import {
@@ -567,7 +567,7 @@ function UserList() {
                         <Button type='button' onClick={handleCreateDialogClose} color="secondary" variant="contained" disabled={Loading} >
                             Cancel
                         </Button>
-                        <Button type='submit' color="primary" variant="contained" disabled={Loading} startIcon={Loading && <HourglassTopOutlinedIcon />}>
+                        <Button type='submit' color="primary" variant="contained" disabled={Loading} startIcon={Loading && <CircularProgress size={24} sx={{ color: "white" }} />}>
                             Submit
                         </Button>
                     </DialogActions>
@@ -745,7 +745,7 @@ function UserList() {
                         <Button type='button' onClick={handleEditDialogClose} color="secondary" variant="contained" disabled={Loading} >
                             Cancel
                         </Button>
-                        <Button type='submit' color="primary" variant="contained" disabled={Loading} startIcon={Loading && <HourglassTopOutlinedIcon />}>
+                        <Button type='submit' color="primary" variant="contained" disabled={Loading} startIcon={Loading && <CircularProgress size={24} sx={{ color: "white" }} />}>
                             Update
                         </Button>
                     </DialogActions>
@@ -827,7 +827,7 @@ function UserList() {
                         <Button type='button' disabled={Loading} onClick={handlePasswordDialogClose} color="secondary" variant="contained">
                             Cancel
                         </Button>
-                        <Button type='submit' disabled={Loading} startIcon={Loading && <HourglassTopOutlinedIcon />} color="primary" variant="contained">
+                        <Button type='submit' disabled={Loading} startIcon={Loading && <CircularProgress size={24} sx={{ color: "white" }} />} color="primary" variant="contained">
                             Update
                         </Button>
                     </DialogActions>
