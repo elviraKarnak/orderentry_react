@@ -30,7 +30,7 @@ function FarmOrderItemList({ row }) {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {row?.original?.orderItemDetails?.map((row) => (
+                        {row?.original?.orderItems?.map((row) => (
                             <TableRow
                                 key={row.id}
                                 sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
@@ -50,12 +50,13 @@ function FarmOrderItemList({ row }) {
                                 <TableCell>{row.product_category}</TableCell>
                                 <TableCell>{row.product_color}</TableCell>
                                 <TableCell>
-                                    {row.boxes} {row.box_type}
+                                    {/* {row.boxes} {row.box_type} */}
+                                    {row.item_quantity}
                                 </TableCell>
-                                <TableCell>{row.cost_per_unit}</TableCell>
-                                <TableCell>{row.total_price}</TableCell>
+                                <TableCell>{row.item_price}</TableCell>
+                                <TableCell>{row.item_total_price}</TableCell>
                                 <TableCell>
-                                    {row.status}
+                                    {row.farm_status}
                                     {/* <Select
                                         value={row.status}
                                         onChange={(e) => handleStatusChange(row.id, e.target.value)}

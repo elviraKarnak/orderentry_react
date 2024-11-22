@@ -275,13 +275,13 @@ export const boxTypeOptions = [
   { value: "LB", label: "LB - Pounds" },
 ];
 
-export const UserStatus=[
+export const UserStatus = [
   { value: "active", label: "Active" },
   { value: "in-active", label: "Inactive" },
 ]
 
-export const FARM_PURCHASE_STATUS=[
-  { value: "new_order", label: "New Order" },
-  { value: "accepted", label: "Accepted" },
-  { value: "cancelled", label: "Cancelled" },
+export const FARM_PURCHASE_STATUS = [
+  { value: "new_order", label: "New Order", disabled: true },
+  { value: "accepted", label: "Accepted", disabled: false },
+  { value: "cancelled", label: "Cancelled", disabled: false },
 ]

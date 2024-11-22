@@ -6,7 +6,7 @@ import {
     MRT_ToggleFiltersButton,
 } from "material-react-table";
 import FarmOrderItemList from "./FarmOrderItemList";
-import { Box, IconButton, MenuItem, Select, Tooltip,Typography } from "@mui/material";
+import { Box, IconButton, MenuItem, Select, Tooltip, Typography } from "@mui/material";
 
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -17,34 +17,45 @@ import FileDownloadOutlinedIcon from '@mui/icons-material/FileDownloadOutlined';
 import { FARM_PURCHASE_STATUS } from "../../../utils/Constant";
 
 import TimerIcon from '@mui/icons-material/Timer';
+import { FarmOrderUpdateHook, GetFarmOrderListHook } from "../hooks";
 
-const dummyData = [{
-    id:1,
-    checkout_cut_off_time: "12hrs 0 mins 0 secs",
-    po_date: '20/11/2024',
-    po_number: 1213434,
-    awb_number: "",
-    inv_number: "",
-    inv_date: "",
-    total_price: 960,
-    status: "new_order",
-    orderItemDetails: [
-        {
-            id:1,
-            product_image: "https://via.placeholder.com/870x580.png?text=Placeholder+Image",
-            product_name: "Freedom 50cm",
-            product_category: "Rose",
-            product_color: "Red",
-            boxes: 25,
-            box_type: "ST",
-            cost_per_unit: 0.39,
-            total_price:16.25,
-            status: "Acepted",
-        }
-    ]
-}]
+// const dummyData = [{
+//     id:1,
+//     checkout_cut_off_time: "12hrs 0 mins 0 secs",
+//     po_date: '20/11/2024',
+//     po_number: 1213434,
+//     awb_number: "",
+//     inv_number: "",
+//     inv_date: "",
+//     total_price: 960,
+//     status: "new_order",
+//     orderItemDetails: [
+//         {
+//             id:1,
+//             product_image: "https://via.placeholder.com/870x580.png?text=Placeholder+Image",
+//             product_name: "Freedom 50cm",
+//             product_category: "Rose",
+//             product_color: "Red",
+//             boxes: 25,
+//             box_type: "ST",
+//             cost_per_unit: 0.39,
+//             total_price:16.25,
+//             status: "Acepted",
+//         }
+//     ]
+// }]
 
 function FarmOrderList() {
+
+
+    /// query hook ///
+    const { data: FarmOrderListData = [] } = GetFarmOrderListHook();
+
+    /// mutation hook ///
+    const {
+        mutateAsync: updateFarmOrder,
+        isPending: isUpdateingFarmOrder
+    } = FarmOrderUpdateHook();
 
 
     const columns = useMemo(
@@ -56,18 +67,18 @@ function FarmOrderList() {
                 cell: ({ row }) => {
                     return (
                         <Typography variant="body2" color="text.secondary">
-                            <TimerIcon/> {row.original.checkout_cut_off_time}
+                            <TimerIcon /> {row.original.checkout_cut_off_time}
                         </Typography>
                     );
                 }
             },
             {
-                accessorKey: "po_date",
+                accessorKey: "order_date",
                 header: "PO Date",
                 enableEditing: false
             },
             {
-                accessorKey: "po_number",
+                accessorKey: "order_number",
                 header: "PO#",
                 enableEditing: false
             },
@@ -79,34 +90,56 @@ function FarmOrderList() {
                     type: 'text',
                     required: true,
                     onBlur: async (event) => {
-                        console.log(row.original)
-                        console.log(event.currentTarget.value);
+                        // console.log(row.original)
+                        // console.log(event.currentTarget.value);
+
+                        var payload = {
+                            order_id: row.original.id,
+                            awb_number: event.currentTarget.value
+                        }
+
+                        await updateFarmOrder(payload)
                     },
                 }),
             },
             {
-                accessorKey: "inv_number",
+                accessorKey: "invoice_number",
                 header: "Inv#",
                 enableEditing: true,
                 muiEditTextFieldProps: ({ cell, row }) => ({
                     type: 'text',
                     required: true,
                     onBlur: async (event) => {
-                        console.log(row.original)
-                        console.log(event.currentTarget.value);
+                        // console.log(row.original)
+                        // console.log(event.currentTarget.value);
+
+                        var payload = {
+                            order_id: row.original.id,
+                            invoice_number: event.currentTarget.value
+                        }
+
+                        await updateFarmOrder(payload)
+
                     },
                 }),
             },
             {
-                accessorKey: "inv_date",
+                accessorKey: "invoice_date",
                 header: "Inv Date",
                 enableEditing: true,
                 muiEditTextFieldProps: ({ cell, row }) => ({
                     type: 'text',
                     required: true,
                     onBlur: async (event) => {
-                        console.log(row.original)
-                        console.log(event.currentTarget.value);
+                        // console.log(row.original)
+                        // console.log(event.currentTarget.value);
+
+                        var payload = {
+                            order_id: row.original.id,
+                            invoice_date: event.currentTarget.value
+                        }
+
+                        await updateFarmOrder(payload)
                     },
                 }),
             },
@@ -116,7 +149,7 @@ function FarmOrderList() {
                 enableEditing: false,
             },
             {
-                accessorKey: "status",
+                accessorKey: "farm_status",
                 header: "Status",
                 enableEditing: false,
                 Cell: ({ renderedCellValue, row }) => {
@@ -124,15 +157,15 @@ function FarmOrderList() {
                         <Select
                             labelId="demo-simple-select-helper-label"
                             id="demo-simple-select-helper"
-                            className={`dropdown ${(row.original.status?.toLowerCase())?.replace(/\s/g, '')} `}
+                            className={`dropdown ${(row.original.farm_status?.toLowerCase())?.replace(/\s/g, '')} `}
                             style={{
                                 minWidth: 100,
                             }}
-                            value={row.original.status}
+                            value={row.original.farm_status}
                         // onChange={(e) => handleUserStatusChange(row.original.id, e.target.value)}
                         >
                             {FARM_PURCHASE_STATUS.map((v, i) => (
-                                <MenuItem key={i} value={v.value}>{v.label}</MenuItem>
+                                <MenuItem key={i} value={v.value} disabled={v.disabled} >{v.label}</MenuItem>
                             ))}
                         </Select>
                     </>);
@@ -144,13 +177,13 @@ function FarmOrderList() {
 
     const farmListTable = useMaterialReactTable({
         columns: columns,
-        data: dummyData,
+        data: FarmOrderListData,
         enableColumnFilterModes: true,
         enableColumnOrdering: true,
         enableGrouping: true,
         enableColumnPinning: true,
         enableFacetedValues: true,
-        positionActionsColumn:"last",
+        positionActionsColumn: "last",
         enableRowActions: true,
         editDisplayMode: 'table',
         enableEditing: true,
@@ -179,6 +212,7 @@ function FarmOrderList() {
         },
         state: {
             // isLoading: stagingInventoryIsLoading,
+            isSaving: isUpdateingFarmOrder,
             // showAlertBanner: stagingInventoryisError,
             // showProgressBars: stagingInventoryIsFetching,
             // rowSelection: rowSelection,
