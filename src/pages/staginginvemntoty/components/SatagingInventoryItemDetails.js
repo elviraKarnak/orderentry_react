@@ -41,9 +41,12 @@ function SatagingInventoryItemDetails({ row, stagingInventoryRefetch }) {
 
         var response = await SatagingInventoryItemStatusChange(payload);
 
+        console.log(response)
+
         if (response.result.status === false) {
           Swal.fire({
-            text: "Sataging Inventory item status change failed.",
+            // text: "Sataging Inventory item status change failed.",
+            text:response.result.msg,
             icon: "error",
           });
           return;
@@ -74,6 +77,7 @@ function SatagingInventoryItemDetails({ row, stagingInventoryRefetch }) {
               <TableCell>Category</TableCell>
               <TableCell>Color</TableCell>
               <TableCell>SO#</TableCell>
+              <TableCell>PO#</TableCell>
               <TableCell>Quantity</TableCell>
               <TableCell>Farm Price</TableCell>
               <TableCell>Total</TableCell>
@@ -102,11 +106,13 @@ function SatagingInventoryItemDetails({ row, stagingInventoryRefetch }) {
                 <TableCell>{row.vendor_name}</TableCell>
                 <TableCell>{row.product_category}</TableCell>
                 <TableCell>{row.product_color}</TableCell>
-                <TableCell>#{row.so}</TableCell>
+                <TableCell>{row.so ? `#${row.so}` : ""}</TableCell>
+                <TableCell>{row.po ? `#${row.po}` : ""}</TableCell>
                 <TableCell>
-                  {row.boxes} {row.box_type}
+                  {/* {row.boxes} {row.box_type} */}
+                  {row.quantity} {row.box_type}
                 </TableCell>
-                <TableCell>{row.cost_per_unit}</TableCell>
+                <TableCell>{row.farm_price}</TableCell>
                 <TableCell>{row.total_price}</TableCell>
                 <TableCell>{row.date_received}</TableCell>
                 <TableCell>

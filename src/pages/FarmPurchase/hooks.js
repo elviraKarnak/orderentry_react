@@ -1,8 +1,9 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import Swal from "sweetalert2";
 import { toast } from "react-toastify";
-import { farmOrderItemUpdateApi, farmOrderListAPi, farmOrderUpdateApi } from "../../utils/fetch";
+import { farmOrderItemStatusUpdateApi, farmOrderItemUpdateApi, farmOrderListAPi, farmOrderStatusUpdateApi, farmOrderUpdateApi } from "../../utils/fetch";
 
+export const disableStatus=['accepted','cancelled'];
 
 /////////////////////// Query //////////////////////////
 export function GetFarmOrderListHook() {
@@ -54,6 +55,67 @@ export function FarmOrderItemUpdateHook(){
             delete payload.order_item_id;
 
             const response = await farmOrderItemUpdateApi(order_item_id, payload);
+            return response;
+        },
+        onMutate: (paylaod) => {
+            console.log("paylaod: ", paylaod);
+
+            // queryClient.invalidateQueries('user_list');
+        },
+        onSuccess: (responce) => {
+            console.log(responce);
+            queryClient.invalidateQueries('farm_order_list');
+        },
+        onError: (error) => {
+            console.error(error);
+        },
+    })
+}
+
+
+
+export function FarmOrderStatusUpdateHook() {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: async (data) => {
+
+            const payload={
+                order_id: data.order_id,
+                status: data.status
+            }
+
+            const response = await farmOrderStatusUpdateApi(payload);
+            return response;
+        },
+        onMutate: (paylaod) => {
+            console.log("paylaod: ", paylaod);
+
+            // queryClient.invalidateQueries('user_list');
+        },
+        onSuccess: (responce) => {
+            console.log(responce);
+            queryClient.invalidateQueries('farm_order_list');
+        },
+        onError: (error) => {
+            console.error(error);
+        },
+    })
+}
+
+
+
+
+export function FarmOrderItemStatusUpdateHook() {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: async (data) => {
+
+            const payload={
+                id: data.id, // order meta table id
+                status: data.status
+            }
+
+            const response = await farmOrderItemStatusUpdateApi(payload);
             return response;
         },
         onMutate: (paylaod) => {

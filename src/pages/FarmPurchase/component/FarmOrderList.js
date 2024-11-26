@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import {
     MaterialReactTable,
     useMaterialReactTable,
@@ -6,7 +6,7 @@ import {
     MRT_ToggleFiltersButton,
 } from "material-react-table";
 import FarmOrderItemList from "./FarmOrderItemList";
-import { Box, IconButton, MenuItem, Select, Tooltip, Typography } from "@mui/material";
+import { Box, IconButton, MenuItem, Select, TextField, Tooltip, Typography } from "@mui/material";
 
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -17,7 +17,13 @@ import FileDownloadOutlinedIcon from '@mui/icons-material/FileDownloadOutlined';
 import { FARM_PURCHASE_STATUS } from "../../../utils/Constant";
 
 import TimerIcon from '@mui/icons-material/Timer';
-import { FarmOrderUpdateHook, GetFarmOrderListHook } from "../hooks";
+import { disableStatus, FarmOrderItemStatusUpdateHook, FarmOrderStatusUpdateHook, FarmOrderUpdateHook, GetFarmOrderListHook } from "../hooks";
+
+import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import dayjs from "dayjs";
 
 // const dummyData = [{
 //     id:1,
@@ -56,6 +62,20 @@ function FarmOrderList() {
         mutateAsync: updateFarmOrder,
         isPending: isUpdateingFarmOrder
     } = FarmOrderUpdateHook();
+
+    const {
+        mutateAsync: orderStatusUpdate,
+        isPending: isOrderStatusUpdate,
+    } = FarmOrderStatusUpdateHook();
+
+
+
+    const handleOrderStatusChange = async (order_id, status) => {
+        await orderStatusUpdate({
+            order_id: order_id,
+            status: status
+        })
+    }
 
 
     const columns = useMemo(
@@ -126,22 +146,46 @@ function FarmOrderList() {
             {
                 accessorKey: "invoice_date",
                 header: "Inv Date",
-                enableEditing: true,
-                muiEditTextFieldProps: ({ cell, row }) => ({
-                    type: 'text',
-                    required: true,
-                    onBlur: async (event) => {
-                        // console.log(row.original)
-                        // console.log(event.currentTarget.value);
+                enableEditing: false,
+                Cell: ({ row }) => {
 
-                        var payload = {
-                            order_id: row.original.id,
-                            invoice_date: event.currentTarget.value
+                    const [dateValue, setDateValue] = useState(
+                        row.original.invoice_date ? dayjs(row.original.invoice_date) : null
+                    );
+
+
+                    const handleDateChange = async (newValue) => {
+                        setDateValue(newValue);
+                        if (newValue) {
+                            const payload = {
+                                order_id: row.original.id,
+                                invoice_date: newValue.format('YYYY-MM-DD'), // Adjust format as needed
+                            };
+
+                            console.log("Invoice date updated:", payload);
+
+                            try {
+                                await updateFarmOrder(payload); // Replace with your API call function
+                                console.log("Invoice date updated successfully:", payload);
+
+                            } catch (error) {
+                                console.error("Error updating invoice date:", error);
+                            }
                         }
+                    };
 
-                        await updateFarmOrder(payload)
-                    },
-                }),
+
+                    return (<LocalizationProvider dateAdapter={AdapterDayjs}>
+                        <DemoContainer components={['DatePicker']}>
+                            <DatePicker
+                                label="Invoice Date"
+                                value={dateValue}
+                                onChange={handleDateChange}
+                                renderInput={(params) => <TextField {...params} />}
+                            />
+                        </DemoContainer>
+                    </LocalizationProvider>);
+                },
             },
             {
                 accessorKey: "total_price",
@@ -162,7 +206,8 @@ function FarmOrderList() {
                                 minWidth: 100,
                             }}
                             value={row.original.farm_status}
-                        // onChange={(e) => handleUserStatusChange(row.original.id, e.target.value)}
+                            onChange={(e) => handleOrderStatusChange(row.original.id, e.target.value)}
+                            disabled={disableStatus.includes(row.original.farm_status)}
                         >
                             {FARM_PURCHASE_STATUS.map((v, i) => (
                                 <MenuItem key={i} value={v.value} disabled={v.disabled} >{v.label}</MenuItem>
@@ -212,7 +257,7 @@ function FarmOrderList() {
         },
         state: {
             // isLoading: stagingInventoryIsLoading,
-            isSaving: isUpdateingFarmOrder,
+            isSaving: isUpdateingFarmOrder || isOrderStatusUpdate,
             // showAlertBanner: stagingInventoryisError,
             // showProgressBars: stagingInventoryIsFetching,
             // rowSelection: rowSelection,

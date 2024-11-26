@@ -10,8 +10,32 @@ import {
     Select,
     MenuItem,
 } from '@mui/material';
+import { disableStatus, FarmOrderItemStatusUpdateHook } from '../hooks';
+
+const statusArray = [
+    { label: "Pending", value: "pending" ,disabled: true },
+    { label: "Accepted", value: "accepted",disabled: false },
+    { label: "Cancelled", value: "cancelled",disabled: false },
+]
 
 function FarmOrderItemList({ row }) {
+
+    const {
+        mutateAsync: orderItemStatusUpdate,
+        isPending: isoroerItemStatusUpdate,
+    } = FarmOrderItemStatusUpdateHook();
+
+
+    const handleStatusChange=async(id,status)=>{
+
+        const payload={
+            id: id,
+            status: status
+        }
+
+        await orderItemStatusUpdate(payload)
+    }
+
     return (
         <>
             <TableContainer component={Paper}>
@@ -56,21 +80,21 @@ function FarmOrderItemList({ row }) {
                                 <TableCell>{row.item_price}</TableCell>
                                 <TableCell>{row.item_total_price}</TableCell>
                                 <TableCell>
-                                    {row.farm_status}
-                                    {/* <Select
-                                        value={row.status}
+                                    {/* {row.farm_status} */}
+                                    <Select
+                                        value={row.farm_status}
                                         onChange={(e) => handleStatusChange(row.id, e.target.value)}
                                         variant="outlined"
                                         size="small"
                                         className={`dropdown`}
-                                        disabled={row.status === "transferred"}
+                                        disabled={disableStatus.includes(row.farm_status)}
                                     >
-                                        {SatagingInventoryDefaultStatus.map((status) => (
-                                            <MenuItem key={status.value} value={status.value}>
-                                                {status.label}
+                                        {statusArray.map((s,index) => (
+                                            <MenuItem key={index} value={s.value} disabled={s.disabled}>
+                                                {s.label}
                                             </MenuItem>
                                         ))}
-                                    </Select> */}
+                                    </Select>
                                 </TableCell>
                             </TableRow>
                         ))}
