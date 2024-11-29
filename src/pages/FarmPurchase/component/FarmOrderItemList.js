@@ -15,7 +15,7 @@ import { disableStatus, FarmOrderItemStatusUpdateHook } from '../hooks';
 const statusArray = [
     { label: "Pending", value: "pending" ,disabled: true },
     { label: "Accepted", value: "accepted",disabled: false },
-    { label: "Cancelled", value: "cancelled",disabled: false },
+    { label: "Canceled", value: "canceled",disabled: false },
 ]
 
 function FarmOrderItemList({ row }) {
@@ -80,14 +80,14 @@ function FarmOrderItemList({ row }) {
                                 <TableCell>{row.item_price}</TableCell>
                                 <TableCell>{row.item_total_price}</TableCell>
                                 <TableCell>
-                                    {/* {row.farm_status} */}
+                                    {/* {row.status} */}
                                     <Select
-                                        value={row.farm_status}
+                                        value={row.status}
                                         onChange={(e) => handleStatusChange(row.id, e.target.value)}
                                         variant="outlined"
                                         size="small"
                                         className={`dropdown`}
-                                        disabled={disableStatus.includes(row.farm_status)}
+                                        disabled={disableStatus.includes(row.status)}
                                     >
                                         {statusArray.map((s,index) => (
                                             <MenuItem key={index} value={s.value} disabled={s.disabled}>

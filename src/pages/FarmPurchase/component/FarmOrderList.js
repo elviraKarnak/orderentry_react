@@ -109,6 +109,7 @@ function FarmOrderList() {
                 muiEditTextFieldProps: ({ cell, row }) => ({
                     type: 'text',
                     required: true,
+                    disabled:disableStatus.includes(row.original.status),
                     onBlur: async (event) => {
                         // console.log(row.original)
                         // console.log(event.currentTarget.value);
@@ -129,6 +130,7 @@ function FarmOrderList() {
                 muiEditTextFieldProps: ({ cell, row }) => ({
                     type: 'text',
                     required: true,
+                    disabled:disableStatus.includes(row.original.status),
                     onBlur: async (event) => {
                         // console.log(row.original)
                         // console.log(event.currentTarget.value);
@@ -181,6 +183,7 @@ function FarmOrderList() {
                                 label="Invoice Date"
                                 value={dateValue}
                                 onChange={handleDateChange}
+                                disabled={disableStatus.includes(row.original.status)}
                                 renderInput={(params) => <TextField {...params} />}
                             />
                         </DemoContainer>
@@ -193,7 +196,7 @@ function FarmOrderList() {
                 enableEditing: false,
             },
             {
-                accessorKey: "farm_status",
+                accessorKey: "status",
                 header: "Status",
                 enableEditing: false,
                 Cell: ({ renderedCellValue, row }) => {
@@ -201,13 +204,13 @@ function FarmOrderList() {
                         <Select
                             labelId="demo-simple-select-helper-label"
                             id="demo-simple-select-helper"
-                            className={`dropdown ${(row.original.farm_status?.toLowerCase())?.replace(/\s/g, '')} `}
+                            className={`dropdown ${(row.original.status?.toLowerCase())?.replace(/\s/g, '')} `}
                             style={{
                                 minWidth: 100,
                             }}
-                            value={row.original.farm_status}
+                            value={row.original.status}
                             onChange={(e) => handleOrderStatusChange(row.original.id, e.target.value)}
-                            disabled={disableStatus.includes(row.original.farm_status)}
+                            disabled={disableStatus.includes(row.original.status)}
                         >
                             {FARM_PURCHASE_STATUS.map((v, i) => (
                                 <MenuItem key={i} value={v.value} disabled={v.disabled} >{v.label}</MenuItem>

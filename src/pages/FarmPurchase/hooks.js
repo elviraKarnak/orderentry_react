@@ -3,7 +3,7 @@ import Swal from "sweetalert2";
 import { toast } from "react-toastify";
 import { farmOrderItemStatusUpdateApi, farmOrderItemUpdateApi, farmOrderListAPi, farmOrderStatusUpdateApi, farmOrderUpdateApi } from "../../utils/fetch";
 
-export const disableStatus=['accepted','cancelled'];
+export const disableStatus=['accepted','canceled'];
 
 /////////////////////// Query //////////////////////////
 export function GetFarmOrderListHook() {

@@ -283,5 +283,5 @@ export const UserStatus = [
 export const FARM_PURCHASE_STATUS = [
   { value: "new_order", label: "New Order", disabled: true },
   { value: "accepted", label: "Accepted", disabled: false },
-  { value: "cancelled", label: "Cancelled", disabled: false },
+  { value: "canceled", label: "Canceled", disabled: false },
 ]
