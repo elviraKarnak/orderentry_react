@@ -82,7 +82,7 @@ function SatagingInventory() {
   const rowCheckBoxSelect = (orderListTable, status) => {
 
     var selectedRowsOnPage = orderListTable.getPaginationRowModel().rows.reduce((acc, row) => {
-      if (row.original.status === status) {
+      if (row.original.status === status && row.original.awb !== null) {
         acc[row.original.id] = true;
       }
       return acc;
@@ -242,8 +242,8 @@ function SatagingInventory() {
       checked: rowSelection[row.id] || false,
 
       disabled: ((chooseStatus === "")
-        ? (row.original.status === "transferred")
-        : (row.original.status !== chooseStatus)),
+        ? (row.original.status === "transferred") || (row.original.awb === null)
+        : (row.original.status !== chooseStatus) || (row.original.awb === null)),
 
       onChange: (event) => {
 

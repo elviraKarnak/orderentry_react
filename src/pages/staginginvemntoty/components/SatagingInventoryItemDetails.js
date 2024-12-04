@@ -18,6 +18,7 @@ function SatagingInventoryItemDetails({ row, stagingInventoryRefetch }) {
   const handleStatusChange = (item_id, status) => {
     // console.log(item_id, status);
 
+
     Swal.fire({
       title: "Are you sure?",
       text: "You wan't to change Sataging inventory item status!",
@@ -46,7 +47,7 @@ function SatagingInventoryItemDetails({ row, stagingInventoryRefetch }) {
         if (response.result.status === false) {
           Swal.fire({
             // text: "Sataging Inventory item status change failed.",
-            text:response.result.msg,
+            text: response.result.msg,
             icon: "error",
           });
           return;
@@ -86,48 +87,48 @@ function SatagingInventoryItemDetails({ row, stagingInventoryRefetch }) {
             </TableRow>
           </TableHead>
           <TableBody>
-            {row?.original?.inhouseProductEntryDataItems?.map((row) => (
+            {row?.original?.inhouseProductEntryDataItems?.map((item) => (
               <TableRow
-                key={row.id}
+                key={item.id}
                 sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
               >
                 <TableCell component="th" scope="row">
-                  {row.id}
+                  {item.id}
                 </TableCell>
                 <TableCell>
                   <img
-                    src={row.product_image}
+                    src={item.product_image}
                     alt=""
                     width={"50px"}
                     height={"50px"}
                   />
                 </TableCell>
-                <TableCell>{row.product_name}</TableCell>
-                <TableCell>{row.vendor_name}</TableCell>
-                <TableCell>{row.product_category}</TableCell>
-                <TableCell>{row.product_color}</TableCell>
-                <TableCell>{row.so ? `#${row.so}` : ""}</TableCell>
-                <TableCell>{row.po ? `#${row.po}` : ""}</TableCell>
+                <TableCell>{item.product_name}</TableCell>
+                <TableCell>{item.vendor_name}</TableCell>
+                <TableCell>{item.product_category}</TableCell>
+                <TableCell>{item.product_color}</TableCell>
+                <TableCell>{item.so ? `#${item.so}` : ""}</TableCell>
+                <TableCell>{item.po ? `#${item.po}` : ""}</TableCell>
                 <TableCell>
-                  {/* {row.boxes} {row.box_type} */}
-                  {row.quantity} {row.box_type}
+                  {/* {item.boxes} {item.box_type} */}
+                  {item.quantity} {item.box_type}
                 </TableCell>
-                <TableCell>{row.farm_price}</TableCell>
-                <TableCell>{row.total_price}</TableCell>
-                <TableCell>{row.date_received}</TableCell>
+                <TableCell>{item.farm_price}</TableCell>
+                <TableCell>{item.total_price}</TableCell>
+                <TableCell>{item.date_received}</TableCell>
                 <TableCell>
-                  {/* {row.status} */}
+                  {/* {item.status} */}
                   <Select
-                    value={row.status}
-                    onChange={(e) => handleStatusChange(row.id, e.target.value)}
+                    value={item.status}
+                    onChange={(e) => handleStatusChange(item.id, e.target.value)}
                     variant="outlined"
                     size="small"
                     className={`dropdown`}
-                    disabled={row.status === "transferred"}
+                    disabled={item.status === "transferred" || row?.original?.awb === null}
                   >
                     {SatagingInventoryDefaultStatus.map((status) => (
                       <MenuItem key={status.value} value={status.value}>
-                        {status.label}
+                        {status.label} 
                       </MenuItem>
                     ))}
                   </Select>

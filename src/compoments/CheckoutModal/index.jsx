@@ -208,7 +208,7 @@ function Index(props) {
 
       Swal.fire("Saved!", "Your order has been process.", "success");
 
-      // navigate("/order-view");
+      navigate("/");
     } else {
       toast.error(responce.result.msg);
     }
@@ -234,14 +234,19 @@ function Index(props) {
     let updatedData = [...userState.ProductData];
     for (const [l_index, item] of updatedData.entries()) {
       if (item.product_details.id === product_id) {
-        updatedData[l_index].quantity = "";
-        updatedData[l_index].total = 0;
-        updatedData[l_index].margin = 0;
+
+        var total_price = ((Number(item.product_details.cost_price) * 100) / (100 - Number(item.product_details.margin_data.t_1_m)));
+        total_price = (total_price * Number(item.product_details.minqty)).toFixed(2);
+
+        updatedData[l_index].quantity = item.product_details.minqty;
+        updatedData[l_index].total = total_price;
+        updatedData[l_index].margin = item.product_details.margin_data.t_1_m;
         updatedData[l_index].status = 'new';
         break;
       }
     }
     console.log("p_d_data ", updatedData);
+
     // === replace_ProductData ====
     dispatch({ type: "replace_ProductData", value: updatedData });
 
@@ -336,7 +341,8 @@ function Index(props) {
                             </td>
                             <td>
                               {/* ${(props.SelectCustomerData?.ship_addr.ship_method === "fob" ? item.product_details.fob_price : item.product_details.landed_price)} */}
-                              ${item.product_details.real_price}
+                              {/* ${item.product_details.real_price} */}
+                              ${item.product_details.cost_price}
                             </td>
                             {/* <td>{item.quantity} ST</td> */}
                             <td>

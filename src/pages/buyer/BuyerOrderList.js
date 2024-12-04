@@ -30,6 +30,7 @@ import { validateRequired } from './validation';
 import { orderItemUpdate } from './hooks';
 import CheckCRUDPermission from '../../utils/commnFnc/ChecCRUDPermission';
 import { PageModuleData } from '../../utils/Constant';
+import getFarmList from '../../utils/commnFnc/getFarmList';
 
 const disabledStatus = ["purchased", "canceled"];
 const notSelectedStatus = ["new_order", "processing"];
@@ -38,6 +39,8 @@ const notSelectedStatus = ["new_order", "processing"];
 function BuyerOrderList() {
 
     const permisionData = CheckCRUDPermission(PageModuleData.orderList);
+
+    const [FarmList] = useState(getFarmList());
 
     // const { userData } = useSelector(state => state.Auth);
 
@@ -70,45 +73,74 @@ function BuyerOrderList() {
         { label: "Canceled", value: "canceled" },
     ]
 
-    const orderStatusChange = (id, status) => {
-        Swal.fire({
-            title: "Are you sure?",
-            text: "You wan't to change order status!",
-            icon: "warning",
-            showCancelButton: true,
-            confirmButtonColor: "#5936eb",
-            cancelButtonColor: "#d33",
-            confirmButtonText: "Yes"
-        }).then(async (result) => {
+    const orderStatusChange = (row, id, status) => {
 
-            if (result.isConfirmed) {
-                // var status_selected_obj = orderDefaultStatus.filter((item) => item.label === e.target.value);
-                // status_selected_obj = status_selected_obj[0];
+        if (!row.original.farm) {
+            Swal.fire({
+                text: "Please select farm first",
+                icon: "warning"
+            });
+        } else {
+
+            Swal.fire({
+                title: "Are you sure?",
+                text: "You wan't to change order status!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#5936eb",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Yes"
+            }).then(async (result) => {
+
+                if (result.isConfirmed) {
+                    // var status_selected_obj = orderDefaultStatus.filter((item) => item.label === e.target.value);
+                    // status_selected_obj = status_selected_obj[0];
 
 
-                const payload = {
-                    "orderItemId": [id],
-                    "status_val": status
-                };
 
-                var response = await fmiOrderSystemAppOrderItemStatusChange(payload);
 
-                Swal.fire({
-                    text: "Order item status change successfully.",
-                    icon: "success"
-                });
+                    const payload = {
+                        "orderItemId": [id],
+                        "status_val": status
+                    };
 
-                setRowSelection((prevSelection) => {
-                    const updatedSelection = { ...prevSelection };
-                    delete updatedSelection[id];
-                    return updatedSelection;
-                });
+                    var response = await fmiOrderSystemAppOrderItemStatusChange(payload);
 
-                getOrderList();
+                    Swal.fire({
+                        text: "Order item status change successfully.",
+                        icon: "success"
+                    });
 
-            }
-        });
+                    setRowSelection((prevSelection) => {
+                        const updatedSelection = { ...prevSelection };
+                        delete updatedSelection[id];
+                        return updatedSelection;
+                    });
+
+                    getOrderList();
+
+
+
+                }
+            });
+        }
     };
+
+    const farmChoose = async (order_item_id, farm) => {
+
+        // alert(farm);
+        // setFarm(row.original.farm);
+
+        var payload = {
+            order_item_id: order_item_id,
+            farm: farm
+        }
+
+
+        await orderItemUpdate(payload);
+
+        getOrderList();
+    }
 
 
 
@@ -183,22 +215,26 @@ function BuyerOrderList() {
             {
                 accessorKey: 'farm',
                 header: 'Farm',
-                enableEditing: permisionData.edit_access,
-                muiEditTextFieldProps: ({ cell, row }) => ({
-                    type: 'text',
-                    required: true,
-                    onBlur: async (event) => {
+                enableEditing: false,
+                Cell: ({ renderedCellValue, row }) => (
 
-                        var payload = {
-                            order_item_id: row.original.item_tbl_id,
-                            farm: event.currentTarget.value
-                        }
-                        // console.log(row.original)
-                        // console.log(event.currentTarget.value);
+                    <>
+                        {/* {console.log(row.original.item_tbl_id, " ", renderedCellValue, " :renderedCellValue")} */}
 
-                        await orderItemUpdate(payload);
-                    },
-                }),
+                        <Select
+                            // labelId="demo-simple-select-helper-label"
+                            // id="demo-simple-select-helper"
+                            // className={`dropdown`}
+                            value={row.original.farm}
+                            onChange={e => farmChoose(row.original.item_tbl_id, e.target.value)}
+                        // disabled={!permisionData.edit_access}
+                        >
+                            {FarmList.map((v, i) => (
+                                <MenuItem key={i} value={v.value}>{v.label}</MenuItem>
+                            ))}
+                        </Select>
+                    </>
+                ),
             },
             {
                 accessorKey: 'cost_price',
@@ -242,7 +278,7 @@ function BuyerOrderList() {
                             className={`dropdown  ${(row.original.order_item_status?.toLowerCase())?.replace(/\s/g, '')} ${(disabledStatus.includes(row.original.order_item_status)) && "prevent_click"}`}
                             // value={row.original.order_item_status}
                             value={row.original.order_item_status}
-                            onChange={e => orderStatusChange(row.original.item_tbl_id, e.target.value)}
+                            onChange={e => orderStatusChange(row, row.original.item_tbl_id, e.target.value)}
                             disabled={!permisionData.edit_access}
                         >
                             {orderDefaultStatus.map((v, i) => (

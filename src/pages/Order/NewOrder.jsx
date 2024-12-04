@@ -73,10 +73,10 @@ function NewOrder() {
   const [ProductData, setProductData] = useState([]);
   const [OrderItemsData, setOrderItemsData] = useState([]);
 
-  const [TotalPM, setTotalPM] = useState({
-    margin: 0,
-    total: 0,
-  });
+  // const [TotalPM, setTotalPM] = useState({
+  //   margin: 0,
+  //   total: 0,
+  // });
 
   const [availableDates, setAvailableDates] = useState({
     minDate: new Date(), // Current date - All dates before the current date will be disabled
@@ -177,7 +177,7 @@ function NewOrder() {
       toast.warning('Please select product at frist');
       return
     }
-
+   
     //  =========== modal open ========
     setCheckOutModal(true);
   };
@@ -218,36 +218,52 @@ function NewOrder() {
         // === replace_ProductData ====
         dispatch({ type: "replace_ProductData", value: [] });
       } else {
-        var tempArr = userState.ProductData;
 
-        var pIdArr = [];
+        const tempProductDataArr = userState.ProductData || [];
+        const tempArr = [];
 
-        for (var item of tempArr) {
-          var p_id = item.product_details.id;
-          pIdArr.push(p_id);
+        console.log("Initial Product Data: ", tempProductDataArr);
+
+        // Checking existing ProductData
+        for (const item of tempProductDataArr) {
+          if (item.status === "order") {
+            tempArr.push(item);
+          }
         }
 
-        for (var i of responce.result.results) {
+        console.log("Products with 'order' status retained: ", tempArr);
 
-          if (!pIdArr.includes(i.id)) {
 
-            var total_price = ((Number(i.cost_price) * 100) / (100 - Number(i.margin_data.t_1_m)));
-            total_price = (total_price * Number(i.minqty)).toFixed(2);
+        for (const i of responce.result.results) {
+          // Check if the product already exists in the current order
+          const existingProduct = tempProductDataArr.find(
+            (item) =>
+              item.status === "order" &&
+              item.product_details.id === i.id
+          );
 
-            var temp = {
+          if (!existingProduct) {
+            // Calculate total price for new products
+            const total_price = (
+              ((Number(i.cost_price) * 100) / (100 - Number(i.margin_data.t_1_m))) *
+              Number(i.minqty)
+            ).toFixed(2);
+
+            // Create a new product object
+            const newProduct = {
               product_details: i,
               quantity: i.minqty,
               total: total_price,
               margin: i.margin_data.t_1_m,
               temp_product_id: i.id,
-              status: 'new',
+              status: "new",
             };
 
-            tempArr.push(temp);
+            tempArr.push(newProduct);
           }
         }
 
-        console.log("tempArr  ", tempArr);
+        console.log("tempArr 2 ", tempArr);
 
         // alert(AddItem)
 
@@ -385,45 +401,6 @@ function NewOrder() {
     setLoader(false);
   };
 
-  // ===== chekc =======
-  const NewOrderAdd = async (index, product_item_id, product_quantity) => {
-    // ================ new array create =======
-
-    if (product_quantity === "") {
-      toast.warning("pleace select product quantity!");
-      return;
-    }
-
-    const indexToUpdate = index;
-    if (indexToUpdate !== -1) {
-      // Create a new array with the updated value
-      const updatedData = userState.ProductData[indexToUpdate];
-
-      if (userState.AddProductArr.includes(updatedData.product_details.id)) {
-        // toast.warning("Product alredy selected!")
-
-        var newOrderItemData = userState.OrderItemsData.map((item) =>
-          item.product_details.id === updatedData.product_details.id
-            ? updatedData
-            : item
-        );
-
-        // console.log("newOrderItemData ", newOrderItemData);
-
-        // === replace_OrderItemsData ====
-        dispatch({ type: "replace_OrderItemsData", value: newOrderItemData });
-      } else {
-        // ===== new_AddProductArr =======
-        dispatch({
-          type: "new_AddProductArr",
-          value: updatedData.product_details.id,
-        });
-
-        // === new_OrderItemsData ====
-        dispatch({ type: "new_OrderItemsData", value: updatedData });
-      }
-    }
-  };
 
 
   const NewOrderAdd_2 = async (index, product_item_id, product_quantity) => {
@@ -451,48 +428,6 @@ function NewOrder() {
   };
 
 
-  // ============= Sale's man set price =======
-  const salePriceSet = (
-    change_price,
-    original_price,
-    p_id,
-    index,
-    quantity
-  ) => {
-    // alert(quantity)
-
-    const indexToUpdate = index;
-
-    if (indexToUpdate !== -1) {
-      // Create a new array with the updated value
-      let updatedData = [...userState.ProductData];
-
-      // ------- sale price -------
-      // updatedData[indexToUpdate] = { ...updatedData[indexToUpdate], product_details: {landed_price:change_price} };
-
-      if (SelectCustomerData.ship_addr.ship_method === "fob") {
-        updatedData[indexToUpdate].product_details.productMeta.sale_price =
-          change_price;
-      } else {
-        updatedData[indexToUpdate].product_details.productMeta.sale_price =
-          change_price;
-      }
-
-      // ------- total -------
-      // updatedData[indexToUpdate] = { ...updatedData[indexToUpdate], total: (Number(quantity) * Number(change_price)).toFixed(2) };
-
-      updatedData[indexToUpdate].total = (
-        Number(quantity) * Number(change_price)
-      ).toFixed(2);
-
-      console.log("after sale price change updatedData: ", updatedData);
-
-      // Set the state with the updated array
-      // === replace_ProductData ====
-      dispatch({ type: "replace_ProductData", value: updatedData });
-    }
-  };
-
   /// ============== set ImageShowModal image url =============
   const setImageShowModalUrl = (url) => {
     setImageURL(url);
@@ -505,18 +440,22 @@ function NewOrder() {
     var total = 0;
     var margin = 0;
 
-    for (var item of userState.ProductData) {
-      if (item.status == 'order') {
+    for (var i of userState.ProductData) {
+      if (i.status == 'order') {
         no_product += 1;
       }
     }
 
     for (var i of userState.ProductData) {
-      total += Number(i.total);
+      if (i.status == 'order') {
+        total += Number(i.total);
+      }
     }
 
     for (var i of userState.ProductData) {
-      margin += Number(i.margin);
+      if (i.status == 'order') {
+        margin += Number(i.margin);
+      }
     }
 
     var t_mergin = isNaN(margin / no_product) ? 0 : margin / no_product;
@@ -526,82 +465,13 @@ function NewOrder() {
       margin: t_mergin,
     };
 
+    console.log("TotalAmountCount: ",obj)
+    // console.log("TotalAmountCount: ",userState.ProductData)
+
     // === set TotalPM ====
     dispatch({ type: "TotalPM", value: obj });
   };
 
-  const NewOrderSave = async () => {
-    if (userState.OrderItemsData.length === 0) {
-      toast.warning("Item Not select!");
-      return;
-    }
-
-    // ============= new ============== //
-    var tempItem = [];
-
-    for (var item of userState.OrderItemsData) {
-      var temp = {
-        item_id: item.product_details.id,
-        item_details: item.product_details.product_name,
-        item_price:
-          SelectCustomerData.ship_addr.ship_method === "fob"
-            ? item.product_details.cost_price
-            : item.product_details.cost_price,
-        item_total_price: item.total,
-        item_quantity: item.quantity,
-        item_margin: item.margin,
-        item_color: item.product_details.color_string,
-        item_cat: item.product_details.category_string,
-        item_uom: item.product_details.uom,
-        item_farm: item.product_details.source,
-        item_company: SelectCustomerData.company_name,
-      };
-
-      tempItem.push(temp);
-    }
-
-    var new_payload = {
-      customer_id: SelectCustomerData.id,
-      wp_order_id: "",
-      order_type: "in-house", // in-house or website
-      packing_charge: "0.00",
-      fuel_charge: "0.00",
-      order_truckid: 123,
-      payment_card_type: "Visa",
-      payment_amount: userState.TotalPM.total,
-      payment_approval_code: "075618",
-      items_details: tempItem,
-      ship_date: DeliveryDate,
-      order_address_details: {
-        ship_to: SelectCustomerData.company_name,
-        address: `${SelectCustomerData.ship_addr.ship_addr_1} ${SelectCustomerData.ship_addr.ship_addr_2}`,
-        city: SelectCustomerData.ship_addr.ship_city_name,
-        state: SelectCustomerData.ship_addr.ship_state_name,
-        zipcode: SelectCustomerData.ship_addr.ship_zip_code,
-      },
-    };
-
-    // console.log(userState.OrderItemsData, " SelectCustomerData123")
-
-    var responce = await fmiOrderSystemAppOrderAdd(new_payload);
-
-    console.log("responce000 ", responce);
-
-    if (responce.status) {
-      toast.success("Order Save");
-
-      // === order_data_reset ====
-      dispatch({ type: "order_data_reset" });
-
-      setAddItem((pre) => (pre ? false : true));
-
-      Swal.fire("Saved!", "Your order has been saved.", "success");
-
-      navigate("/order-view");
-    } else {
-      toast.error(responce.result.msg);
-    }
-  };
 
   const quantityList = (min, stock) => {
     // alert(min, stock)
@@ -638,93 +508,7 @@ function NewOrder() {
     return parse(temp);
   };
 
-  const quantityListValueset = (
-    index,
-    quantity,
-    landed_price,
-    fob_price,
-    margin_data
-  ) => {
-    // Find the index of the object with id 2
-    // const indexToUpdate = ProductData.findIndex(item => item.id === 2);
 
-    var price =
-      SelectCustomerData.ship_addr.ship_method === "fob"
-        ? fob_price
-        : landed_price;
-
-    const indexToUpdate = index;
-
-    if (indexToUpdate !== -1) {
-      // Create a new array with the updated value
-      const updatedData = [...userState.ProductData];
-
-      var margin = 0;
-
-      console.log("margin_data ", margin_data);
-
-      if (margin_data.t_2_isSet === true && margin_data.t_3_isSet === true) {
-        if (quantity >= margin_data.t_1_qty && quantity < margin_data.t_2_qty) {
-          margin = margin_data.t_1_m;
-        } else if (
-          quantity >= margin_data.t_2_qty &&
-          quantity < margin_data.t_3_qty
-        ) {
-          margin = margin_data.t_2_m;
-        } else {
-          margin = margin_data.t_3_m;
-        }
-      } else if (margin_data.t_2_isSet === true) {
-        if (quantity >= margin_data.t_1_qty && quantity < margin_data.t_2_qty) {
-          margin = margin_data.t_1_m;
-        } else {
-          margin = margin_data.t_2_m;
-        }
-      } else if (margin_data.t_3_isSet === true) {
-        if (quantity >= margin_data.t_1_qty && quantity < margin_data.t_3_qty) {
-          margin = margin_data.t_1_m;
-        } else {
-          margin = margin_data.t_3_m;
-        }
-      } else {
-        margin = margin_data.t_1_m;
-      }
-
-      // alert(margin)
-
-      // ------- quantity -------
-      updatedData[indexToUpdate] = {
-        ...updatedData[indexToUpdate],
-        quantity: quantity,
-      };
-
-      // ------- margin -------
-      updatedData[indexToUpdate] = {
-        ...updatedData[indexToUpdate],
-        margin: margin,
-      };
-
-      var total_price = (Number(price) * 100) / (100 - margin);
-      total_price = (total_price * Number(quantity)).toFixed(2);
-      // ------- total -------
-      updatedData[indexToUpdate] = {
-        ...updatedData[indexToUpdate],
-        total: total_price,
-      };
-
-      // ------- margin -------
-      // var sale_price = Number(quantity) * Number(unit_price);
-      // var buy_price = Number(quantity) * Number(cost_price);
-      // var margin = (((sale_price - buy_price) / sale_price) * 100).toFixed(2);
-
-      // updatedData[indexToUpdate] = { ...updatedData[indexToUpdate], margin: (margin !== 'NaN' ? margin : 0) };
-
-      // Set the state with the updated array
-      // === replace_ProductData ====
-      dispatch({ type: "replace_ProductData", value: updatedData });
-
-    }
-  };
 
   const quantityListValueset_2 = (
     index,
@@ -870,40 +654,6 @@ function NewOrder() {
     }
   };
 
-  const OrderItemDelete = (index, product_id) => {
-    var newArr = userState.OrderItemsData.filter(
-      (item, in_index) => in_index !== index
-    );
-
-    // === replace_OrderItemsData ====
-    dispatch({ type: "replace_OrderItemsData", value: newArr });
-
-    var total = 0;
-    var margin = 0;
-
-    for (var i of newArr) {
-      total += Number(i.total);
-    }
-
-    for (var i of newArr) {
-      margin += Number(i.margin);
-    }
-
-    var avg_margin = margin / newArr.length;
-    // alert(newArr.length)
-
-    var obj = {
-      total: total,
-      margin: margin == 0 && newArr.length == 0 ? 0 : avg_margin,
-    };
-
-    // === set TotalPM ====
-    dispatch({ type: "TotalPM", value: obj });
-
-    var temp = userState.AddProductArr.filter((item) => product_id !== item);
-    // ====== replace_AddProductArr =====
-    dispatch({ type: "replace_AddProductArr", value: temp });
-  };
 
   useEffect(() => {
     calculateMaxDate();
@@ -1199,18 +949,10 @@ function NewOrder() {
         )}
 
         <div className="order-total-table">
-          {/* <div className="add-line-item  pb-3">
-            <img src={AddCircleOut} alt="" /> Add a line item{" "}
-            <span>
-              Margin {userState.TotalPM.margin}% Subtotal $
-              {userState.TotalPM.total}
-            </span>
-          </div> */}
 
-          <br />
           {/* /////////////////////////// product list //////////////////////////// */}
 
-          <div className="order-tabletwo">
+          <div className="order-tabletwo mt-4">
             <table className="table">
               <thead>
                 <tr>
@@ -1220,8 +962,9 @@ function NewOrder() {
                   <th>Color</th>
                   <th>Source</th>
                   <th>Quantity</th>
-                  <th>Cost Price</th>
-                  <th>Sale Price</th>
+                  <th>Price</th>
+                  {/* <th>Cost Price</th>
+                  <th>Sale Price</th> */}
                   <th>Total</th>
                   <th>Margin</th>
                   <th>Action</th>
@@ -1276,27 +1019,11 @@ function NewOrder() {
 
                         <td>{item.product_details.cost_price}</td>
 
-                        <td>
-                          {/* {item.product_details.productMeta.sale_price} */}
-
+                        {/* <td>
+                          
                           {item.product_details.real_price}
 
-                          {/* <input
-                                  type="number"
-                                  value={
-                                    item.product_details.real_price
-                                  }
-                                  onChange={(e) =>
-                                    salePriceSet(
-                                      e.target.value,
-                                      item.product_details.cost_price,
-                                      item.product_details.id,
-                                      index,
-                                      item.quantity
-                                    )
-                                  }
-                                /> */}
-                        </td>
+                        </td> */}
 
                         <td>{item.total}</td>
                         <td>{item.margin}</td>

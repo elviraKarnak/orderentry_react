@@ -17,13 +17,14 @@ import FileDownloadOutlinedIcon from '@mui/icons-material/FileDownloadOutlined';
 import { FARM_PURCHASE_STATUS } from "../../../utils/Constant";
 
 import TimerIcon from '@mui/icons-material/Timer';
-import { disableStatus, FarmOrderItemStatusUpdateHook, FarmOrderStatusUpdateHook, FarmOrderUpdateHook, GetFarmOrderListHook } from "../hooks";
+import { disableStatus, FarmOrderInvoiceFileUploadHook, FarmOrderItemStatusUpdateHook, FarmOrderStatusUpdateHook, FarmOrderUpdateHook, GetFarmOrderListHook } from "../hooks";
 
 import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import dayjs from "dayjs";
+import { toast } from "react-toastify";
 
 // const dummyData = [{
 //     id:1,
@@ -68,6 +69,11 @@ function FarmOrderList() {
         isPending: isOrderStatusUpdate,
     } = FarmOrderStatusUpdateHook();
 
+    const {
+        mutateAsync: invoiceFileUpload,
+        isPending: isInvoiceFileUpload
+    } = FarmOrderInvoiceFileUploadHook();
+
 
 
     const handleOrderStatusChange = async (order_id, status) => {
@@ -109,7 +115,7 @@ function FarmOrderList() {
                 muiEditTextFieldProps: ({ cell, row }) => ({
                     type: 'text',
                     required: true,
-                    disabled:disableStatus.includes(row.original.status),
+                    disabled: disableStatus.includes(row.original.status),
                     onBlur: async (event) => {
                         // console.log(row.original)
                         // console.log(event.currentTarget.value);
@@ -130,7 +136,7 @@ function FarmOrderList() {
                 muiEditTextFieldProps: ({ cell, row }) => ({
                     type: 'text',
                     required: true,
-                    disabled:disableStatus.includes(row.original.status),
+                    disabled: disableStatus.includes(row.original.status),
                     onBlur: async (event) => {
                         // console.log(row.original)
                         // console.log(event.currentTarget.value);
@@ -260,7 +266,7 @@ function FarmOrderList() {
         },
         state: {
             // isLoading: stagingInventoryIsLoading,
-            isSaving: isUpdateingFarmOrder || isOrderStatusUpdate,
+            isSaving: isUpdateingFarmOrder || isOrderStatusUpdate || isInvoiceFileUpload,
             // showAlertBanner: stagingInventoryisError,
             // showProgressBars: stagingInventoryIsFetching,
             // rowSelection: rowSelection,
@@ -271,20 +277,61 @@ function FarmOrderList() {
             <FarmOrderItemList row={row} />
         ),
 
-        renderRowActions: ({ row, table }) => (
-            <Box sx={{ display: 'flex', gap: '1rem' }}>
+        renderRowActions: ({ row, table }) => {
+
+            const handleFileUpload = async (event) => {
+
+                // await invoiceFileUpload({
+                //     id: row.original.id,
+                //     invoice_file: row.original.invoice_file
+                // })
+
+                // console.log(row.original);
+
+                const file = event.target.files[0];
+                if (!file) {
+                    console.error("No file selected");
+                    return;
+                }
+
+                var payload = {
+                    id: row.original.id,
+                    invoice_file: file
+                }
+
+                try {
+                    await invoiceFileUpload(payload);
+                    // console.log("Invoice file uploaded successfully:", file.name);
+                    toast.success("Invoice file uploaded successfully");
+                } catch (error) {
+                    console.error("Error uploading invoice file:", error);
+                }
+            }
+
+            return (<Box sx={{ display: 'flex', gap: '1rem' }}>
                 <Tooltip title="Upload Invoice">
-                    <IconButton onClick={() => alert(1)}>
+                    {/* <IconButton onClick={handleFileUpload}>
                         <FileUploadOutlinedIcon />
-                    </IconButton>
+                    </IconButton> */}
+                    <label htmlFor={`upload-invoice-${row.original.id}`}>
+                        <input
+                            id={`upload-invoice-${row.original.id}`}
+                            type="file"
+                            style={{ display: 'none' }}
+                            onChange={handleFileUpload}
+                        />
+                        <IconButton component="span">
+                            <FileUploadOutlinedIcon />
+                        </IconButton>
+                    </label>
                 </Tooltip>
                 <Tooltip title="Download Labels">
                     <IconButton onClick={() => alert(2)}>
                         <FileDownloadOutlinedIcon />
                     </IconButton>
                 </Tooltip>
-            </Box>
-        ),
+            </Box>);
+        },
     });
 
     return (

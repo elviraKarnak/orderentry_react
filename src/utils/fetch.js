@@ -44,6 +44,7 @@ export async function fmiOrderSystemAppAppLogin(userEmail, UserPasswoard) {
       fmiOrderSystemAppResult.role_id
     );
     window.sessionStorage.setItem('permisionData', JSON.stringify(fmiOrderSystemAppResult.permisionData));
+    window.sessionStorage.setItem('farmUserList', JSON.stringify(fmiOrderSystemAppResult.farmUserList));
     return true;
   } else {
     const error = new Error();
@@ -1373,4 +1374,45 @@ export const farmOrderItemStatusUpdateApi = async (payload) => {
     return { status: 'error', error: 'Network error' };
   }
 }
+
+/**
+ * @param {*} payload
+ * @param {string} payload.invoice_id
+ * @param {file object} payload.invoice_file
+ */
+export const farmInvoiceFileUploadApi = async (payload) => {
+  try {
+    let config = {
+      method: 'POST',
+      maxBodyLength: Infinity,
+      url: `${REACT_APP_API_SERVICE_URL}/api/v1/admin/farm/invoice-file-upload`,
+      headers: {
+        'x-api-key': 'b1d1I0p7A2Er2n0eD2b0As8c0kT8p2M9',
+        token: window.sessionStorage.getItem('access-token'),
+        'Content-Type': 'multipart/form-data',
+      },
+      data: payload,
+    };
+
+    const fmiOrderSystemAppResponse = await axios.request(config);
+
+    if (fmiOrderSystemAppResponse.status === 200) {
+      const fmiOrderSystemAppResult = await fmiOrderSystemAppResponse.data;
+      // Success
+      return { status: true, result: fmiOrderSystemAppResult };
+    } else {
+      // Server-side error
+      console.log('Server error:', fmiOrderSystemAppResponse.status);
+      const errorData = await fmiOrderSystemAppResponse.data;
+      console.log('Server errorData ', errorData);
+      return { status: false, error: errorData };
+    }
+  }
+  catch (error) {
+    // Network error
+    console.log('Network error:', error);
+    return { status: 'error', error: 'Network error' };
+  }
+}
+
 // # FARM API END
