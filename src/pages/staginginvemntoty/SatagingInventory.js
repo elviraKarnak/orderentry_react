@@ -35,9 +35,13 @@ import { SatagingInventoryDefaultStatus } from '../../utils/Constant';
 import SatagingInventoryItemDetails from './components/SatagingInventoryItemDetails';
 import ProductEntry from './components/ProductEntry';
 import { object } from 'yup';
+import { useDispatch } from 'react-redux';
+import { commonActions } from '../../redux/reducers/Common';
 // import { QueryClient } from 'react-query';
 
 function SatagingInventory() {
+
+  const dispatch=useDispatch();
 
   const [rowSelection, setRowSelection] = useState({});
   const [allSelectCheckboxSelect, setAllSelectCheckboxSelect] = useState(false);
@@ -420,6 +424,10 @@ function SatagingInventory() {
 
   });
 
+
+  useEffect(()=>{
+    dispatch(commonActions.setPageTitle(""));
+  },[])
 
   useEffect(() => {
 

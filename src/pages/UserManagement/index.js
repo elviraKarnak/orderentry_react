@@ -7,15 +7,7 @@ function UserManagement() {
     return (
         <>
             <Grid container>
-                <Grid item sm={12}>
-                    <Header />
-                </Grid>
-
-                <Grid item sm={12}>
-                    <Typography variant="h4" className="title">
-                        User Management
-                    </Typography>
-                </Grid>
+                
 
                 <Grid item sm={12}>
                     <Typography variant="h6" className="title">

@@ -8,6 +8,7 @@ import { encryptTransform } from 'redux-persist-transform-encrypt';
 
 ///////////////////// declare all Reducer  //////////////////////////
 import authReducer from './reducers/Auth';
+import commonReducer from './reducers/Common';
 ///////////////////// End declare all Reducer  /////////////////////
 
 
@@ -32,6 +33,7 @@ const persistConfig = {
 ///////////////////// write all Reducer  ///////////////////////
 const rootReducer = combineReducers({
     Auth: authReducer,
+    Common: commonReducer
 });
 ///////////////////// End write all Reducer ///////////////////
 

@@ -31,12 +31,16 @@ import { orderItemUpdate } from './hooks';
 import CheckCRUDPermission from '../../utils/commnFnc/ChecCRUDPermission';
 import { PageModuleData } from '../../utils/Constant';
 import getFarmList from '../../utils/commnFnc/getFarmList';
+import { useDispatch } from 'react-redux';
+import { commonActions } from '../../redux/reducers/Common';
 
 const disabledStatus = ["purchased", "canceled"];
 const notSelectedStatus = ["new_order", "processing"];
 
 
 function BuyerOrderList() {
+
+    const dispatch = useDispatch();
 
     const permisionData = CheckCRUDPermission(PageModuleData.orderList);
 
@@ -506,6 +510,10 @@ function BuyerOrderList() {
     }
 
     useEffect(() => {
+        dispatch(commonActions.setPageTitle("Order List"))
+    }, [])
+
+    useEffect(() => {
         getOrderList();
         // console.log(orderData)
     }, []);
@@ -517,14 +525,10 @@ function BuyerOrderList() {
 
 
     return (
-        <div>
-            <Header title="Order List" />
-
-            <div classNameName="data_table-head">
-                <div className="container-fluid">
-                    <div className="view_order_table">
-                        <MaterialReactTable table={table} />
-                    </div>
+        <div classNameName="data_table-head">
+            <div className="container-fluid">
+                <div className="view_order_table">
+                    <MaterialReactTable table={table} />
                 </div>
             </div>
         </div>

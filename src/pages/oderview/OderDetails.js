@@ -14,11 +14,15 @@ import Swal from 'sweetalert2'
 import { Typography } from '@mui/material';
 import CheckCRUDPermission from '../../utils/commnFnc/ChecCRUDPermission';
 import { PageModuleData } from '../../utils/Constant';
+import { useDispatch } from 'react-redux';
+import { commonActions } from '../../redux/reducers/Common';
 
 const disabledStatus = ["purchased", "canceled"];
 const notSelectedStatus = ["new_order", "processing"];
 
 function OderDetails() {
+
+	const dispatch=useDispatch();
 
 	const permisionData = CheckCRUDPermission(PageModuleData.orderView);
 
@@ -280,6 +284,9 @@ function OderDetails() {
 
 	}
 
+	useEffect(()=>{
+		dispatch(commonActions.setPageTitle("Order Details"))
+	},[])
 
 	useEffect(() => {
 		getOrderList();
@@ -290,8 +297,6 @@ function OderDetails() {
 
 	return (
 		<>
-			<Header title='Order Details' />
-			<div><Typography variant="h3" className="title">Order Details</Typography></div>
 			<div className="data_table-head">
 				<div className="container-fluid">
 					<div className="view_order_table"><MaterialReactTable table={table} /></div>

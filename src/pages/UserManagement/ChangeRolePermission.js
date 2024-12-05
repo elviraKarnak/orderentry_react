@@ -3,8 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import { FormControl, Grid, InputLabel, MenuItem, Select, Typography, Box, FormControlLabel, Checkbox, Button } from '@mui/material';
 import Header from '../../common/Header';
 import { GetMenuModulesHook, EditRolePermissionHook } from './hooks';
+import { useDispatch } from 'react-redux';
+import { commonActions } from '../../redux/reducers/Common';
 
 function ChangeRolePermission() {
+
+  const dispatch = useDispatch();
 
   const navigate = useNavigate();
 
@@ -95,6 +99,9 @@ function ChangeRolePermission() {
     }
   }
 
+  useEffect(() => {
+    dispatch(commonActions.setPageTitle("Change Role Permission"))
+  }, [])
 
   // useEffect(() => {
   //   console.log("selectedRoleId", selectedRoleId)
@@ -104,14 +111,9 @@ function ChangeRolePermission() {
   return (
     <>
       <Grid container>
-        <Grid item sm={12}>
-          <Header />
-        </Grid>
 
         <Grid item sm={12}>
           <Typography variant="h4" className="title">
-            Change Role Permission
-
             <Button type="submit" marginLeft={2} variant="contained" color="primary" onClick={() => navigate(-1)}>Back</Button>
           </Typography>
 

@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import Header from '../../common/Header';
 import { MaterialReactTable, useMaterialReactTable } from 'material-react-table';
 import { useQuery } from '@tanstack/react-query';
@@ -8,11 +8,14 @@ import customerService from '../../services/customer.service';
 import CustomerDummyList from '../../utils/dummy_data/CustomerDummyList';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { commonActions } from '../../redux/reducers/Common';
 
 
 function SimpleSearchNew() {
 
     const navigate = useNavigate();
+    const dispatch = useDispatch();
 
 
     /**
@@ -145,25 +148,22 @@ function SimpleSearchNew() {
     });
 
 
+    useEffect(() => {
+        dispatch(commonActions.setPageTitle("Order Entry"))
+    }, [])
 
     // render //
     return (<Grid container spacing={2}>
 
         <Grid item xs={12} md={12} lg={12}>
-            <Header />
-        </Grid>
-
-        <Grid item xs={12} md={12} lg={12}>
             <Typography variant="h3" className="title">
-                Order Entry
                 <Button
-                variant="contained"
-                color="primary"
-                sx={{ m: 2 }}>
-                Add New Customer
-            </Button>
+                    variant="contained"
+                    color="primary"
+                    sx={{ m: 2 }}>
+                    Add New Customer
+                </Button>
             </Typography>
-            
         </Grid>
 
         <Grid item xs={12} md={12} lg={12}>

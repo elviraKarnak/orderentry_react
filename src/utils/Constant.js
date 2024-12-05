@@ -23,6 +23,97 @@ export const PageModuleData = {
   "farmPurchase": "MODULE_009",
 }
 
+
+export const menuData = {
+  admin: [
+    {
+      menuName: "Dashboard",
+      path: "/",
+      icon: <TbLayoutDashboardFilled />,
+      code: "",
+    },
+    {
+      menuName: "Order Entry",
+      path: "/order-entry",
+      icon: <TfiWrite />,
+      code: PageModuleData.orderEntry,
+    },
+    {
+      menuName: "Order View",
+      path: "/order-view",
+      icon: <LuView />,
+      code: PageModuleData.orderView,
+    },
+    {
+      menuName: "Order List",
+      path: "/buyer-dashboard",
+      icon: <IoListSharp />,
+      code: PageModuleData.orderList,
+    },
+    {
+      menuName: "Product View",
+      path: "/product-view",
+      icon: <MdOutlineViewInAr />,
+      code: PageModuleData.productView,
+    },
+    // {
+    //   menuName: 'Product Entry',
+    //   path: '/product-entry',
+    // },
+    {
+      menuName: "Staging Inventory",
+      path: "/staging-inventory",
+      icon: <MdOutlineInventory2 />,
+      code: PageModuleData.stagingInventory,
+    },
+    //    {menuName:'Product Entry',
+    //    path:'/product-entry'
+    //    },
+
+    {
+      menuName: "Admin",
+      path: "/admin",
+      icon: <GrUserAdmin />,
+      code: PageModuleData.admin,
+    },
+
+    {
+      menuName: "Accounting",
+      path: "/",
+      icon: <GiNotebook />,
+      code: PageModuleData.accounting,
+    },
+
+    {
+      menuName: "Reporting",
+      path: "/",
+      icon: <ReportGmailerrorredOutlinedIcon />,
+      code: PageModuleData.reporting,
+    },
+    {
+      menuName: "Farm Purchase",
+      path: "/farm-purchase",
+      icon: <AgricultureOutlinedIcon />,
+      code: PageModuleData.farmPurchase,
+    }
+  ],
+
+  farm: [
+    {
+      menuName: "Dashboard",
+      path: "/",
+      icon: <TbLayoutDashboardFilled />,
+      code: "",
+    },
+    {
+      menuName: "Farm Purchase",
+      path: "/farm-purchase",
+      icon: <AgricultureOutlinedIcon />,
+      code: PageModuleData.farmPurchase,
+    }
+  ]
+}
+
 export const menueDataAdmin = [
   {
     menuName: "Dashboard",
@@ -38,7 +129,7 @@ export const menueDataAdmin = [
   },
   {
     menuName: "Order View",
-    path: "/",
+    path: "/order-view",
     icon: <LuView />,
     code: PageModuleData.orderView,
   },
@@ -87,6 +178,22 @@ export const menueDataAdmin = [
     path: "/",
     icon: <ReportGmailerrorredOutlinedIcon />,
     code: PageModuleData.reporting,
+  },
+  {
+    menuName: "Farm Purchase",
+    path: "/farm-purchase",
+    icon: <AgricultureOutlinedIcon />,
+    code: PageModuleData.farmPurchase,
+  }
+];
+
+
+export const menueDataFarm = [
+  {
+    menuName: "Dashboard",
+    path: "/",
+    icon: <TbLayoutDashboardFilled />,
+    code: "",
   },
   {
     menuName: "Farm Purchase",

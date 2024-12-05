@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
     MaterialReactTable,
     useMaterialReactTable,
@@ -40,10 +40,14 @@ import { Visibility, VisibilityOff } from '@mui/icons-material';
 import Swal from 'sweetalert2';
 import { useNavigate } from 'react-router-dom';
 import { UserStatus } from '../../../utils/Constant';
+import { useDispatch } from 'react-redux';
+import { common } from '@mui/material/colors';
+import { commonActions } from '../../../redux/reducers/Common';
 
 
 function UserList() {
 
+    const dispatch=useDispatch();
     const navigate = useNavigate();
     const [Loading, setLoading] = useState(false);
     const [CreateDialog, setCreateDialog] = useState(false);
@@ -392,6 +396,9 @@ function UserList() {
 
     });
 
+    useEffect(()=>{
+        dispatch(commonActions.setPageTitle("User Management"))
+    },[])
 
     return (
         <>

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import Orderdatatable from './Orderdatatable'
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
@@ -8,15 +8,22 @@ import Grid from '@mui/material/Unstable_Grid2';
 import { Link } from 'react-router-dom';
 import Header from '../../common/Header';
 
-
+// redux
+import { useDispatch } from 'react-redux';
+import { commonActions } from '../../redux/reducers/Common';
 
 function OrderView() {
 
-	
+	const dispatch = useDispatch();
+
+
+	useEffect(() => {
+		dispatch(commonActions.setPageTitle('Order View'));
+	}, []);
+
 
 	return (
 		<>
-			<Header title='Order View' />
 			<div>
 				<div className="data_table-head">
 					<Grid container spacing={2}>

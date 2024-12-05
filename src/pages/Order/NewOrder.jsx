@@ -34,6 +34,8 @@ import AppBar from '@mui/material/AppBar'
 import Toolbar from '@mui/material/Toolbar'
 import Typography from '@mui/material/Typography';
 import { useQuery } from '@tanstack/react-query';
+import { useDispatch } from "react-redux";
+import { commonActions } from "../../redux/reducers/Common";
 
 
 // Register the locale
@@ -41,6 +43,8 @@ registerLocale('es', es);
 
 
 function NewOrder() {
+
+  const dispatchReduxStore = useDispatch();
 
   const { userState, dispatch } = useContext(userContext);
   const [ProductName, setProductName] = useState("");
@@ -177,7 +181,7 @@ function NewOrder() {
       toast.warning('Please select product at frist');
       return
     }
-   
+
     //  =========== modal open ========
     setCheckOutModal(true);
   };
@@ -465,7 +469,7 @@ function NewOrder() {
       margin: t_mergin,
     };
 
-    console.log("TotalAmountCount: ",obj)
+    console.log("TotalAmountCount: ", obj)
     // console.log("TotalAmountCount: ",userState.ProductData)
 
     // === set TotalPM ====
@@ -655,6 +659,10 @@ function NewOrder() {
   };
 
 
+  useEffect(()=>{
+    dispatchReduxStore(commonActions.setPageTitle("Order Entry"))
+  },[])
+
   useEffect(() => {
     calculateMaxDate();
     // getCustomerList();
@@ -690,7 +698,6 @@ function NewOrder() {
     <>
       {loader && <Loader />}
 
-      <Header />
 
       <Container>
         <div className="billing-grid order-bill">

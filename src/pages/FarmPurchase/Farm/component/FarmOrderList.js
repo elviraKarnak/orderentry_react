@@ -14,7 +14,7 @@ import KeyIcon from '@mui/icons-material/Key';
 
 import FileUploadOutlinedIcon from '@mui/icons-material/FileUploadOutlined';
 import FileDownloadOutlinedIcon from '@mui/icons-material/FileDownloadOutlined';
-import { FARM_PURCHASE_STATUS } from "../../../utils/Constant";
+import { FARM_PURCHASE_STATUS, PageModuleData } from "../../../../utils/Constant";
 
 import TimerIcon from '@mui/icons-material/Timer';
 import { disableStatus, FarmOrderInvoiceFileUploadHook, FarmOrderItemStatusUpdateHook, FarmOrderStatusUpdateHook, FarmOrderUpdateHook, GetFarmOrderListHook } from "../hooks";
@@ -25,6 +25,8 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import dayjs from "dayjs";
 import { toast } from "react-toastify";
+import { useSelector } from "react-redux";
+import CheckCRUDPermission from "../../../../utils/commnFnc/ChecCRUDPermission";
 
 // const dummyData = [{
 //     id:1,
@@ -54,9 +56,14 @@ import { toast } from "react-toastify";
 
 function FarmOrderList() {
 
+    const { authUser } = useSelector(state => state.Auth);
+
+    const permisionData = CheckCRUDPermission(PageModuleData.farmPurchase);
+
+
 
     /// query hook ///
-    const { data: FarmOrderListData = [] } = GetFarmOrderListHook();
+    const { data: FarmOrderListData = [] } = GetFarmOrderListHook(authUser.role_id, authUser.user_id);
 
     /// mutation hook ///
     const {
@@ -115,7 +122,7 @@ function FarmOrderList() {
                 muiEditTextFieldProps: ({ cell, row }) => ({
                     type: 'text',
                     required: true,
-                    disabled: disableStatus.includes(row.original.status),
+                    disabled: ((disableStatus.includes(row.original.status)) || row.original.status != "new_order"),
                     onBlur: async (event) => {
                         // console.log(row.original)
                         // console.log(event.currentTarget.value);
@@ -136,7 +143,7 @@ function FarmOrderList() {
                 muiEditTextFieldProps: ({ cell, row }) => ({
                     type: 'text',
                     required: true,
-                    disabled: disableStatus.includes(row.original.status),
+                    disabled: ((disableStatus.includes(row.original.status)) || row.original.status != "new_order"),
                     onBlur: async (event) => {
                         // console.log(row.original)
                         // console.log(event.currentTarget.value);
@@ -189,7 +196,7 @@ function FarmOrderList() {
                                 label="Invoice Date"
                                 value={dateValue}
                                 onChange={handleDateChange}
-                                disabled={disableStatus.includes(row.original.status)}
+                                disabled={((disableStatus.includes(row.original.status)) || row.original.status != "new_order")}
                                 renderInput={(params) => <TextField {...params} />}
                             />
                         </DemoContainer>

@@ -1,16 +1,28 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import Swal from "sweetalert2";
 import { toast } from "react-toastify";
-import { farmInvoiceFileUploadApi, farmOrderItemStatusUpdateApi, farmOrderItemUpdateApi, farmOrderListAPi, farmOrderStatusUpdateApi, farmOrderUpdateApi } from "../../utils/fetch";
+import { farmInvoiceFileUploadApi, farmOrderItemStatusUpdateApi, farmOrderItemUpdateApi, farmOrderListAPi, farmOrderStatusUpdateApi, farmOrderUpdateApi } from "../../../utils/fetch";
 
-export const disableStatus=['accepted','canceled'];
+
+export const disableStatus = ['accepted', 'canceled'];
 
 /////////////////////// Query //////////////////////////
-export function GetFarmOrderListHook() {
+export function GetFarmOrderListHook(role_id, user_id) {
     return useQuery({
         queryKey: ["farm_order_list"],
         queryFn: async () => {
-            const response = await farmOrderListAPi();
+
+            // console.log(role_id, user_id)
+
+            var farm_id = null;
+
+            if (role_id == 4) {
+                farm_id = user_id;
+            }
+
+            // alert(role_id)
+
+            const response = await farmOrderListAPi(farm_id);
             console.log("farm order list", response);
             return response.result.data;
         },
@@ -46,15 +58,15 @@ export function FarmOrderUpdateHook() {
 }
 
 
-export function FarmOrderItemUpdateHook(){
+export function FarmOrderItemUpdateHook() {
     const queryClient = useQueryClient();
     return useMutation({
         mutationFn: async (payload) => {
 
-            const order_item_id = payload.order_item_id;
-            delete payload.order_item_id;
+            const id = payload.id;
+            delete payload.id;
 
-            const response = await farmOrderItemUpdateApi(order_item_id, payload);
+            const response = await farmOrderItemUpdateApi(id, payload);
             return response;
         },
         onMutate: (paylaod) => {
@@ -79,7 +91,7 @@ export function FarmOrderStatusUpdateHook() {
     return useMutation({
         mutationFn: async (data) => {
 
-            const payload={
+            const payload = {
                 order_id: data.order_id,
                 status: data.status
             }
@@ -110,7 +122,7 @@ export function FarmOrderItemStatusUpdateHook() {
     return useMutation({
         mutationFn: async (data) => {
 
-            const payload={
+            const payload = {
                 id: data.id, // order meta table id
                 status: data.status
             }
@@ -145,7 +157,7 @@ export function FarmOrderInvoiceFileUploadHook() {
             //     invoice_file: data.invoice_file
             // }
 
-            const payload=new FormData();
+            const payload = new FormData();
             payload.append("id", data.id);
             payload.append("invoice_file", data.invoice_file);
 

@@ -19,12 +19,15 @@ import GridViewSharpIcon from "@mui/icons-material/GridViewSharp";
 import FormatListBulletedSharpIcon from "@mui/icons-material/FormatListBulletedSharp";
 import { ListItemIcon } from "@mui/material";
 
-import { menueDataAdmin } from "../utils/Constant";
+import { menuData, menueDataAdmin } from "../utils/Constant";
 
 //icon
 import { SlLogout } from "react-icons/sl";
 import { RxCross2 } from "react-icons/rx";
 import checkMenuPermission from "../utils/commnFnc/CheckMenuPermission";
+import { useDispatch, useSelector } from "react-redux";
+import { commonActions } from "../redux/reducers/Common";
+import { authActions } from "../redux/reducers/Auth";
 
 const drawerWidth = 240;
 
@@ -76,6 +79,13 @@ const DrawerHeader = styled("div")(({ theme }) => ({
 //////////////////////// main header //////////////////////////
 function Header({ title }) {
 
+  const { authUser } = useSelector((state) => state.Auth);
+  const [MenuList,setMenuList] = useState([]);
+
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const location = useLocation();
+
   const theme = useTheme();
   const [open, setOpen] = useState(false);
   const drawerRef = useRef(null);
@@ -90,18 +100,19 @@ function Header({ title }) {
     setOpen(false);
   };
 
-  const navigate = useNavigate();
 
-  
   const handleLogout = () => {
     // Clear session storage
-    sessionStorage.clear();
+
+    dispatch(commonActions.clearCommonState());
+    dispatch(authActions.Logout());
+
     // Redirect to the login screen
-    // navigate('/');
-    window.location.replace("/");
+    // navigate('/login');
+    window.location.replace("/login");
   };
 
-  const location = useLocation();
+
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -115,6 +126,16 @@ function Header({ title }) {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
+
+  useEffect(() => {
+
+    if(authUser.role_id == 4){
+      setMenuList(menuData.farm);
+    }else{
+      setMenuList(menuData.admin);
+    }
+
+  }, [authUser]);
 
   return (
     <Box sx={{ display: "flex" }}>
@@ -207,7 +228,8 @@ function Header({ title }) {
         <Divider />
         <List className="page_navigation sidebar-scroll">
 
-          {menueDataAdmin.map((item, index) => (
+          {/* ////////// menu list //////////// */}
+          {MenuList.map((item, index) => (
             checkMenuPermission(item.code) && <ListItem
               key={index}
               disablePadding
@@ -232,6 +254,7 @@ function Header({ title }) {
               </Link>
             </ListItem>
           ))}
+          
 
           <ListItem disablePadding>
             <ListItemButton>

@@ -1,30 +1,17 @@
 import React from 'react'
-import Header from '../../common/Header';
-import { Grid, Typography } from '@mui/material';
-import FarmOrderList from './component/FarmOrderList';
+import { useSelector } from 'react-redux'
+import Farm from './Farm';
+import Buyer from './Buyer';
 
 function FarmPurchase() {
-    return (
-        <>
-            <Grid container>
-                <Grid item sm={12}>
-                    <Header />
-                </Grid>
 
-                <Grid item sm={12}>
-                    <Typography variant="h4" className="title">
-                        Farm Purchase Order
-                    </Typography>
-                </Grid>
+    const { authUser } = useSelector((state) => state.Auth);
 
-                <Grid item sm={12}>
-                    <Typography variant="h6" className="title">
-                        <FarmOrderList />
-                    </Typography>
-                </Grid>
-            </Grid>
-        </>
-    )
+    if (authUser.role_id == 4) {
+        return <Farm/>;
+    }
+
+    return <Buyer/>;
 }
 
-export default FarmPurchase;
+export default FarmPurchase

@@ -35,7 +35,7 @@ export async function fmiOrderSystemAppAppLogin(userEmail, UserPasswoard) {
     );
     window.sessionStorage.setItem(
       'username',
-      fmiOrderSystemAppResult.superadmin
+      fmiOrderSystemAppResult.username
     );
     window.sessionStorage.setItem('useremail', fmiOrderSystemAppResult.email);
     window.sessionStorage.setItem('login', true);
@@ -45,9 +45,37 @@ export async function fmiOrderSystemAppAppLogin(userEmail, UserPasswoard) {
     );
     window.sessionStorage.setItem('permisionData', JSON.stringify(fmiOrderSystemAppResult.permisionData));
     window.sessionStorage.setItem('farmUserList', JSON.stringify(fmiOrderSystemAppResult.farmUserList));
-    return true;
+
+
+    /////////////////////////////
+    var paylaod = {
+      authUser: {
+        user_id: fmiOrderSystemAppResult.user_id,
+        username: fmiOrderSystemAppResult.username,
+        email: fmiOrderSystemAppResult.email,
+        role_id: fmiOrderSystemAppResult.role_id,
+        permisionData: fmiOrderSystemAppResult.permisionData,
+      },
+      farmUserList: fmiOrderSystemAppResult.farmUserList
+    }
+    ////////////////////////////
+
+
+    return {
+      status: true,
+      userData: paylaod
+    };
+
+    // return true;
+
+
+
   } else {
-    const error = new Error();
+    return {
+      status: false,
+      userData: {}
+    }
+    // const error = new Error();
     // error.message = healthAppLoginResponseResult.message || 'Something went wrong.';
   }
 }
@@ -1182,14 +1210,20 @@ export async function editRolePermissionApi(id, payload) {
 
 
 // # FARM API START
-export const farmOrderListAPi = async () => {
+export const farmOrderListAPi = async (farm_id = null) => {
 
   try {
+
+    var url = `${REACT_APP_API_SERVICE_URL}/api/v1/admin/farm/order-list`;
+
+    if (farm_id) {
+      url = `${REACT_APP_API_SERVICE_URL}/api/v1/admin/farm/order-list?farm_id=${farm_id}`;
+    }
 
     let config = {
       method: 'GET',
       maxBodyLength: Infinity,
-      url: `${REACT_APP_API_SERVICE_URL}/api/v1/admin/farm/order-list`,
+      url: url,
       headers: {
         'x-api-key': 'b1d1I0p7A2Er2n0eD2b0As8c0kT8p2M9',
         token: window.sessionStorage.getItem('access-token'),
@@ -1255,12 +1289,12 @@ export const farmOrderUpdateApi = async (order_id, payload) => {
   }
 }
 
-export const farmOrderItemUpdateApi = async (order_item_id, payload) => {
+export const farmOrderItemUpdateApi = async (id, payload) => {
   try {
     let config = {
       method: 'PUT',
       maxBodyLength: Infinity,
-      url: `${REACT_APP_API_SERVICE_URL}/api/v1/admin/farm/order-item-update/${order_item_id}`,
+      url: `${REACT_APP_API_SERVICE_URL}/api/v1/admin/farm/order-item-update/${id}`,
       headers: {
         'x-api-key': 'b1d1I0p7A2Er2n0eD2b0As8c0kT8p2M9',
         token: window.sessionStorage.getItem('access-token'),

@@ -6,9 +6,17 @@ const initialState = {
     loading: false,
     error: null,
     isAuthenticated: false,
-    userData: {},
-    userType: null,
+    authUser: {
+        user_id: "",
+        username: "",
+        email: "",
+        role_id: "",
+        permisionData: [],
+    },
+    farmUserList: []
 };
+
+// "1 => super admin | 2 => Sales | 3 => Buyer | 4 => Farm | 5 => Customer "
 
 // Define the async thunk to fetch user data from the API
 export const UserLoginApi = createAsyncThunk(
@@ -47,11 +55,29 @@ const authSlice = createSlice({
     initialState: initialState,
     reducers: {
 
+        Login(state, action) {
+            // console.log("authentication",action.payload)
+            state.isAuthenticated = true;
+            state.authUser = {
+                user_id: action.payload.authUser.user_id,
+                username: action.payload.authUser.username,
+                email: action.payload.authUser.email,
+                role_id: Number(action.payload.authUser.role_id),
+                permisionData: action.payload.authUser.permisionData
+            }
+            state.farmUserList = action.payload.farmUserList;
+        },
 
         Logout(state) {
             state.isAuthenticated = false;
-            state.userData = {};
-            state.userType = null;
+            state.authUser = {
+                user_id: "",
+                username: "",
+                email: "",
+                role_id: "",
+                permisionData: [],
+            };
+            state.farmUserList = [];
             localStorage.clear();
             sessionStorage.clear();
         },
@@ -66,11 +92,17 @@ const authSlice = createSlice({
             .addCase(UserLoginApi.fulfilled, (state, action) => {
                 state.loading = false;
                 state.isAuthenticated = true;
-                state.userData = action.payload;
-                state.userType=action.payload.user_type;
+                state.authUser = {
+                    user_id: action.payload.user_id,
+                    username: action.payload.username,
+                    email: action.payload.email,
+                    role_id: action.payload.role_id,
+                    permisionData: action.payload.permisionData
+                }
+                state.farmUserList = action.payload.farmUserList;
                 window.sessionStorage.setItem('access-token', action.payload.token);
 
-                console.log("UserLogin ",action.payload)
+                console.log("UserLogin ", action.payload)
             })
             .addCase(UserLoginApi.rejected, (state, action) => {
                 state.loading = false;

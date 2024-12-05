@@ -17,8 +17,15 @@ import loginimage from "../../assests/images/login.png";
 
 
 import { fmiOrderSystemAppAppLogin } from "../../utils/fetch";
+import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { authActions } from "../../redux/reducers/Auth";
+import { commonActions } from "../../redux/reducers/Common";
 
-function UserLogin(props) {
+function UserLogin() {
+
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const {
     control,
@@ -37,8 +44,12 @@ function UserLogin(props) {
       loginPassword
     );
 
-    if (fetcLoginResponse) {
-      props.getLoginResponse(true);
+    console.log("fetcLoginResponse", fetcLoginResponse);
+
+    if (fetcLoginResponse.status) {
+      dispatch(authActions.Login(fetcLoginResponse.userData));
+      // props.getLoginResponse(true);
+      navigate("/");
     } else {
       alert("Error: Something went wrong");
     }

@@ -8,7 +8,7 @@ import { Container } from '@mui/material';
 
 import { PageModuleData } from '../../utils/Constant';
 import checkMenuPermission from '../../utils/commnFnc/CheckMenuPermission';
-import FarmPurchase from '../FarmPurchase';
+import FarmPurchase from '../FarmPurchase/Farm';
 
 
 function Dashboard() {
@@ -42,10 +42,10 @@ function Dashboard() {
                                     {getUserType === '1' && <OrderView />}
                                     {getUserType === '3' && <BuyerOrderList />} */}
 
-                                    {console.log(getUserType)}
-                                    {['1','2','3'].includes(getUserType) && <OrderView />}
-                                    {['4'].includes(getUserType) && <FarmPurchase />}
-                                    
+                                    {/* {console.log(getUserType)} */}
+                                    {/* {['1','2','3'].includes(getUserType) && <OrderView />}
+                                    {['4'].includes(getUserType) && <FarmPurchase />} */}
+                                    <OrderView />
                                     
                                 </>
                             ) : (
