@@ -203,6 +203,15 @@ export const menueDataFarm = [
   }
 ];
 
+
+export const UserRole = {
+  "SUPER_ADMIN": 1,
+  "SALES": 2,
+  "BUYER": 3,
+  "FARM": 4,
+  "CUSTOMER": 5,
+}
+
 export const SatagingInventoryData = [
   {
     id: 1,

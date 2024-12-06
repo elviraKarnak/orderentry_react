@@ -34,6 +34,7 @@
     "react-scripts": "5.0.1",
     "react-search-autocomplete": "^8.5.2",
     "react-toastify": "^10.0.5",
+    "react-use-downloader": "^1.2.8",
     "redux-persist": "^6.0.0",
     "redux-persist-transform-encrypt": "^5.1.1",
     "redux-thunk": "^3.1.0",

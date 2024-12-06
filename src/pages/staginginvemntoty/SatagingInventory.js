@@ -453,10 +453,6 @@ function SatagingInventory() {
       <div className='row'>
 
         <div className='col-sm-12'>
-          <Header />
-        </div>
-
-        <div className='col-sm-12'>
           <ProductEntry stagingInventoryRefetch={stagingInventoryRefetch} />
         </div>
 

@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import Swal from "sweetalert2";
 import { toast } from "react-toastify";
-import { farmInvoiceFileUploadApi, farmOrderItemStatusUpdateApi, farmOrderItemUpdateApi, farmOrderListAPi, farmOrderStatusUpdateApi, farmOrderUpdateApi } from "../../../utils/fetch";
+import { farmInvoiceFileDeleteApi, farmInvoiceFileUploadApi, farmOrderItemStatusUpdateApi, farmOrderItemUpdateApi, farmOrderListAPi, farmOrderStatusUpdateApi, farmOrderUpdateBYAdminApi } from "../../../utils/fetch";
 
 
 export const disableStatus = ['accepted', 'canceled'];
@@ -9,7 +9,7 @@ export const disableStatus = ['accepted', 'canceled'];
 /////////////////////// Query //////////////////////////
 export function GetFarmOrderListHook(role_id, user_id) {
     return useQuery({
-        queryKey: ["farm_order_list"],
+        queryKey: ["farm_order_list_admin"],
         queryFn: async () => {
 
             // console.log(role_id, user_id)
@@ -39,7 +39,7 @@ export function FarmOrderUpdateHook() {
             const order_id = payload.order_id;
             delete payload.order_id;
 
-            const response = await farmOrderUpdateApi(order_id, payload);
+            const response = await farmOrderUpdateBYAdminApi(order_id, payload);
             return response;
         },
         onMutate: (paylaod) => {
@@ -49,7 +49,14 @@ export function FarmOrderUpdateHook() {
         },
         onSuccess: (responce) => {
             console.log(responce);
-            queryClient.invalidateQueries('farm_order_list');
+
+            if(responce.result.status){
+                toast.success("Farm Order Updated Successfully");
+            }else{
+                toast.warning(responce.result.message);
+            }
+
+            queryClient.invalidateQueries('farm_order_list_admin');
         },
         onError: (error) => {
             console.error(error);
@@ -76,7 +83,7 @@ export function FarmOrderItemUpdateHook() {
         },
         onSuccess: (responce) => {
             console.log(responce);
-            queryClient.invalidateQueries('farm_order_list');
+            queryClient.invalidateQueries('farm_order_list_admin');
         },
         onError: (error) => {
             console.error(error);
@@ -106,7 +113,7 @@ export function FarmOrderStatusUpdateHook() {
         },
         onSuccess: (responce) => {
             console.log(responce);
-            queryClient.invalidateQueries('farm_order_list');
+            queryClient.invalidateQueries('farm_order_list_admin');
         },
         onError: (error) => {
             console.error(error);
@@ -137,7 +144,7 @@ export function FarmOrderItemStatusUpdateHook() {
         },
         onSuccess: (responce) => {
             console.log(responce);
-            queryClient.invalidateQueries('farm_order_list');
+            queryClient.invalidateQueries('farm_order_list_admin');
         },
         onError: (error) => {
             console.error(error);
@@ -172,7 +179,41 @@ export function FarmOrderInvoiceFileUploadHook() {
         },
         onSuccess: (responce) => {
             console.log(responce);
-            queryClient.invalidateQueries('farm_order_list');
+            queryClient.invalidateQueries('farm_order_list_admin');
+        },
+        onError: (error) => {
+            console.error(error);
+        },
+    })
+}
+
+
+
+export function FarmOrderInvoiceFileDeleteHook() {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: async (data) => {
+
+            // const payload={
+            //     id: data.id, // order meta table id
+            //     invoice_file: data.invoice_file
+            // }
+
+            // const payload = new FormData();
+            // payload.append("id", data.id);
+
+
+            const response = await farmInvoiceFileDeleteApi(data);
+            return response;
+        },
+        onMutate: (paylaod) => {
+            console.log("paylaod: ", paylaod);
+
+            // queryClient.invalidateQueries('user_list');
+        },
+        onSuccess: (responce) => {
+            console.log(responce);
+            queryClient.invalidateQueries('farm_order_list_admin');
         },
         onError: (error) => {
             console.error(error);

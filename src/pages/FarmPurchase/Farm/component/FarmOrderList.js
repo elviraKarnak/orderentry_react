@@ -6,7 +6,7 @@ import {
     MRT_ToggleFiltersButton,
 } from "material-react-table";
 import FarmOrderItemList from "./FarmOrderItemList";
-import { Box, IconButton, MenuItem, Select, TextField, Tooltip, Typography } from "@mui/material";
+import { Box, Button, IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText, ListSubheader, MenuItem, Select, TextField, Tooltip, Typography } from "@mui/material";
 
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -17,7 +17,7 @@ import FileDownloadOutlinedIcon from '@mui/icons-material/FileDownloadOutlined';
 import { FARM_PURCHASE_STATUS, PageModuleData } from "../../../../utils/Constant";
 
 import TimerIcon from '@mui/icons-material/Timer';
-import { disableStatus, FarmOrderInvoiceFileUploadHook, FarmOrderItemStatusUpdateHook, FarmOrderStatusUpdateHook, FarmOrderUpdateHook, GetFarmOrderListHook } from "../hooks";
+import { disableStatus, FarmOrderInvoiceFileDeleteHook, FarmOrderInvoiceFileUploadHook, FarmOrderItemStatusUpdateHook, FarmOrderStatusUpdateHook, FarmOrderUpdateHook, GetFarmOrderListHook } from "../hooks";
 
 import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -28,37 +28,36 @@ import { toast } from "react-toastify";
 import { useSelector } from "react-redux";
 import CheckCRUDPermission from "../../../../utils/commnFnc/ChecCRUDPermission";
 
-// const dummyData = [{
-//     id:1,
-//     checkout_cut_off_time: "12hrs 0 mins 0 secs",
-//     po_date: '20/11/2024',
-//     po_number: 1213434,
-//     awb_number: "",
-//     inv_number: "",
-//     inv_date: "",
-//     total_price: 960,
-//     status: "new_order",
-//     orderItemDetails: [
-//         {
-//             id:1,
-//             product_image: "https://via.placeholder.com/870x580.png?text=Placeholder+Image",
-//             product_name: "Freedom 50cm",
-//             product_category: "Rose",
-//             product_color: "Red",
-//             boxes: 25,
-//             box_type: "ST",
-//             cost_per_unit: 0.39,
-//             total_price:16.25,
-//             status: "Acepted",
-//         }
-//     ]
-// }]
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogTitle from '@mui/material/DialogTitle';
+import ArrowCircleDownIcon from '@mui/icons-material/ArrowCircleDown';
+import CancelIcon from '@mui/icons-material/Cancel';
+import { downloadAnyFile } from "../../../../utils/commnFnc/downloadAnyFile";
+import moment from "moment";
+import Swal from "sweetalert2";
+
 
 function FarmOrderList() {
 
     const { authUser } = useSelector(state => state.Auth);
 
     const permisionData = CheckCRUDPermission(PageModuleData.farmPurchase);
+
+    const [OpenDialog, setOpenDialog] = useState(false);
+    const [InvloceFiles, setInvloceFiles] = useState([]);
+
+    const handleDialogOpen = (data) => {
+        console.log(data)
+        setInvloceFiles(data?.farmOrderInvoices);
+        setOpenDialog(true);
+    };
+
+    const handleDialogClose = () => {
+        setOpenDialog(false);
+        setInvloceFiles([]);
+    };
 
 
 
@@ -81,6 +80,11 @@ function FarmOrderList() {
         isPending: isInvoiceFileUpload
     } = FarmOrderInvoiceFileUploadHook();
 
+    const {
+        mutateAsync: invoiceFileDelete,
+        isPending: isInvoiceFileDelete
+    } = FarmOrderInvoiceFileDeleteHook();
+
 
 
     const handleOrderStatusChange = async (order_id, status) => {
@@ -89,6 +93,33 @@ function FarmOrderList() {
             status: status
         })
     }
+
+
+    const handleInvoiceFileDelete = (id) => {
+
+        setOpenDialog(false);
+
+        Swal.fire({
+            title: "Do you want to delete this invoice file?",
+            text: "You won't be able to revert this!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Yes",
+        }).then(async (result) => {
+
+            if (result.isConfirmed) {
+                await invoiceFileDelete({ id: id })
+                handleDialogClose();
+                Swal.fire("Deleted!", "Your file has been deleted.", "success");
+            } else {
+                setOpenDialog(true);
+            }
+        });
+
+
+    }
+
+
 
 
     const columns = useMemo(
@@ -273,7 +304,7 @@ function FarmOrderList() {
         },
         state: {
             // isLoading: stagingInventoryIsLoading,
-            isSaving: isUpdateingFarmOrder || isOrderStatusUpdate || isInvoiceFileUpload,
+            isSaving: isUpdateingFarmOrder || isOrderStatusUpdate || isInvoiceFileUpload || isInvoiceFileDelete,
             // showAlertBanner: stagingInventoryisError,
             // showProgressBars: stagingInventoryIsFetching,
             // rowSelection: rowSelection,
@@ -333,7 +364,10 @@ function FarmOrderList() {
                     </label>
                 </Tooltip>
                 <Tooltip title="Download Labels">
-                    <IconButton onClick={() => alert(2)}>
+                    <IconButton
+                        disabled={(row.original.farmOrderInvoices.length > 0) ? false : true}
+                        onClick={() => handleDialogOpen(row.original)}
+                    >
                         <FileDownloadOutlinedIcon />
                     </IconButton>
                 </Tooltip>
@@ -344,6 +378,46 @@ function FarmOrderList() {
     return (
         <>
             <MaterialReactTable table={farmListTable} />
+
+            {/* dialog for download and delete invoice */}
+            <Dialog
+                open={OpenDialog}
+                onClose={handleDialogClose}
+                fullWidth
+                maxWidth="sm"
+            >
+                <DialogTitle>Invoice File List</DialogTitle>
+                <DialogContent>
+                    <List
+                        sx={{ width: '100%', bgcolor: 'background.paper' }}
+                        component="nav"
+                        aria-labelledby="nested-list-subheader"
+                    >
+                        {InvloceFiles?.map((item, index) => (
+                            <ListItem key={index}>
+                                <ListItemButton
+                                    onClick={(event) => downloadAnyFile(event, item.file_url, `invoice-${moment(item.created_at).format('DD-MM-YYYY')}`)}
+                                >
+                                    <ListItemIcon>
+                                        <ArrowCircleDownIcon />
+                                    </ListItemIcon>
+                                    <ListItemText primary={`invoice-${moment(item.created_at).format('DD-MM-YYYY')}`} />
+                                </ListItemButton>
+                                <ListItemButton
+                                    onClick={() => handleInvoiceFileDelete(item.id)}
+                                >
+                                    <ListItemIcon>
+                                        <CancelIcon />
+                                    </ListItemIcon>
+                                </ListItemButton>
+                            </ListItem>
+                        ))}
+                    </List>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleDialogClose}>Cancel</Button>
+                </DialogActions>
+            </Dialog>
         </>
     );
 }
