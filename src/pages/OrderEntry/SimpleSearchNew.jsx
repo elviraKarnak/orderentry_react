@@ -10,6 +10,8 @@ import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { commonActions } from '../../redux/reducers/Common';
+import { customerActions } from '../../redux/reducers/Customer';
+import { orderEntryActions } from '../../redux/reducers/OrderEntry';
 
 
 function SimpleSearchNew() {
@@ -28,7 +30,9 @@ function SimpleSearchNew() {
         var responce = await customerService.findOne(id);
         if (responce.data.status) {
             // console.log(responce.data.data[0])
-            navigate("/new-order", { state: { selectCustomerData: responce.data.data[0] } });
+            dispatch(customerActions.setSelectCustomer(responce.data.data[0]));
+            dispatch(orderEntryActions.order_data_reset());
+            navigate("/new-order");
         } else {
             toast.error(responce.data.msg)
         }

@@ -9,6 +9,8 @@ import { encryptTransform } from 'redux-persist-transform-encrypt';
 ///////////////////// declare all Reducer  //////////////////////////
 import authReducer from './reducers/Auth';
 import commonReducer from './reducers/Common';
+import orderEntryReducer from './reducers/OrderEntry';
+import customerReducer from './reducers/Customer';
 ///////////////////// End declare all Reducer  /////////////////////
 
 
@@ -25,7 +27,7 @@ const encryptor = encryptTransform({
 
 const persistConfig = {
     key: 'root',
-    storage:storageSession,
+    storage: storageSession,
     transforms: [encryptor],
 };
 
@@ -33,7 +35,9 @@ const persistConfig = {
 ///////////////////// write all Reducer  ///////////////////////
 const rootReducer = combineReducers({
     Auth: authReducer,
-    Common: commonReducer
+    Common: commonReducer,
+    OrderEntry: orderEntryReducer,
+    Customer: customerReducer,
 });
 ///////////////////// End write all Reducer ///////////////////
 

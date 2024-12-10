@@ -19,8 +19,16 @@ import customerService from "../../services/customer.service";
 import Loader from "../../pages/Loader/CommonLoader";
 import { fmiOrderSystemAppOrderAdd } from "../../utils/fetch";
 import { set } from "react-hook-form";
+import { useDispatch, useSelector } from "react-redux";
+import { orderEntryActions } from "../../redux/reducers/OrderEntry";
+import { customerActions } from "../../redux/reducers/Customer";
 
 function Index(props) {
+
+  const dispatchReduxStore = useDispatch();
+  const { ProductData, OrderItemsData, AddProductArr, TotalPM } = useSelector((state) => state.OrderEntry);
+  const { SelectCustomer } = useSelector((state) => state.Customer);
+
   const { userState, dispatch } = useContext(userContext);
   const navigate = useNavigate();
   const [shippingModal, setShippingModal] = useState(false);
@@ -70,7 +78,7 @@ function Index(props) {
 
   const CheckOutConfirm = () => {
 
-    var OrderItemsData = userState.ProductData.filter((item) => item.status === 'order');
+    var OrderItemsData = ProductData.filter((item) => item.status === 'order');
 
     if (OrderItemsData.length === 0) {
       toast.warning('Please select product at frist');
@@ -125,7 +133,7 @@ function Index(props) {
     // ============= new ============== //
     var tempItem = [];
 
-    var OrderItemsData = userState.ProductData.filter((item) => item.status === 'order');
+    var OrderItemsData = ProductData.filter((item) => item.status === 'order');
 
     // userState.OrderItemsData
 
@@ -134,7 +142,7 @@ function Index(props) {
         item_id: item.product_details.id,
         item_details: item.product_details.product_name,
         item_price:
-          props.SelectCustomerData.ship_addr.ship_method === "fob"
+          SelectCustomer.ship_addr.ship_method === "fob"
             ? item.product_details.cost_price
             : item.product_details.cost_price,
         item_total_price: item.total,
@@ -144,7 +152,7 @@ function Index(props) {
         item_cat: item.product_details.category_string,
         item_uom: item.product_details.uom,
         item_farm: item.product_details.source,
-        item_company: props.SelectCustomerData.company_name,
+        item_company: SelectCustomer.company_name,
       };
 
       tempItem.push(temp);
@@ -152,28 +160,28 @@ function Index(props) {
 
     var new_payload = {
       // awb_number: awbNumber,
-      customer_id: props.SelectCustomerData.id,
+      customer_id: SelectCustomer.id,
       wp_order_id: "",
       order_from_status: "in_house", // in_house or live
       packing_charge: "0.00",
       fuel_charge: "0.00",
       order_truckid: 123,
       payment_card_type: payment_type_value,
-      payment_amount: userState.TotalPM.total,
+      payment_amount: TotalPM.total,
       payment_approval_code: "075618",
       items_details: tempItem,
       ship_date: props.DeliveryDate,
       order_address_details: {
-        ship_to: props.SelectCustomerData.company_name,
-        address: `${props.SelectCustomerData.ship_addr.ship_addr_1} ${props.SelectCustomerData.ship_addr.ship_addr_2}`,
-        city: props.SelectCustomerData.ship_addr.ship_city_name,
-        state: props.SelectCustomerData.ship_addr.ship_state_name,
-        zipcode: props.SelectCustomerData.ship_addr.ship_zip_code,
+        ship_to: SelectCustomer.company_name,
+        address: `${SelectCustomer.ship_addr.ship_addr_1} ${SelectCustomer.ship_addr.ship_addr_2}`,
+        city: SelectCustomer.ship_addr.ship_city_name,
+        state: SelectCustomer.ship_addr.ship_state_name,
+        zipcode: SelectCustomer.ship_addr.ship_zip_code,
       },
 
       //// selear data ////
       // sales_rep_id: userState.id,
-      // ship_method:props.SelectCustomerData.ship_addr.ship_method === "fob"? "fob": "landed",
+      // ship_method:SelectCustomer.ship_addr.ship_method === "fob"? "fob": "landed",
       // payment_type: payment_type,
     };
     // ////////////////////////////////////////////
@@ -202,7 +210,7 @@ function Index(props) {
       setOrderProcessingModal(false);
 
       // === order_data_reset ====
-      dispatch({ type: "order_data_reset" });
+      dispatchReduxStore(orderEntryActions.order_data_reset());
 
       props.setAddItem((pre) => (pre ? false : true));
 
@@ -214,53 +222,46 @@ function Index(props) {
     }
   };
 
-  const GetOrderItemList = async () => {
-    if (props.OrderId !== null) {
-      // alert(props.OrderId)
-      var responce = await orderService.singleOrderItemList(props.OrderId);
-      console.log("singlr data ", responce.data);
-      setOrderData(responce.data.data);
 
-      var name = "ship_method";
-      setPlaceOrderData({
-        ...placeOrderData,
-        ship_method: responce.data.data.customer_details.ship_addr.ship_method,
-      });
-    }
-  };
 
   const OrderItemDelete = (index, product_id) => {
     // Create a new array with the updated value
-    let updatedData = [...userState.ProductData];
-    for (const [l_index, item] of updatedData.entries()) {
-      if (item.product_details.id === product_id) {
+    // var updatedData = ProductData;
 
-        var total_price = ((Number(item.product_details.cost_price) * 100) / (100 - Number(item.product_details.margin_data.t_1_m)));
-        total_price = (total_price * Number(item.product_details.minqty)).toFixed(2);
+    // console.log("OrderItemDelete ",index,product_id, updatedData);
 
-        updatedData[l_index].quantity = item.product_details.minqty;
-        updatedData[l_index].total = total_price;
-        updatedData[l_index].margin = item.product_details.margin_data.t_1_m;
-        updatedData[l_index].status = 'new';
-        break;
-      }
-    }
-    console.log("p_d_data ", updatedData);
+    // for (const [l_index, item] of updatedData.entries()) {
+    //   if (item.product_details.id === product_id) {
+
+    //     var total_price = ((Number(item.product_details.cost_price) * 100) / (100 - Number(item.product_details.margin_data.t_1_m)));
+    //     total_price = (total_price * Number(item.product_details.minqty)).toFixed(2);
+
+    //     console.log("OrderItemDelete2 ", updatedData[l_index].quantity, l_index, item.product_details.minqty);
+
+    //     updatedData[l_index].quantity = item.product_details.minqty;
+    //     updatedData[l_index].total = total_price;
+    //     updatedData[l_index].margin = item.product_details.margin_data.t_1_m;
+    //     updatedData[l_index].status = 'new';
+
+    //     break;
+    //   }
+    // }
+    // console.log("p_d_data ", updatedData);
+
+    dispatchReduxStore(orderEntryActions.OrderItemDelete({ index: index, product_id: product_id }));
 
     // === replace_ProductData ====
-    dispatch({ type: "replace_ProductData", value: updatedData });
+    // dispatchReduxStore(orderEntryActions.replace_ProductData(updatedData));
 
-    var newArr = userState.OrderItemsData.filter(
-      (item, in_index) => in_index !== index
-    );
+    var newArr = OrderItemsData.filter((item, in_index) => in_index !== index);
 
     // === replace_OrderItemsData ====
-    dispatch({ type: "replace_OrderItemsData", value: newArr });
+    dispatchReduxStore(orderEntryActions.replace_OrderItemsData(newArr));
 
-    var temp = userState.AddProductArr.filter((item) => product_id !== item);
+    var temp = AddProductArr.filter((item) => product_id !== item);
 
     // ====== replace_AddProductArr =====
-    dispatch({ type: "replace_AddProductArr", value: temp });
+    dispatchReduxStore(orderEntryActions.replace_AddProductArr(temp));
   };
 
   const shipMethodChange = async (e) => {
@@ -271,13 +272,11 @@ function Index(props) {
       return;
     }
 
-    var preCustomerData = props.SelectCustomerData;
-    preCustomerData.ship_addr.ship_method = e.target.value;
-    props.setSelectCustomerData(preCustomerData);
+    dispatchReduxStore(customerActions.shipMethodChange(e.target.value));
 
     setLoader(true);
     var value = e.target.value;
-    var id = props.SelectCustomerData.ship_addr.id;
+    var id = SelectCustomer.ship_addr.id;
 
     var responce = await customerService.updateShipMethod({
       ship_method: value,
@@ -292,7 +291,7 @@ function Index(props) {
     setPaytemt_type_value(value);
   };
 
-  // console.log("props.SelectCustomerData  ", props.SelectCustomerData);
+  // console.log("SelectCustomer  ", SelectCustomer);
 
   // useEffect(() => {
   //     GetOrderItemList();
@@ -331,8 +330,8 @@ function Index(props) {
                   </tr>
                 </thead>
                 <tbody>
-                  {userState.ProductData.length > 0 &&
-                    userState.ProductData.map((item, index) => (
+                  {ProductData.length > 0 &&
+                    ProductData.map((item, index) => (
                       <>
                         {item.status === 'order' &&
                           <tr key={index}>
@@ -340,7 +339,7 @@ function Index(props) {
                               {item.product_details.product_name}
                             </td>
                             <td>
-                              {/* ${(props.SelectCustomerData?.ship_addr.ship_method === "fob" ? item.product_details.fob_price : item.product_details.landed_price)} */}
+                              {/* ${(SelectCustomer?.ship_addr.ship_method === "fob" ? item.product_details.fob_price : item.product_details.landed_price)} */}
                               {/* ${item.product_details.real_price} */}
                               ${item.product_details.cost_price}
                             </td>
@@ -403,7 +402,7 @@ function Index(props) {
           <div className="order-total">
             <p>
               <span className="subtotal">
-                Subtotal ${userState.TotalPM.total}
+                Subtotal ${TotalPM.total}
               </span>
             </p>
             <p>
@@ -411,7 +410,7 @@ function Index(props) {
             </p>
             <p>
               <span className="total">Total</span>{" "}
-              <span className="amount">${userState.TotalPM.total}</span>
+              <span className="amount">${TotalPM.total}</span>
             </p>
 
             <Button
@@ -482,64 +481,64 @@ function Index(props) {
                     </div>
                     <div className="col-lg-9">
                       <div className="bill-info">
-                        <h3>{props.SelectCustomerData?.company_name}</h3>
+                        <h3>{SelectCustomer?.company_name}</h3>
                         <h4>
                           {
-                            props.SelectCustomerData?.ship_addr
+                            SelectCustomer?.ship_addr
                               .ship_contact_name
                           }
                         </h4>
                         <h4>
-                          {props.SelectCustomerData?.ship_addr.ship_addr_1 && (
+                          {SelectCustomer?.ship_addr.ship_addr_1 && (
                             <>
-                              {props.SelectCustomerData?.ship_addr.ship_addr_1},
+                              {SelectCustomer?.ship_addr.ship_addr_1},
                             </>
                           )}
 
-                          {props.SelectCustomerData?.ship_addr.ship_addr_2 && (
+                          {SelectCustomer?.ship_addr.ship_addr_2 && (
                             <>
-                              {props.SelectCustomerData?.ship_addr.ship_addr_2},
+                              {SelectCustomer?.ship_addr.ship_addr_2},
                             </>
                           )}
 
-                          {props.SelectCustomerData?.ship_addr
+                          {SelectCustomer?.ship_addr
                             .ship_country_name && (
                               <>
                                 {
-                                  props.SelectCustomerData?.ship_addr
+                                  SelectCustomer?.ship_addr
                                     .ship_country_name
                                 }
                                 ,
                               </>
                             )}
 
-                          {props.SelectCustomerData?.ship_addr
+                          {SelectCustomer?.ship_addr
                             .ship_state_name && (
                               <>
                                 {
-                                  props.SelectCustomerData?.ship_addr
+                                  SelectCustomer?.ship_addr
                                     .ship_state_name
                                 }
                                 ,
                               </>
                             )}
 
-                          {props.SelectCustomerData?.ship_addr
+                          {SelectCustomer?.ship_addr
                             .ship_city_name && (
                               <>
                                 {
-                                  props.SelectCustomerData?.ship_addr
+                                  SelectCustomer?.ship_addr
                                     .ship_city_name
                                 }
                                 ,
                               </>
                             )}
 
-                          {props.SelectCustomerData?.ship_addr
+                          {SelectCustomer?.ship_addr
                             .ship_zip_code && (
                               <>
                                 {
-                                  props.SelectCustomerData?.ship_addr
+                                  SelectCustomer?.ship_addr
                                     .ship_zip_code
                                 }
                               </>
@@ -576,7 +575,7 @@ function Index(props) {
                         <option value="">select</option>
                         <option
                           selected={
-                            props.SelectCustomerData?.ship_addr.ship_method ===
+                            SelectCustomer?.ship_addr.ship_method ===
                               "fob"
                               ? "selected"
                               : ""
@@ -587,7 +586,7 @@ function Index(props) {
                         </option>
                         <option
                           selected={
-                            props.SelectCustomerData?.ship_addr.ship_method ===
+                            SelectCustomer?.ship_addr.ship_method ===
                               "fedex"
                               ? "selected"
                               : ""
@@ -606,7 +605,7 @@ function Index(props) {
                 <div className="order-total">
                   <p>
                     <span className="subtotal">
-                      Subtotal ${userState.TotalPM.total}
+                      Subtotal ${TotalPM.total}
                     </span>
                   </p>
                   <p>
@@ -616,7 +615,7 @@ function Index(props) {
                   </p>
                   <p>
                     <span className="total">Total</span>{" "}
-                    <span className="amount">${userState.TotalPM.total}</span>
+                    <span className="amount">${TotalPM.total}</span>
                   </p>
                   <Button
                     onClick={billingactive}
@@ -719,7 +718,7 @@ function Index(props) {
                   </p> */}
                   <p>
                     <span className="subtotal">
-                      Subtotal ${userState.TotalPM.total}
+                      Subtotal ${TotalPM.total}
                     </span>
                   </p>
                   <p>
@@ -729,7 +728,7 @@ function Index(props) {
                   </p>
                   <p>
                     <span className="total">Total</span>{" "}
-                    <span className="amount">${userState.TotalPM.total}</span>
+                    <span className="amount">${TotalPM.total}</span>
                   </p>
                   <Button
                     onClick={placeOrder}

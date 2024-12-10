@@ -34,10 +34,8 @@ import AppBar from '@mui/material/AppBar'
 import Toolbar from '@mui/material/Toolbar'
 import Typography from '@mui/material/Typography';
 import { useQuery } from '@tanstack/react-query';
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { commonActions } from "../../redux/reducers/Common";
-import { orderEntryActions } from "../../redux/reducers/OrderEntry";
-import { customerActions } from "../../redux/reducers/Customer";
 
 
 // Register the locale
@@ -47,8 +45,6 @@ registerLocale('es', es);
 function NewOrder() {
 
   const dispatchReduxStore = useDispatch();
-  const { ProductData } = useSelector((state) => state.OrderEntry);
-  const { SelectCustomer } = useSelector((state) => state.Customer);
 
   const { userState, dispatch } = useContext(userContext);
   const [ProductName, setProductName] = useState("");
@@ -56,7 +52,7 @@ function NewOrder() {
   const [Customer, setCustomer] = useState(false);
   const [CustomerData, setCustomerData] = useState([]);
   const [Step, setStep] = useState(1);
-  // const [SelectCustomerData, setSelectCustomerData] = useState(null);
+  const [SelectCustomerData, setSelectCustomerData] = useState(null);
   const [EditModalChangeStatus, setEditModalChangeStatus] = useState(false);
   const [AddItem, setAddItem] = useState(false);
   const [OrderId, setOrderId] = useState(null);
@@ -78,7 +74,7 @@ function NewOrder() {
     shop_by_branch: true
   });
 
-  // const [ProductData, setProductData] = useState([]);
+  const [ProductData, setProductData] = useState([]);
   const [OrderItemsData, setOrderItemsData] = useState([]);
 
   // const [TotalPM, setTotalPM] = useState({
@@ -128,11 +124,13 @@ function NewOrder() {
       return;
     }
 
-    dispatchReduxStore(customerActions.shipMethodChange(e.target.value));
+    var preCustomerData = SelectCustomerData;
+    preCustomerData.ship_addr.ship_method = e.target.value;
+    setSelectCustomerData(preCustomerData);
 
     setLoader(true);
     var value = e.target.value;
-    var id = SelectCustomer.ship_addr.id;
+    var id = SelectCustomerData.ship_addr.id;
 
     var responce = await customerService.updateShipMethod({
       ship_method: value,
@@ -141,9 +139,15 @@ function NewOrder() {
     setLoader(false);
   };
 
-  
+  // const getCustomerList = async () => {
+  //     var responce = await customerService.findAll("");
+  //     setCustomerData(responce.data.data)
+  // }
 
-  
+  const addCustomer = () => {
+    // alert(Customer)
+    setCustomer((pre) => (pre ? false : true));
+  };
 
   const newOrderSaveAndContinueChk = async () => {
     // Swal.fire({
@@ -171,7 +175,7 @@ function NewOrder() {
 
     // });
 
-    var OrderItemsData = ProductData.filter((item) => item.status === 'order');
+    var OrderItemsData = userState.ProductData.filter((item) => item.status === 'order');
 
     if (OrderItemsData.length === 0) {
       toast.warning('Please select product at frist');
@@ -192,13 +196,13 @@ function NewOrder() {
     }
 
     // console.log(
-    //   "SelectCustomer.ship_addr.ship_method ",
-    //   SelectCustomer.ship_addr
+    //   "SelectCustomerData.ship_addr.ship_method ",
+    //   SelectCustomerData.ship_addr
     // );
 
     var payload = {
       search_text: ProductDataSearch.search_text.trim(),
-      shipping_model: SelectCustomer?.ship_addr?.ship_method === "fob" ? "fob" : "landed", // landed or fob
+      shipping_model: SelectCustomerData?.ship_addr?.ship_method === "fob" ? "fob" : "landed", // landed or fob
       page: ProductDataSearch.page,
       limit: ProductDataSearch.limit,
       shop_by_branch: ProductDataSearch.shop_by_branch ? '1' : '0',
@@ -216,11 +220,10 @@ function NewOrder() {
     if (responce.status) {
       if (responce.result.results.length === 0) {
         // === replace_ProductData ====
-        // dispatch({ type: "replace_ProductData", value: [] });
-        dispatchReduxStore(orderEntryActions.replace_ProductData([]));
+        dispatch({ type: "replace_ProductData", value: [] });
       } else {
 
-        const tempProductDataArr = ProductData || [];
+        const tempProductDataArr = userState.ProductData || [];
         const tempArr = [];
 
         console.log("Initial Product Data: ", tempProductDataArr);
@@ -269,8 +272,7 @@ function NewOrder() {
         // alert(AddItem)
 
         // === replace_ProductData ====
-        // dispatch({ type: "replace_ProductData", value: tempArr });
-        dispatchReduxStore(orderEntryActions.replace_ProductData(tempArr));
+        dispatch({ type: "replace_ProductData", value: tempArr });
       }
     }
 
@@ -280,6 +282,128 @@ function NewOrder() {
   //   queryKey: ['orderEntryProductList'],
   //   queryFn: ProductList
   // });
+
+
+
+  // ======= wordpress product list api call (not use) ====== //
+  const ProductList2 = async () => {
+    try {
+      if (DeliveryDate === undefined) {
+        toast.warning("Please select delivery date");
+        return;
+      }
+
+      setLoader(true);
+
+      // === order_data_reset ====
+      dispatch({ type: "order_data_reset" });
+
+      if (!AddItem) {
+        setAddItem((pre) => (pre ? false : true));
+
+        var deliveryDate = moment(DeliveryDate).format("MM/DD/YYYY");
+        var ship_method =
+          SelectCustomerData.ship_addr.ship_method === "fob" ? "fob" : "landed";
+
+        const responce = await axios.get(
+          `${process.env.REACT_APP_WORDPRESS_API_SERVICE_URL}/getproducts/v1/product_filter_listing?model=${ship_method}&date_text=${deliveryDate}&page_no=1&pact=&pcolor&psource&isbybunch&searchquery=${ProductName}&filter_opt`
+        );
+
+        // console.log(responce.data, " ======== product data ====")
+
+        if (responce.data.items.length > 0) {
+          var tempArr = userState.ProductData;
+
+          var pIdArr = [];
+
+          for (var item of tempArr) {
+            var p_id = item.product_details.id;
+            pIdArr.push(p_id);
+          }
+
+          for (var i of responce.data.items) {
+            if (!pIdArr.includes(i.id)) {
+              var temp = {
+                product_details: i,
+                quantity: "",
+                total: 0.0,
+                margin: 0,
+              };
+
+              tempArr.push(temp);
+            }
+          }
+
+          console.log("tempArr  ", tempArr);
+
+          // alert(AddItem)
+
+          // === replace_ProductData ====
+          dispatch({ type: "replace_ProductData", value: tempArr });
+        }
+      } else {
+        setAddItem((pre) => (pre ? false : true));
+      }
+
+      setLoader(false);
+      // setProductData2(response.data.items)
+      // console.log("dsadsadsad", response);
+    } catch (error) {
+      // Handle errors here
+      console.error("Error fetching data:", error);
+      setLoader(false);
+    }
+  };
+
+  const ProductNameSearch = async (search_p_name) => {
+    if (DeliveryDate === undefined) {
+      toast.warning("Please select delivery date");
+      return;
+    }
+
+    setLoader(true);
+
+    // === order_data_reset ====
+    // dispatch({ type: "order_data_reset" });
+
+    setProductName(search_p_name);
+
+    // setAddItem(true)
+
+    var deliveryDate = moment(DeliveryDate).format("MM/DD/YYYY");
+    var ship_method =
+      SelectCustomerData.ship_addr.ship_method === "fob" ? "fob" : "landed";
+
+    const responce = await axios.get(
+      `${process.env.REACT_APP_WORDPRESS_API_SERVICE_URL}/getproducts/v1/product_filter_listing?model=${ship_method}&date_text=${deliveryDate}&page_no=1&pact=&pcolor&psource&isbybunch&searchquery=${search_p_name}&filter_opt`
+    );
+
+    // console.log(responce.data, " ======== product data ====")
+
+    if (responce.data.items.length > 0) {
+      var tempArr = [];
+
+      for (var i of responce.data.items) {
+        var temp = {
+          product_details: i,
+          quantity: "",
+          total: 0.0,
+          margin: 0,
+        };
+
+        tempArr.push(temp);
+      }
+
+      console.log("tempArr_2  ", tempArr);
+
+      // alert(AddItem)
+
+      // === replace_ProductData ====
+      dispatch({ type: "replace_ProductData", value: tempArr });
+    }
+
+    setLoader(false);
+  };
 
 
 
@@ -293,7 +417,7 @@ function NewOrder() {
 
     const indexToUpdate = index;
     if (indexToUpdate !== -1) {
-      const updatedData = [...ProductData];
+      const updatedData = [...userState.ProductData];
 
       // ------- total -------
       updatedData[indexToUpdate] = {
@@ -302,8 +426,7 @@ function NewOrder() {
       };
 
       // === replace_ProductData ====
-      // dispatch({ type: "replace_ProductData", value: updatedData });
-      dispatchReduxStore(orderEntryActions.replace_ProductData(updatedData));
+      dispatch({ type: "replace_ProductData", value: updatedData });
 
     }
   };
@@ -321,19 +444,19 @@ function NewOrder() {
     var total = 0;
     var margin = 0;
 
-    for (var i of ProductData) {
+    for (var i of userState.ProductData) {
       if (i.status == 'order') {
         no_product += 1;
       }
     }
 
-    for (var i of ProductData) {
+    for (var i of userState.ProductData) {
       if (i.status == 'order') {
         total += Number(i.total);
       }
     }
 
-    for (var i of ProductData) {
+    for (var i of userState.ProductData) {
       if (i.status == 'order') {
         margin += Number(i.margin);
       }
@@ -347,11 +470,10 @@ function NewOrder() {
     };
 
     console.log("TotalAmountCount: ", obj)
-    // console.log("TotalAmountCount: ",ProductData)
+    // console.log("TotalAmountCount: ",userState.ProductData)
 
     // === set TotalPM ====
-    // dispatch({ type: "TotalPM", value: obj });
-    dispatchReduxStore(orderEntryActions.TotalPM(obj))
+    dispatch({ type: "TotalPM", value: obj });
   };
 
 
@@ -404,7 +526,7 @@ function NewOrder() {
     // const indexToUpdate = ProductData.findIndex(item => item.id === 2);
 
     var price =
-      SelectCustomer.ship_addr.ship_method === "fob"
+      SelectCustomerData.ship_addr.ship_method === "fob"
         ? fob_price
         : landed_price;
 
@@ -412,13 +534,13 @@ function NewOrder() {
 
     var indexToUpdate = index;
 
-    // var indexToUpdate = ProductData.map((item, inner_index) =>
+    // var indexToUpdate = userState.ProductData.map((item, inner_index) =>
     //   item.temp_product_id == temp_product_id ? inner_index : -1
     // );
 
     if (indexToUpdate !== -1) {
       // Create a new array with the updated value
-      const updatedData = [...ProductData];
+      const updatedData = [...userState.ProductData];
 
       // var indexToUpdate = updatedData.find((item, inner_index) => item.temp_product_id == temp_product_id).product_details.id;
 
@@ -488,9 +610,7 @@ function NewOrder() {
       // Set the state with the updated array
 
       // === replace_ProductData ====
-      // dispatch({ type: "replace_ProductData", value: updatedData });
-      dispatchReduxStore(orderEntryActions.replace_ProductData(updatedData));
-
+      dispatch({ type: "replace_ProductData", value: updatedData });
 
       // var stateChangeData = {
       //   replace_ProductData: updatedData,
@@ -507,7 +627,7 @@ function NewOrder() {
       //   // );
 
       //   // Create a new array with the updated value
-      //   // const updatedData = ProductData[indexToUpdate];
+      //   // const updatedData = userState.ProductData[indexToUpdate];
       //   const productUpdatedData = updatedData[indexToUpdate];
 
       //   if (
@@ -539,24 +659,33 @@ function NewOrder() {
   };
 
 
+  useEffect(()=>{
+    dispatchReduxStore(commonActions.setPageTitle("Order Entry"))
+  },[])
 
   useEffect(() => {
-
-    // ==== set page title ====
-    dispatchReduxStore(commonActions.setPageTitle("Order Entry"))
-
-    // === order_data_reset ====
-    dispatchReduxStore(orderEntryActions.order_data_reset());
-
-    // === calculateMaxDate ====
     calculateMaxDate();
-
-  }, []);
-
+    // getCustomerList();
+    // console.log(SelectCustomerData);
+  }, [SelectCustomerData]);
 
   useEffect(() => {
     TotalAmountCount();
-  }, [ProductData]);
+  }, [userState.ProductData]);
+
+  // ======= reset pre vious data ==========
+  useEffect(() => {
+    // =========== selected customer value set =============
+    if (location.state !== null) {
+      // console.log("location.state.selectCustomerData ",location.state.selectCustomerData)
+      setSelectCustomerData(location.state.selectCustomerData);
+    }
+
+    // === order_data_reset ====
+    dispatch({ type: "order_data_reset" });
+  }, []);
+
+  // console.log("userState.ProductData ",userState.ProductData)
 
 
   useEffect(() => {
@@ -574,25 +703,56 @@ function NewOrder() {
         <div className="billing-grid order-bill">
           <h2>New Order</h2>
           <Row className="order_top_row d-lg-flex align-items-center">
+            {/* ======= customer select ========= */}
+            {SelectCustomerData == null && (
+              <Col lg={9}>
+                {!Customer && (
+                  <div className="add-customer">
+                    <div className="create-btn-sec">
+                      <img src={AddImage} alt="" />
+                      <Button
+                        type="button"
+                        className="create-btn"
+                        onClick={addCustomer}
+                      >
+                        + Add a customer
+                      </Button>
+                    </div>
+                  </div>
+                )}
+
+                {/*  =========== customer search ======= */}
+                {Customer && (
+                  <>
+                    {/* <CustomerSelectDropdown options={CustomerData} setSelectCustomerData={setSelectCustomerData} EditModalChangeStatus={EditModalChangeStatus} /> */}
+
+                    <CustomerAutoSearch
+                      setSelectCustomerData={setSelectCustomerData}
+                      EditModalChangeStatus={EditModalChangeStatus}
+                    />
+                  </>
+                )}
+              </Col>
+            )}
 
             {/* ======= customer show ========= */}
-            {SelectCustomer != null && (
+            {SelectCustomerData != null && (
               <>
                 <Col lg={4}>
                   <div className="bill-info">
                     <small>Bill to</small>
-                    <h3>{SelectCustomer?.company_name}</h3>
+                    <h3>{SelectCustomerData?.company_name}</h3>
                     <h4>
-                      {SelectCustomer?.firstname}{" "}
-                      {SelectCustomer?.lastname}
+                      {SelectCustomerData?.firstname}{" "}
+                      {SelectCustomerData?.lastname}
                     </h4>
                     <span>
                       Customer#{" "}
-                      <strong>{SelectCustomer?.customer_no}</strong>
+                      <strong>{SelectCustomerData?.customer_no}</strong>
                     </span>
                     <p>
-                      <a href={`mailto:${SelectCustomer?.email}`}>
-                        {SelectCustomer?.email}
+                      <a href={`mailto:${SelectCustomerData?.email}`}>
+                        {SelectCustomerData?.email}
                       </a>
                     </p>
                     <p
@@ -608,31 +768,31 @@ function NewOrder() {
                 <Col lg={3}>
                   <div className="bill-info">
                     <small>Ship to</small>
-                    <h3>{SelectCustomer?.company_name}</h3>
-                    <h4>{SelectCustomer?.ship_addr.ship_contact_name}</h4>
+                    <h3>{SelectCustomerData?.company_name}</h3>
+                    <h4>{SelectCustomerData?.ship_addr.ship_contact_name}</h4>
                     <h4>
-                      {SelectCustomer.ship_addr.ship_addr_1 && (
-                        <>{SelectCustomer.ship_addr.ship_addr_1},</>
+                      {SelectCustomerData.ship_addr.ship_addr_1 && (
+                        <>{SelectCustomerData.ship_addr.ship_addr_1},</>
                       )}
 
-                      {SelectCustomer.ship_addr.ship_addr_2 && (
-                        <>{SelectCustomer.ship_addr.ship_addr_2},</>
+                      {SelectCustomerData.ship_addr.ship_addr_2 && (
+                        <>{SelectCustomerData.ship_addr.ship_addr_2},</>
                       )}
 
-                      {SelectCustomer.ship_addr.ship_country_name && (
-                        <>{SelectCustomer.ship_addr.ship_country_name},</>
+                      {SelectCustomerData.ship_addr.ship_country_name && (
+                        <>{SelectCustomerData.ship_addr.ship_country_name},</>
                       )}
 
-                      {SelectCustomer.ship_addr.ship_state_name && (
-                        <>{SelectCustomer.ship_addr.ship_state_name},</>
+                      {SelectCustomerData.ship_addr.ship_state_name && (
+                        <>{SelectCustomerData.ship_addr.ship_state_name},</>
                       )}
 
-                      {SelectCustomer.ship_addr.ship_city_name && (
-                        <>{SelectCustomer.ship_addr.ship_city_name},</>
+                      {SelectCustomerData.ship_addr.ship_city_name && (
+                        <>{SelectCustomerData.ship_addr.ship_city_name},</>
                       )}
 
-                      {SelectCustomer.ship_addr.ship_zip_code && (
-                        <>{SelectCustomer.ship_addr.ship_zip_code}</>
+                      {SelectCustomerData.ship_addr.ship_zip_code && (
+                        <>{SelectCustomerData.ship_addr.ship_zip_code}</>
                       )}
                     </h4>
                     <p
@@ -653,7 +813,7 @@ function NewOrder() {
                         <option value="">select</option>
                         <option
                           selected={
-                            SelectCustomer?.ship_addr.ship_method === "fob"
+                            SelectCustomerData?.ship_addr.ship_method === "fob"
                               ? "selected"
                               : ""
                           }
@@ -663,7 +823,7 @@ function NewOrder() {
                         </option>
                         <option
                           selected={
-                            SelectCustomer?.ship_addr.ship_method ===
+                            SelectCustomerData?.ship_addr.ship_method ===
                               "fedex"
                               ? "selected"
                               : ""
@@ -684,16 +844,50 @@ function NewOrder() {
                 <div className="text-lg-end">
                   <Button
                     onClick={newOrderSaveAndContinueChk}
-                    disabled={SelectCustomer != null ? false : true}
+                    disabled={SelectCustomerData != null ? false : true}
                     className="new-order-btn btn btn-info green"
                   >
                     View Order
                   </Button>
                 </div>
 
-                
+                <div className="text-lg-end">
+                  {/* <Button
+                    type="button"
+                    className="btn btn-secondary rounded-5 cart-btn"
+                    data-bs-toggle="modal"
+                    data-bs-target="#checkoutModal"
+                  >
+                    Total
+                  </Button> */}
+
+                  {/* <Button
+                    type="button"
+                    className="btn btn-secondary rounded-5 cart-btn"
+                    onClick={() => setCheckOutModal(true)}
+                  >
+                    Total
+                  </Button> */}
+                </div>
+
+                {/* ===================== */}
 
                 <div className="order-info">
+                  <p>
+                    {/* <label>Order Number</label> <span>#123456789</span> */}
+                  </p>
+                  {/* <p className="clearfix">
+                    <label>Invoice Date</label>{" "}
+                    <DatePicker
+                      locale="es"
+                      showIcon
+                      closeOnScroll={true}
+                      placeholderText="To"
+                      selected={formDate}
+                      onChange={(date) => setFormDate(date)}
+                      className={"form-control"}
+                    />
+                  </p> */}
                   <p className="clearfix">
                     <label>Delivery Date</label>{" "}
                     <DatePicker
@@ -716,9 +910,15 @@ function NewOrder() {
         </div>
 
 
-        
+        {SelectCustomerData != null && (
+          <div className="category-select">
+            <Row className="justify-content-end">
 
-        {SelectCustomer != null && (
+            </Row>
+          </div>
+        )}
+
+        {SelectCustomerData != null && (
           <div className="category-select">
             <Row className="justify-content-end">
               <Col lg={2} className="text-lg-start">
@@ -778,8 +978,8 @@ function NewOrder() {
                 </tr>
               </thead>
               <tbody>
-                {ProductData.length > 0 &&
-                  ProductData.map((item, index) => (
+                {userState.ProductData.length > 0 &&
+                  userState.ProductData.map((item, index) => (
                     <>
                       <tr key={index}>
                         <td>
@@ -875,27 +1075,27 @@ function NewOrder() {
             </table>
 
             {/* <div className="order-total">
-                <p>
-                    <span className="subtotal">Subtotal $0.00</span>
-                </p>
-                <p>
-                    <span className="subtotal">Subtotal $0.00</span>
-                </p>
-                <p>
-                    <span className="total">Total</span>{" "}
-                    <span className="amount">$0.00</span>
-                </p>
-                <p />
-            </div> */}
+                        <p>
+                            <span className="subtotal">Subtotal $0.00</span>
+                        </p>
+                        <p>
+                            <span className="subtotal">Subtotal $0.00</span>
+                        </p>
+                        <p>
+                            <span className="total">Total</span>{" "}
+                            <span className="amount">$0.00</span>
+                        </p>
+                        <p />
+                    </div> */}
           </div>
 
         </div>
       </Container>
 
       {/* ====== Customer edit modal ======== */}
-      {SelectCustomer != null && (
+      {SelectCustomerData != null && (
         <CustomerEditModalForm
-          id={SelectCustomer?.id}
+          id={SelectCustomerData?.id}
           Step={Step}
           setEditModalChangeStatus={setEditModalChangeStatus}
           EditModalChangeStatus={EditModalChangeStatus}
@@ -906,6 +1106,8 @@ function NewOrder() {
       <CheckoutModal
         CheckOutModal={CheckOutModal}
         setCheckOutModal={setCheckOutModal}
+        SelectCustomerData={SelectCustomerData}
+        setSelectCustomerData={setSelectCustomerData}
         DeliveryDate={DeliveryDate}
         setAddItem={setAddItem}
         quantityListValueset_2={quantityListValueset_2}
