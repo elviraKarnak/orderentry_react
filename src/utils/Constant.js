@@ -4,25 +4,23 @@ import { LuView } from "react-icons/lu";
 import { MdOutlineViewInAr } from "react-icons/md";
 import { MdOutlineInventory2 } from "react-icons/md";
 import { GrUserAdmin } from "react-icons/gr";
-import AgricultureOutlinedIcon from '@mui/icons-material/AgricultureOutlined';
-import ReportGmailerrorredOutlinedIcon from '@mui/icons-material/ReportGmailerrorredOutlined';
+import AgricultureOutlinedIcon from "@mui/icons-material/AgricultureOutlined";
+import ReportGmailerrorredOutlinedIcon from "@mui/icons-material/ReportGmailerrorredOutlined";
 // import { CiViewTable } from "react-icons/ci";
 import { IoListSharp } from "react-icons/io5";
 import { GiNotebook } from "react-icons/gi";
 
-
 export const PageModuleData = {
-  "orderEntry": "MODULE_001",
-  "orderView": "MODULE_002",
-  "orderList": "MODULE_003",
-  "productView": "MODULE_004",
-  "stagingInventory": "MODULE_005",
-  "admin": "MODULE_006",
-  "accounting": "MODULE_007",
-  "reporting": "MODULE_008",
-  "farmPurchase": "MODULE_009",
-}
-
+  orderEntry: "MODULE_001",
+  orderView: "MODULE_002",
+  orderList: "MODULE_003",
+  productView: "MODULE_004",
+  stagingInventory: "MODULE_005",
+  admin: "MODULE_006",
+  accounting: "MODULE_007",
+  reporting: "MODULE_008",
+  farmPurchase: "MODULE_009",
+};
 
 export const menuData = {
   admin: [
@@ -95,7 +93,7 @@ export const menuData = {
       path: "/farm-purchase",
       icon: <AgricultureOutlinedIcon />,
       code: PageModuleData.farmPurchase,
-    }
+    },
   ],
 
   farm: [
@@ -110,9 +108,9 @@ export const menuData = {
       path: "/farm-purchase",
       icon: <AgricultureOutlinedIcon />,
       code: PageModuleData.farmPurchase,
-    }
-  ]
-}
+    },
+  ],
+};
 
 export const menueDataAdmin = [
   {
@@ -184,9 +182,8 @@ export const menueDataAdmin = [
     path: "/farm-purchase",
     icon: <AgricultureOutlinedIcon />,
     code: PageModuleData.farmPurchase,
-  }
+  },
 ];
-
 
 export const menueDataFarm = [
   {
@@ -200,17 +197,16 @@ export const menueDataFarm = [
     path: "/farm-purchase",
     icon: <AgricultureOutlinedIcon />,
     code: PageModuleData.farmPurchase,
-  }
+  },
 ];
 
-
 export const UserRole = {
-  "SUPER_ADMIN": 1,
-  "SALES": 2,
-  "BUYER": 3,
-  "FARM": 4,
-  "CUSTOMER": 5,
-}
+  SUPER_ADMIN: 1,
+  SALES: 2,
+  BUYER: 3,
+  FARM: 4,
+  CUSTOMER: 5,
+};
 
 export const SatagingInventoryData = [
   {
@@ -394,10 +390,24 @@ export const boxTypeOptions = [
 export const UserStatus = [
   { value: "active", label: "Active" },
   { value: "in-active", label: "Inactive" },
-]
+];
 
 export const FARM_PURCHASE_STATUS = [
   { value: "new_order", label: "New Order", disabled: true },
   { value: "accepted", label: "Accepted", disabled: false },
   { value: "canceled", label: "Canceled", disabled: false },
-]
+];
+
+export const CUSTOMER_SERVICE_REPRESENTATIVE_LIST = [
+  { value: "None", label: "None" },
+  { value: "Angelique Crespo", label: "Angelique Crespo" },
+  { value: "Anthony Vergara", label: "Anthony Vergara" },
+  { value: "Antonio Crespo", label: "Antonio Crespo" },
+  { value: "Brian Benjamin", label: "Brian Benjamin" },
+  { value: "Daniel Crespo", label: "Daniel Crespo" },
+  { value: "Grace Perdomo", label: "Grace Perdomo" },
+  { value: "JORGE ZALEM", label: "JORGE ZALEM" },
+  { value: "Jon Negron", label: "Jon Negron" },
+  { value: "Karin Siegers", label: "Karin Siegers" },
+  { value: "Nikki Newman", label: "Nikki Newman" },
+];

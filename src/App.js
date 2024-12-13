@@ -1,5 +1,4 @@
 //Dependencies
-//checking changes log
 import React from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Container from "@mui/material/Container";
@@ -42,6 +41,11 @@ import Root from "./pages/Root";
 import OrderView from "./pages/oderview/OrderView";
 import { useSelector } from "react-redux";
 import NotFound from "./pages/NotFound";
+import AddCustomer from "./compoments/AddCustomerModal/AddCustomer.modal";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
+import AddressForm from "./compoments/CustomerAddressModel/AddressForm.model";
 
 const queryClient = new QueryClient();
 queryClient.setDefaultOptions({
@@ -96,9 +100,12 @@ function App() {
 
             <Route path="*" element={<NotFound />} />
           </Routes>
+          <ToastContainer />
         </BrowserRouter>
       </Store>
     </QueryClientProvider>
+
+    // <AddressForm />
   );
 }
 
