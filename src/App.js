@@ -45,8 +45,6 @@ import AddCustomer from "./compoments/AddCustomerModal/AddCustomer.modal";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-import AddressForm from "./compoments/CustomerAddressModel/AddressForm.model";
-
 const queryClient = new QueryClient();
 queryClient.setDefaultOptions({
   queries: {
@@ -104,8 +102,6 @@ function App() {
         </BrowserRouter>
       </Store>
     </QueryClientProvider>
-
-    // <AddressForm />
   );
 }
 

@@ -27,10 +27,13 @@ import { commonActions } from "../../redux/reducers/Common";
 import { customerActions } from "../../redux/reducers/Customer";
 import { orderEntryActions } from "../../redux/reducers/OrderEntry";
 import AddCustomer from "../../compoments/AddCustomerModal/AddCustomer.modal";
+import AddressModel from "../../compoments/CustomerAddressModel/Address.model";
 import { findAllCustomersApi } from "../../utils/fetch";
 
 function SimpleSearchNew() {
   const [isModelOpen, setIsModelOpen] = useState(false);
+  const [isAddressModel, setIsAddressModel] = useState(false);
+  const [selectedCustomer, setSelectedCustomer] = useState();
   const [usersList, setUsersList] = useState([]);
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -197,7 +200,10 @@ function SimpleSearchNew() {
         <Tooltip title="Address">
           <IconButton
             color="success"
-            onClick={() => console.log("customer address")}
+            onClick={() => {
+              setIsAddressModel(true);
+              setSelectedCustomer(row.original);
+            }}
           >
             <AddHomeIcon />
           </IconButton>
@@ -253,6 +259,32 @@ function SimpleSearchNew() {
             <AddCustomer
               setIsModelOpen={setIsModelOpen}
               refetch={getAllUsers}
+            />
+          </div>,
+          document.getElementById("portal-root")
+        )}
+
+      {/* address Model */}
+      {isAddressModel &&
+        ReactDOM.createPortal(
+          <div
+            style={{
+              width: "100%",
+              height: "100vh",
+              position: "fixed",
+              top: "0",
+              left: "0",
+              zIndex: "1000",
+              background: "rgba(0,0,0,0.5)",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <AddressModel
+              setIsAddressModel={setIsAddressModel}
+              selectedCustomer={selectedCustomer}
+              // refetch={getAllUsers}
             />
           </div>,
           document.getElementById("portal-root")

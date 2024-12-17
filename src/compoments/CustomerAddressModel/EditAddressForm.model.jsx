@@ -9,7 +9,7 @@ import {
 } from "@mui/material";
 import { useForm, Controller } from "react-hook-form";
 
-const AddressForm = () => {
+const AddressForm = ({ setIsEditOrAdd }) => {
   const { control, handleSubmit } = useForm({
     defaultValues: {
       address_type: "",
@@ -34,7 +34,9 @@ const AddressForm = () => {
       sx={{
         maxWidth: 600,
         mx: "auto",
-        p: 2,
+        p: 4,
+        backgroundColor: "white",
+        borderRadius: "10px",
       }}
     >
       <Typography variant="h6" gutterBottom>
@@ -157,7 +159,12 @@ const AddressForm = () => {
         </Grid>
 
         <Grid item xs={12} sm={12}>
-          <Button variant="outlined" type="button" fullWidth>
+          <Button
+            variant="outlined"
+            type="button"
+            fullWidth
+            onClick={() => setIsEditOrAdd(false)}
+          >
             Cancel
           </Button>
         </Grid>
