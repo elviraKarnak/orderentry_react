@@ -29,8 +29,8 @@ const ConfirmDelete = ({ setIsDelete }) => {
       <Grid container spacing={2} justifyContent="center">
         <Grid item>
           <Button
-            variant="outlined"
-            color="primary"
+            variant="contained"
+            color="success"
             onClick={() => setIsDelete(false)}
           >
             Cancel

@@ -1532,3 +1532,73 @@ export const findAllCustomersApi = async () => {
 };
 
 // ----------------------------------------- Customer API END -----------------------------------X
+
+// ------------------------------------------ Customer Address API Start -------------------------
+
+export const AddcustomerAddressApi = async (payload) => {
+  try {
+    let config = {
+      method: "POST",
+      maxBodyLength: Infinity,
+      url: `${REACT_APP_API_SERVICE_URL}/api/v1/admin/customer/customer-addr-add`,
+      headers: {
+        "x-api-key": "b1d1I0p7A2Er2n0eD2b0As8c0kT8p2M9",
+        token: window.sessionStorage.getItem("access-token"),
+        "Content-Type": "application/json",
+      },
+      data: JSON.stringify(payload),
+    };
+
+    const response = await axios.request(config);
+
+    if (response.status === 200) {
+      const responseResult = await response.data;
+      // Success
+      return { status: true, result: responseResult };
+    } else {
+      // Server-side error
+      console.log("Server error:", response.status);
+      const errorData = await response.data;
+      console.log("Server errorData ", errorData);
+      return { status: false, error: errorData };
+    }
+  } catch (error) {
+    // Network error
+    console.log("Network error:", error);
+    return { status: "error", error };
+  }
+};
+
+export const editCustomerAddressApi = async (payload, address_id) => {
+  try {
+    let config = {
+      method: "PUT",
+      maxBodyLength: Infinity,
+      url: `${REACT_APP_API_SERVICE_URL}/api/v1/admin/customer/customer-addr-edit/${address_id}`,
+      headers: {
+        "x-api-key": "b1d1I0p7A2Er2n0eD2b0As8c0kT8p2M9",
+        token: window.sessionStorage.getItem("access-token"),
+        "Content-Type": "application/json",
+      },
+      data: JSON.stringify(payload),
+    };
+
+    const response = await axios.request(config);
+
+    if (response.status === 200) {
+      const responseResult = await response.data;
+      // Success
+      return { status: true, result: responseResult };
+    } else {
+      // Server-side error
+      console.log("Server error:", response.status);
+      const errorData = await response.data;
+      console.log("Server errorData ", errorData);
+      return { status: false, error: errorData };
+    }
+  } catch (error) {
+    // Network error
+    console.log("Network error:", error);
+    return { status: "error", error };
+  }
+};

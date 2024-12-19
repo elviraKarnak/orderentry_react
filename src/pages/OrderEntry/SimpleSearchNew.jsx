@@ -14,10 +14,12 @@ import {
   Tooltip,
   Button,
 } from "@mui/material";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
+import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
+import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
 import FiberNewIcon from "@mui/icons-material/FiberNew";
-import AddHomeIcon from "@mui/icons-material/AddHome";
+import PlayCircleOutlineOutlinedIcon from "@mui/icons-material/PlayCircleOutlineOutlined";
+
+import AddHomeOutlinedIcon from "@mui/icons-material/AddHomeOutlined";
 import customerService from "../../services/customer.service";
 import CustomerDummyList from "../../utils/dummy_data/CustomerDummyList";
 import { toast } from "react-toastify";
@@ -192,7 +194,7 @@ function SimpleSearchNew() {
             color="primary"
             onClick={() => console.log("edit customer")}
           >
-            <EditIcon />
+            <EditOutlinedIcon />
           </IconButton>
         </Tooltip>
 
@@ -205,7 +207,7 @@ function SimpleSearchNew() {
               setSelectedCustomer(row.original);
             }}
           >
-            <AddHomeIcon />
+            <AddHomeOutlinedIcon />
           </IconButton>
         </Tooltip>
 
@@ -215,7 +217,7 @@ function SimpleSearchNew() {
             color="error"
             onClick={() => console.log("Delete", row.original.id)}
           >
-            <DeleteIcon />
+            <DeleteOutlineOutlinedIcon />
           </IconButton>
         </Tooltip>
 
@@ -225,7 +227,7 @@ function SimpleSearchNew() {
             color="secondary"
             onClick={() => selectedSingleCustomerGet(row.original.id)}
           >
-            <FiberNewIcon />
+            <PlayCircleOutlineOutlinedIcon />
           </IconButton>
         </Tooltip>
       </Box>
@@ -284,7 +286,7 @@ function SimpleSearchNew() {
             <AddressModel
               setIsAddressModel={setIsAddressModel}
               selectedCustomer={selectedCustomer}
-              // refetch={getAllUsers}
+              refetch={getAllUsers}
             />
           </div>,
           document.getElementById("portal-root")
