@@ -37,6 +37,7 @@ function SimpleSearchNew() {
   const [isAddressModel, setIsAddressModel] = useState(false);
   const [selectedCustomer, setSelectedCustomer] = useState();
   const [usersList, setUsersList] = useState([]);
+  const [userFormType, setUserFormType] = useState(); // add or edit
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -192,7 +193,11 @@ function SimpleSearchNew() {
         <Tooltip title="Edit customer Details">
           <IconButton
             color="primary"
-            onClick={() => console.log("edit customer")}
+            onClick={() => {
+              setUserFormType("edit");
+              setSelectedCustomer(row.original);
+              setIsModelOpen(true);
+            }}
           >
             <EditOutlinedIcon />
           </IconButton>
@@ -241,7 +246,7 @@ function SimpleSearchNew() {
   // render //
   return (
     <>
-      {/* new customer form model */}
+      {/* --------------- customer form model START --------------> */}
       {isModelOpen &&
         ReactDOM.createPortal(
           <div
@@ -260,13 +265,16 @@ function SimpleSearchNew() {
           >
             <AddCustomer
               setIsModelOpen={setIsModelOpen}
+              selectedCustomer={selectedCustomer}
               refetch={getAllUsers}
+              type={userFormType}
             />
           </div>,
           document.getElementById("portal-root")
         )}
+      {/* xxxxxxxxxxxxxxxxxxxxx  New customer form model END xxxxxxxxxxxxxxxxxxxxxx*/}
 
-      {/* address Model */}
+      {/* ----------------- Address Model START -----------------> */}
       {isAddressModel &&
         ReactDOM.createPortal(
           <div
@@ -291,6 +299,7 @@ function SimpleSearchNew() {
           </div>,
           document.getElementById("portal-root")
         )}
+      {/* xxxxxxxxxxxxxxxxxxxxx  Address Model END xxxxxxxxxxxxxxxxxxxxxx*/}
 
       <Grid container spacing={2}>
         <Grid item xs={12} md={12} lg={12}>
@@ -299,7 +308,11 @@ function SimpleSearchNew() {
               variant="contained"
               color="primary"
               sx={{ m: 2 }}
-              onClick={() => setIsModelOpen(true)}
+              onClick={() => {
+                setUserFormType("add");
+                setSelectedCustomer({});
+                setIsModelOpen(true);
+              }}
             >
               Add New Customer
             </Button>

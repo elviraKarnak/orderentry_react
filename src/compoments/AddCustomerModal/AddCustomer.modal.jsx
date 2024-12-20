@@ -17,14 +17,61 @@ import { useForm, Controller } from "react-hook-form";
 import { toast } from "react-toastify";
 import { customerAddApi } from "../../utils/fetch";
 import { customerAddSchema } from "./ValidationSchema";
+import { customerEditSchema } from "./ValidationSchema";
 import { CUSTOMER_SERVICE_REPRESENTATIVE_LIST } from "../../utils/Constant";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 
-const ResponsiveForm = ({ setIsModelOpen, refetch }) => {
+const ResponsiveForm = ({
+  setIsModelOpen,
+  refetch,
+  type,
+  selectedCustomer,
+}) => {
+  console.log(
+    "======== inside Edit customer form update and add =======\n",
+    selectedCustomer
+  );
+
+  console.log("========= current type =========\n", type);
+
   const [showPassword, setShowPassword] = useState(false);
   const [compShowPassword, setCompShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  // const [formHookObject, setFormHookObject] = useState(
+  //   type == "add"
+  //     ? {
+  // defaultValues: {
+  //   email: "",
+  //   username: "",
+  //   user_first_name: "",
+  //   user_last_name: "",
+  //   phone: "",
+  //   customer_serivce_representative: "None",
+  //   customer_no: "",
+  //   user_pass: "",
+  //   user_pass_confirm: "",
+  //   company: "",
+  // },
+  // resolver: yupResolver(customerAddSchema),
+  //       }
+  //     : {
+  //         defaultValues: {
+  //           email: selectedCustomer.email,
+  //           username: selectedCustomer.username,
+  //           user_first_name: selectedCustomer.user_first_name,
+  //           user_last_name: selectedCustomer.user_last_name,
+  //           phone: selectedCustomer.user_phone,
+  //           customer_serivce_representative:
+  //             selectedCustomer.user_customer_serivce_representative,
+  //           customer_no: selectedCustomer.user_customer_no,
+  //           user_pass: "",
+  //           user_pass_confirm: "",
+  //           company: selectedCustomer.company,
+  //         },
+  //         resolver: yupResolver(customerEditSchema),
+  //       }
+  // );
 
   const {
     handleSubmit,
@@ -49,7 +96,10 @@ const ResponsiveForm = ({ setIsModelOpen, refetch }) => {
 
   const onSubmit = async (data) => {
     try {
+      console.log("submit function was called");
       setLoading(true);
+
+      // if (type == "add") {
       if (data.user_pass !== data.user_pass_confirm) {
         toast.error("Password did not match");
         setLoading(false);
@@ -74,6 +124,10 @@ const ResponsiveForm = ({ setIsModelOpen, refetch }) => {
           `${responseData.error.response.data.validation.body.message}`
         );
       }
+      // } else {
+      //   setLoading(true);
+      //   console.log("updating customer data", data);
+      // }
     } catch (error) {
       toast.error(`${error}`);
       setLoading(false);
@@ -92,7 +146,7 @@ const ResponsiveForm = ({ setIsModelOpen, refetch }) => {
       }}
     >
       <Typography variant="h5" mb={2} textAlign="center">
-        Create New Customer
+        {type == "edit" ? "Update Customer" : "Create New Customer"}
       </Typography>
       <form onSubmit={handleSubmit(onSubmit)}>
         <Grid container spacing={2}>

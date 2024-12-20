@@ -98,7 +98,7 @@ function App() {
 
             <Route path="*" element={<NotFound />} />
           </Routes>
-          <ToastContainer />
+          <ToastContainer theme="dark" />
         </BrowserRouter>
       </Store>
     </QueryClientProvider>

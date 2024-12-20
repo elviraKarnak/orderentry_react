@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Card,
@@ -17,11 +17,15 @@ import CloseIcon from "@mui/icons-material/Close";
 import EditAddressFormModel from "./EditAddressForm.model";
 import InfoModel from "./Info.model";
 import DeleteAddressModel from "./ConfirmDeleteAddress.model";
-import PersonIcon from "@mui/icons-material/Person";
-import EmailIcon from "@mui/icons-material/Email";
-import LocalPhoneIcon from "@mui/icons-material/LocalPhone";
-import BusinessIcon from "@mui/icons-material/Business";
+import PersonOutlineOutlinedIcon from "@mui/icons-material/PersonOutlineOutlined";
+import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
+import CallOutlinedIcon from "@mui/icons-material/CallOutlined";
+import StoreOutlinedIcon from "@mui/icons-material/StoreOutlined";
+import { toast } from "react-toastify";
+import { setDefaultAddressApi } from "../../utils/fetch";
+import { getSingleCustomerAddressApi } from "../../utils/fetch";
 
+// ----------------------------- Address card component  START ------------------------->
 const UserAddressCard = ({
   type,
   address,
@@ -30,21 +34,58 @@ const UserAddressCard = ({
   setIsEditOrAdd,
   setIsDelete,
   setForm,
+  setIsAddressModel,
+  setDeleteAddressId,
+  refetch,
 }) => {
+  console.log("====== Address Card ======\n", address);
+
+  async function handleDefaultAddress() {
+    try {
+      if (address.primary_addr_status == 1) {
+        toast.warning("Already Default Address");
+        return;
+      } else {
+        const response = await setDefaultAddressApi(address.user_id, {
+          id: address.id,
+          user_addr_type: address.user_addr_type,
+        });
+
+        if (response.status == true) {
+          toast.success("Successfully Set as Default Address");
+          setIsAddressModel(false);
+          refetch();
+        } else {
+          toast.error("Failed to set as Default Address");
+        }
+      }
+    } catch (error) {
+      toast.error("Failed to set as Default Address");
+    }
+  }
+
   return (
     <Card
       sx={{
         minWidth: 250,
-        padding: 1,
+        width: "300px",
+        padding: 0,
         flex: "0 0 auto",
-        boxShadow: "3",
+        boxShadow: "1",
+        border: "1px solid rgba(0,0,0,0.1)",
       }}
     >
       {/* Address Details */}
       <Checkbox
         color="success"
-        title="Mark as Default"
+        title={
+          address.primary_addr_status == 1
+            ? "Default Address"
+            : "Mark as Default"
+        }
         sx={{ marginBottom: "0" }}
+        checked={address.primary_addr_status == 1}
+        onClick={handleDefaultAddress}
       />
 
       <CardContent>
@@ -57,7 +98,9 @@ const UserAddressCard = ({
           {/* Address Info */}
           <Box flexGrow={1} sx={{ padding: "0" }}>
             <Typography variant="body1">{address.name},</Typography>
-            <Typography variant="body1">{address.address1}</Typography>
+            <Typography variant="body1">
+              {address.address1.split("").slice(0, 35).join("") + "..."}
+            </Typography>
           </Box>
           {/* Action Buttons */}
           <Box display="flex" gap={1}>
@@ -65,7 +108,10 @@ const UserAddressCard = ({
               color="error"
               size="small"
               title="delete"
-              onClick={() => setIsDelete(true)}
+              onClick={() => {
+                setDeleteAddressId(address.id);
+                setIsDelete(true);
+              }}
             >
               <DeleteIcon />
             </IconButton>
@@ -89,7 +135,7 @@ const UserAddressCard = ({
 
             <Button
               size="small"
-              color="inherit"
+              color="secondary"
               variant="outlined"
               onClick={() => {
                 setInfoData(address);
@@ -105,6 +151,9 @@ const UserAddressCard = ({
   );
 };
 
+// XXXXXXXXXXXXXXXXXXX Address card component  END XXXXXXXXXXXXXXXXXXXXXXX
+
+// ----------------------------- Address Section component  START ------------------------->
 const UserAddressSection = ({
   type,
   customer,
@@ -113,6 +162,9 @@ const UserAddressSection = ({
   setIsDelete,
   setForm,
   setInfoData,
+  setIsAddressModel,
+  setDeleteAddressId,
+  refetch,
 }) => {
   let addresses =
     type == "Billing"
@@ -146,7 +198,7 @@ const UserAddressSection = ({
             setIsEditOrAdd(true);
           }}
         >
-          <AddCircleOutlineIcon />
+          <AddCircleOutlineIcon fontSize="medium" />
         </IconButton>
       </Box>
 
@@ -180,6 +232,9 @@ const UserAddressSection = ({
                 setIsEditOrAdd={setIsEditOrAdd}
                 setIsDelete={setIsDelete}
                 setForm={setForm}
+                setIsAddressModel={setIsAddressModel}
+                setDeleteAddressId={setDeleteAddressId}
+                refetch={refetch}
               />
             );
           })
@@ -229,14 +284,16 @@ const UserAddressSection = ({
     </Box>
   );
 };
+// XXXXXXXXXXXXXXXXXXX Address Section component  END XXXXXXXXXXX
 
-//  ------------------- main component -------------------------
+//  ------------------- Main component START ---------------------------->
 const UserAddressInfo = ({ setIsAddressModel, selectedCustomer, refetch }) => {
-  console.log(selectedCustomer);
+  console.log("===== First customer log ======\n", selectedCustomer);
   const [isEditOrAdd, setIsEditOrAdd] = useState(false);
   const [isInfo, setIsInfo] = useState(false);
   const [infoData, setInfoData] = useState();
   const [isDelete, setIsDelete] = useState(false);
+  const [deleteAddressId, setDeleteAddressId] = useState();
   const [form, setForm] = useState({
     data: {},
     formType: "", // New || Edit
@@ -244,9 +301,37 @@ const UserAddressInfo = ({ setIsAddressModel, selectedCustomer, refetch }) => {
     user_id: "",
   });
 
+  // const [customerAddressList, setCustomerAddressList] = useState();
+
+  // async function fetchCustomerAddress() {
+  //   try {
+  //     const response = await getSingleCustomerAddressApi(selectedCustomer.id);
+  //     // console.log("====== response ======\n", response);
+  //     if (response.status == true) {
+  //       setCustomerAddressList(response.result);
+  //       printAddress();
+  //     } else {
+  //       toast.error("Failed to fetch customer address");
+  //     }
+  //   } catch (error) {
+  //     toast.error("Failed to fetch customer address");
+  //   }
+  // }
+
+  // function printAddress() {
+  //   console.log(
+  //     "====== Single Customer Address List ======\n",
+  //     customerAddressList
+  //   );
+  // }
+
+  // useEffect(() => {
+  //   fetchCustomerAddress();
+  // }, []);
+
   const spanStyle = {
     color: "black",
-    fontWeight: "500",
+    fontWeight: "400",
   };
 
   if (isEditOrAdd) {
@@ -269,7 +354,14 @@ const UserAddressInfo = ({ setIsAddressModel, selectedCustomer, refetch }) => {
     );
   }
   if (isDelete) {
-    return <DeleteAddressModel setIsDelete={setIsDelete} refetch={refetch} />;
+    return (
+      <DeleteAddressModel
+        setIsDelete={setIsDelete}
+        refetch={refetch}
+        deleteAddressId={deleteAddressId}
+        setIsAddressModel={setIsAddressModel}
+      />
+    );
   } else {
     return (
       <Box
@@ -278,7 +370,7 @@ const UserAddressInfo = ({ setIsAddressModel, selectedCustomer, refetch }) => {
           width: "95%",
           margin: "auto",
           backgroundColor: "white",
-          padding: "1rem 2rem",
+          padding: "1rem 1rem",
           borderRadius: "10px",
           height: "90vh",
           display: "flex",
@@ -309,7 +401,7 @@ const UserAddressInfo = ({ setIsAddressModel, selectedCustomer, refetch }) => {
                   }}
                   title="name"
                 >
-                  <PersonIcon />
+                  <PersonOutlineOutlinedIcon />
                   <span style={spanStyle}>
                     {selectedCustomer.user_first_name}{" "}
                     {selectedCustomer.user_last_name}
@@ -326,7 +418,7 @@ const UserAddressInfo = ({ setIsAddressModel, selectedCustomer, refetch }) => {
                   }}
                   title="email"
                 >
-                  <EmailIcon />
+                  <EmailOutlinedIcon />
                   <span style={spanStyle}>{selectedCustomer.email}</span>
                 </IconButton>
               </Grid>
@@ -340,7 +432,7 @@ const UserAddressInfo = ({ setIsAddressModel, selectedCustomer, refetch }) => {
                   }}
                   title="phone"
                 >
-                  <LocalPhoneIcon />
+                  <CallOutlinedIcon />
                   <span style={spanStyle}>{selectedCustomer.user_phone}</span>
                 </IconButton>
               </Grid>
@@ -354,7 +446,7 @@ const UserAddressInfo = ({ setIsAddressModel, selectedCustomer, refetch }) => {
                   }}
                   title="company"
                 >
-                  <BusinessIcon />
+                  <StoreOutlinedIcon />
                   <span style={spanStyle}>{selectedCustomer.company}</span>
                 </IconButton>
               </Grid>
@@ -373,6 +465,8 @@ const UserAddressInfo = ({ setIsAddressModel, selectedCustomer, refetch }) => {
           }}
         >
           {/* Address Sections */}
+
+          {/*------------------------- Billling Address section ---------------------------*/}
           <UserAddressSection
             type="Billing"
             customer={selectedCustomer}
@@ -381,8 +475,13 @@ const UserAddressInfo = ({ setIsAddressModel, selectedCustomer, refetch }) => {
             setInfoData={setInfoData}
             setIsDelete={setIsDelete}
             setForm={setForm}
+            setIsAddressModel={setIsAddressModel}
+            setDeleteAddressId={setDeleteAddressId}
+            refetch={refetch}
           />
           <Divider sx={{ marginTop: "1rem", marginBottom: "1rem" }} />
+
+          {/*------------------------- Shipping Address section ---------------------------*/}
           <UserAddressSection
             type="Shipping"
             customer={selectedCustomer}
@@ -391,6 +490,9 @@ const UserAddressInfo = ({ setIsAddressModel, selectedCustomer, refetch }) => {
             setInfoData={setInfoData}
             setIsDelete={setIsDelete}
             setForm={setForm}
+            setIsAddressModel={setIsAddressModel}
+            setDeleteAddressId={setDeleteAddressId}
+            refetch={refetch}
           />
         </Box>
       </Box>

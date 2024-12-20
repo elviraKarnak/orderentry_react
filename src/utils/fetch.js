@@ -1602,3 +1602,114 @@ export const editCustomerAddressApi = async (payload, address_id) => {
     return { status: "error", error };
   }
 };
+
+export const setDefaultAddressApi = async (user_id, data) => {
+  console.log("====== this is set default address api ======\n", user_id, data);
+  try {
+    let config = {
+      method: "PATCH",
+      url: `${REACT_APP_API_SERVICE_URL}/api/v1/admin/customer/customer-addr-set-default`,
+      headers: {
+        "x-api-key": "b1d1I0p7A2Er2n0eD2b0As8c0kT8p2M9",
+        token: window.sessionStorage.getItem("access-token"),
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    };
+
+    // const response = await axios.request(config);
+
+    const response = await fetch(
+      `${REACT_APP_API_SERVICE_URL}/api/v1/admin/customer/customer-addr-set-default`,
+      config
+    );
+
+    if (response.status === 200) {
+      const responseResult = await response.data;
+      // Success
+      return { status: true, result: responseResult };
+    } else {
+      // Server-side error
+      console.log("Server error:", response.status);
+      const errorData = await response.data;
+      console.log("Server errorData ", errorData);
+      return { status: false, error: errorData };
+    }
+  } catch (error) {
+    // Network error
+    console.log("Network error:", error);
+    return { status: "error", error };
+  }
+};
+
+export const getSingleCustomerAddressApi = async (user_id) => {
+  console.log("====== selected customer id ======\n", user_id);
+  try {
+    let config = {
+      method: "GET",
+      maxBodyLength: Infinity,
+      url: `${REACT_APP_API_SERVICE_URL}/v1/admin/customer/customer-addr-list?user_id=${user_id}`,
+      headers: {
+        "x-api-key": "b1d1I0p7A2Er2n0eD2b0As8c0kT8p2M9",
+        token: window.sessionStorage.getItem("access-token"),
+        "Content-Type": "application/json",
+      },
+    };
+
+    // const response = await axios.request(config);
+    const response = await fetch(
+      `${REACT_APP_API_SERVICE_URL}/v1/admin/customer/customer-addr-list?user_id=${user_id}`,
+      config
+    );
+
+    console.log("====== response ======\n", response);
+
+    if (response.status === 200) {
+      const responseResult = await response.data;
+      // Success
+      return { status: true, result: responseResult };
+    } else {
+      // Server-side error
+      console.log("Server error:", response.status);
+      const errorData = await response.data;
+      console.log("Server errorData ", errorData);
+      return { status: false, error: errorData };
+    }
+  } catch (error) {
+    // Network error
+    console.log("Network error:", error);
+    return { status: "error", error };
+  }
+};
+
+export const deleteCustomerAddressApi = async (address_id) => {
+  try {
+    let config = {
+      method: "DELETE",
+      maxBodyLength: Infinity,
+      url: `${REACT_APP_API_SERVICE_URL}/api/v1/admin/customer/customer-addr-delete/${address_id}`,
+      headers: {
+        "x-api-key": "b1d1I0p7A2Er2n0eD2b0As8c0kT8p2M9",
+        token: window.sessionStorage.getItem("access-token"),
+      },
+    };
+
+    const response = await axios.request(config);
+
+    if (response.status === 200) {
+      const responseResult = await response.data;
+      // Success
+      return { status: true, result: responseResult };
+    } else {
+      // Server-side error
+      console.log("Server error:", response.status);
+      const errorData = await response.data;
+      console.log("Server errorData ", errorData);
+      return { status: false, error: errorData };
+    }
+  } catch (error) {
+    // Network error
+    console.log("Network error:", error);
+    return { status: "error", error };
+  }
+};
