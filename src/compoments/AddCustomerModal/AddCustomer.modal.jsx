@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useLayoutEffect, useState } from "react";
 import {
   TextField,
   Select,
@@ -16,6 +16,7 @@ import {
 import { useForm, Controller } from "react-hook-form";
 import { toast } from "react-toastify";
 import { customerAddApi } from "../../utils/fetch";
+import { customerEditApi } from "../../utils/fetch";
 import { customerAddSchema } from "./ValidationSchema";
 import { customerEditSchema } from "./ValidationSchema";
 import { CUSTOMER_SERVICE_REPRESENTATIVE_LIST } from "../../utils/Constant";
@@ -28,50 +29,42 @@ const ResponsiveForm = ({
   type,
   selectedCustomer,
 }) => {
-  console.log(
-    "======== inside Edit customer form update and add =======\n",
-    selectedCustomer
-  );
-
-  console.log("========= current type =========\n", type);
-
   const [showPassword, setShowPassword] = useState(false);
   const [compShowPassword, setCompShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  // const [formHookObject, setFormHookObject] = useState(
-  //   type == "add"
-  //     ? {
-  // defaultValues: {
-  //   email: "",
-  //   username: "",
-  //   user_first_name: "",
-  //   user_last_name: "",
-  //   phone: "",
-  //   customer_serivce_representative: "None",
-  //   customer_no: "",
-  //   user_pass: "",
-  //   user_pass_confirm: "",
-  //   company: "",
-  // },
-  // resolver: yupResolver(customerAddSchema),
-  //       }
-  //     : {
-  //         defaultValues: {
-  //           email: selectedCustomer.email,
-  //           username: selectedCustomer.username,
-  //           user_first_name: selectedCustomer.user_first_name,
-  //           user_last_name: selectedCustomer.user_last_name,
-  //           phone: selectedCustomer.user_phone,
-  //           customer_serivce_representative:
-  //             selectedCustomer.user_customer_serivce_representative,
-  //           customer_no: selectedCustomer.user_customer_no,
-  //           user_pass: "",
-  //           user_pass_confirm: "",
-  //           company: selectedCustomer.company,
-  //         },
-  //         resolver: yupResolver(customerEditSchema),
-  //       }
-  // );
+
+  const [formResolver, setFormResolver] = useState(
+    type == "add" ? customerAddSchema : customerEditSchema
+  );
+
+  const [formDefaultValue, setFormDefaultValue] = useState(
+    type == "add"
+      ? {
+          email: "",
+          username: "",
+          user_first_name: "",
+          user_last_name: "",
+          phone: "",
+          customer_serivce_representative: "None",
+          customer_no: "",
+          user_pass: "",
+          user_pass_confirm: "",
+          company: "",
+        }
+      : {
+          // email: selectedCustomer.email,
+          username: selectedCustomer.username,
+          user_first_name: selectedCustomer.user_first_name,
+          user_last_name: selectedCustomer.user_last_name,
+          phone: selectedCustomer.user_phone,
+          customer_serivce_representative:
+            selectedCustomer.user_customer_serivce_representative,
+          customer_no: selectedCustomer.user_customer_no,
+          user_pass: "",
+          user_pass_confirm: "",
+          company: selectedCustomer.company,
+        }
+  );
 
   const {
     handleSubmit,
@@ -79,55 +72,79 @@ const ResponsiveForm = ({
     reset,
     formState: { errors },
   } = useForm({
-    defaultValues: {
-      email: "",
-      username: "",
-      user_first_name: "",
-      user_last_name: "",
-      phone: "",
-      customer_serivce_representative: "None",
-      customer_no: "",
-      user_pass: "",
-      user_pass_confirm: "",
-      company: "",
-    },
-    resolver: yupResolver(customerAddSchema),
+    defaultValues: formDefaultValue,
+    resolver: yupResolver(formResolver),
   });
 
   const onSubmit = async (data) => {
     try {
-      console.log("submit function was called");
       setLoading(true);
 
-      // if (type == "add") {
-      if (data.user_pass !== data.user_pass_confirm) {
-        toast.error("Password did not match");
-        setLoading(false);
-        return;
-      }
+      switch (type) {
+        case "add":
+          if (data.user_pass !== data.user_pass_confirm) {
+            toast.error("Password did not match");
+            setLoading(false);
+            return;
+          }
 
-      const responseData = await customerAddApi(data);
+          const responseData = await customerAddApi(data);
 
-      if (responseData.status == true) {
-        toast.success("Customer Added Successfully");
-        if (refetch) {
-          refetch();
-          setIsModelOpen(false);
-          setLoading(false);
-        } else {
-          setIsModelOpen(false);
-          setLoading(false);
-        }
-      } else {
-        setLoading(false);
-        toast.error(
-          `${responseData.error.response.data.validation.body.message}`
-        );
+          if (responseData.status == true) {
+            toast.success("Customer Added Successfully");
+            if (refetch) {
+              refetch();
+              setIsModelOpen(false);
+              // setLoading(false);
+            } else {
+              setIsModelOpen(false);
+              // setLoading(false);
+            }
+          } else {
+            // setLoading(false);
+            toast.error(
+              `${responseData.error.response.data.validation.body.message}`
+            );
+          }
+          break;
+
+        //================== Second case for edit =================
+        case "edit":
+          if (data.user_pass === "" && data.user_pass_confirm === "") {
+            delete data.user_pass;
+            delete data.user_pass_confirm;
+
+            const response = await customerEditApi(data, selectedCustomer.id);
+
+            if (response.status == true) {
+              toast.success("Customer Updated Successfully");
+              refetch();
+              setIsModelOpen(false);
+              setLoading(false);
+            } else {
+              toast.error("Failed to update customer");
+              setLoading(false);
+            }
+          } else {
+            if (data.user_pass !== data.user_pass_confirm) {
+              toast.error("Password did not match");
+              setLoading(false);
+              return;
+            }
+
+            const response = await customerEditApi(data, selectedCustomer.id);
+            if (response.status == true) {
+              toast.success("Customer Updated Successfully");
+              refetch();
+              setIsModelOpen(false);
+              setLoading(false);
+            } else {
+              toast.error("Failed to update customer");
+              setLoading(false);
+            }
+          }
+          break;
       }
-      // } else {
-      //   setLoading(true);
-      //   console.log("updating customer data", data);
-      // }
     } catch (error) {
       toast.error(`${error}`);
       setLoading(false);
@@ -151,22 +168,24 @@ const ResponsiveForm = ({
       <form onSubmit={handleSubmit(onSubmit)}>
         <Grid container spacing={2}>
           {/* Email */}
-          <Grid item xs={12} sm={6}>
-            <Controller
-              name="email"
-              control={control}
-              render={({ field }) => (
-                <TextField
-                  {...field}
-                  label="Email"
-                  fullWidth
-                  size="small"
-                  error={!!errors.email}
-                  helperText={errors.email?.message}
-                />
-              )}
-            />
-          </Grid>
+          {type == "add" && (
+            <Grid item xs={12} sm={6}>
+              <Controller
+                name="email"
+                control={control}
+                render={({ field }) => (
+                  <TextField
+                    {...field}
+                    label="Email"
+                    fullWidth
+                    size="small"
+                    error={!!errors.email}
+                    helperText={errors.email?.message}
+                  />
+                )}
+              />
+            </Grid>
+          )}
 
           {/* User Name */}
           <Grid item xs={12} sm={6}>

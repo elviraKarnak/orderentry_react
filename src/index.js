@@ -1,18 +1,17 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import App from './App';
+import React from "react";
+import ReactDOM from "react-dom/client";
+import App from "./App";
 
 import { ToastContainer } from "react-toastify";
-import 'react-toastify/dist/ReactToastify.css';
+import "react-toastify/dist/ReactToastify.css";
 
 ///////////// Redux //////////////
-import { Provider } from 'react-redux';
-import { PersistGate } from 'redux-persist/integration/react';
-import { store, persistor } from './redux/store';
+import { Provider } from "react-redux";
+import { PersistGate } from "redux-persist/integration/react";
+import { store, persistor } from "./redux/store";
 ////////////// Redux //////////////
 
-
-const root = ReactDOM.createRoot(document.getElementById('root'));
+const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <>
     <ToastContainer
@@ -25,6 +24,7 @@ root.render(
       pauseOnFocusLoss={false}
       draggable
       pauseOnHover={false}
+      theme="dark"
     />
 
     <React.StrictMode>
@@ -35,5 +35,4 @@ root.render(
       </Provider>
     </React.StrictMode>
   </>
-
 );

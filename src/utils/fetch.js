@@ -1498,6 +1498,72 @@ export const customerAddApi = async (payload) => {
   }
 };
 
+export const customerEditApi = async (payload, customer_id) => {
+  try {
+    let config = {
+      method: "PUT",
+      maxBodyLength: Infinity,
+      url: `${REACT_APP_API_SERVICE_URL}/api/v1/admin/customer/customer-edit/${customer_id}`,
+      headers: {
+        "x-api-key": "b1d1I0p7A2Er2n0eD2b0As8c0kT8p2M9",
+        token: window.sessionStorage.getItem("access-token"),
+        "Content-Type": "application/json",
+      },
+      data: JSON.stringify(payload),
+    };
+
+    const customerEditResponse = await axios.request(config);
+
+    if (customerEditResponse.status === 200) {
+      const responseResult = await customerEditResponse.data;
+      // Success
+      return { status: true, result: responseResult };
+    } else {
+      // Server-side error
+      console.log("Server error:", customerEditResponse.status);
+      const errorData = await customerEditResponse.data;
+      console.log("Server errorData ", errorData);
+      return { status: false, error: errorData };
+    }
+  } catch (error) {
+    // Network error
+    console.log("Network error:", error);
+    return { status: "error", error };
+  }
+};
+
+export const deleteCustomerApi = async (customer_id) => {
+  try {
+    let config = {
+      method: "DELETE",
+      maxBodyLength: Infinity,
+      url: `${REACT_APP_API_SERVICE_URL}/api/v1/admin/customer/customer-delete/${customer_id}`,
+      headers: {
+        "x-api-key": "b1d1I0p7A2Er2n0eD2b0As8c0kT8p2M9",
+        token: window.sessionStorage.getItem("access-token"),
+      },
+    };
+
+    const customerDeleteResponse = await axios.request(config);
+
+    if (customerDeleteResponse.status === 200) {
+      const responseResult = await customerDeleteResponse.data;
+      // Success
+      return { status: true, result: responseResult };
+    } else {
+      // Server-side error
+      console.log("Server error:", customerDeleteResponse.status);
+      const errorData = await customerDeleteResponse.data;
+      console.log("Server errorData ", errorData);
+      return { status: false, error: errorData };
+    }
+  } catch (error) {
+    // Network error
+    console.log("Network error:", error);
+    return { status: "error", error };
+  }
+};
+
 export const findAllCustomersApi = async () => {
   try {
     let config = {
@@ -1642,45 +1708,46 @@ export const setDefaultAddressApi = async (user_id, data) => {
   }
 };
 
-export const getSingleCustomerAddressApi = async (user_id) => {
-  console.log("====== selected customer id ======\n", user_id);
-  try {
-    let config = {
-      method: "GET",
-      maxBodyLength: Infinity,
-      url: `${REACT_APP_API_SERVICE_URL}/v1/admin/customer/customer-addr-list?user_id=${user_id}`,
-      headers: {
-        "x-api-key": "b1d1I0p7A2Er2n0eD2b0As8c0kT8p2M9",
-        token: window.sessionStorage.getItem("access-token"),
-        "Content-Type": "application/json",
-      },
-    };
+//api pending
+// export const getSingleCustomerAddressApi = async (user_id) => {
+//   console.log("====== selected customer id ======\n", user_id);
+//   try {
+//     let config = {
+//       method: "GET",
+//       maxBodyLength: Infinity,
+//       url: `${REACT_APP_API_SERVICE_URL}/v1/admin/customer/customer-addr-list?user_id=${user_id}`,
+//       headers: {
+//         "x-api-key": "b1d1I0p7A2Er2n0eD2b0As8c0kT8p2M9",
+//         token: window.sessionStorage.getItem("access-token"),
+//         "Content-Type": "application/json",
+//       },
+//     };
 
-    // const response = await axios.request(config);
-    const response = await fetch(
-      `${REACT_APP_API_SERVICE_URL}/v1/admin/customer/customer-addr-list?user_id=${user_id}`,
-      config
-    );
+//     // const response = await axios.request(config);
+//     const response = await fetch(
+//       `${REACT_APP_API_SERVICE_URL}/v1/admin/customer/customer-addr-list?user_id=${user_id}`,
+//       config
+//     );
 
-    console.log("====== response ======\n", response);
+//     console.log("====== response ======\n", response);
 
-    if (response.status === 200) {
-      const responseResult = await response.data;
-      // Success
-      return { status: true, result: responseResult };
-    } else {
-      // Server-side error
-      console.log("Server error:", response.status);
-      const errorData = await response.data;
-      console.log("Server errorData ", errorData);
-      return { status: false, error: errorData };
-    }
-  } catch (error) {
-    // Network error
-    console.log("Network error:", error);
-    return { status: "error", error };
-  }
-};
+//     if (response.status === 200) {
+//       const responseResult = await response.data;
+//       // Success
+//       return { status: true, result: responseResult };
+//     } else {
+//       // Server-side error
+//       console.log("Server error:", response.status);
+//       const errorData = await response.data;
+//       console.log("Server errorData ", errorData);
+//       return { status: false, error: errorData };
+//     }
+//   } catch (error) {
+//     // Network error
+//     console.log("Network error:", error);
+//     return { status: "error", error };
+//   }
+// };
 
 export const deleteCustomerAddressApi = async (address_id) => {
   try {

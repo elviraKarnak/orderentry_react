@@ -35,38 +35,35 @@ export const customerAddSchema = Yup.object().shape({
 // ----------------------------------------------- xxxxxxxxxxxxx ----------------------------------------------
 
 export const customerEditSchema = Yup.object().shape({
-  email: Yup.string().email("Invalid email format").nullable(),
-
+  // email: Yup.string()
+  //   .email("Invalid email format")
+  //   .required("Email is required"),
   username: Yup.string()
     .min(3, "Username must be at least 3 characters")
-    .nullable(),
-
-  user_first_name: Yup.string().nullable(),
-
-  user_last_name: Yup.string().nullable(),
-
-  phone: Yup.string()
-    .matches(/^[0-9]+$/, "Phone number must be numeric")
-    .nullable(),
-
+    .required("Username is required"),
+  user_first_name: Yup.string().required("First name is required"),
+  user_last_name: Yup.string().required("Last name is required"),
+  phone: Yup.string().required("Phone number is required"),
   customer_no: Yup.number()
     .typeError("Customer number must be a number")
-    .nullable(),
-
+    .required("Customer number is required"),
   user_pass: Yup.string()
-    .matches(/^[A-Z].*$/, "Password must start with an uppercase letter")
-    .matches(
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,30}$/,
-      "Password must be 8-30 characters long, include an uppercase letter, a lowercase letter, a number, and a special character"
-    )
-    .nullable(),
-
+    .nullable() // Allow null or empty
+    .test(
+      "is-valid-password",
+      "Password must start with an uppercase letter, include a lowercase letter, a number, and a special character, and be 8-30 characters long",
+      (value) => {
+        if (!value) return true; // Skip validation if password is null or empty
+        const isValid =
+          /^[A-Z]/.test(value) &&
+          /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,30}$/.test(
+            value
+          );
+        return isValid;
+      }
+    ),
   user_pass_confirm: Yup.string()
-    .when("user_pass", {
-      is: (val) => val?.length > 0, // Validate only if `user_pass` is provided
-      then: Yup.string().oneOf([Yup.ref("user_pass")], "Passwords must match"),
-    })
-    .nullable(),
-
-  company: Yup.string().nullable(),
+    .nullable() // Allow null or empty
+    .oneOf([Yup.ref("user_pass")], "Passwords must match"),
+  company: Yup.string().required("Company is required"),
 });

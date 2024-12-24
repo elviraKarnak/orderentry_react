@@ -31,10 +31,12 @@ import { orderEntryActions } from "../../redux/reducers/OrderEntry";
 import AddCustomer from "../../compoments/AddCustomerModal/AddCustomer.modal";
 import AddressModel from "../../compoments/CustomerAddressModel/Address.model";
 import { findAllCustomersApi } from "../../utils/fetch";
+import DeleteCustomerModel from "../../compoments/AddCustomerModal/DeleteCustomer.model";
 
 function SimpleSearchNew() {
   const [isModelOpen, setIsModelOpen] = useState(false);
   const [isAddressModel, setIsAddressModel] = useState(false);
+  const [isDeleteModel, setIsDeleteModel] = useState(false);
   const [selectedCustomer, setSelectedCustomer] = useState();
   const [usersList, setUsersList] = useState([]);
   const [userFormType, setUserFormType] = useState(); // add or edit
@@ -220,7 +222,10 @@ function SimpleSearchNew() {
         <Tooltip title="Delete Customer">
           <IconButton
             color="error"
-            onClick={() => console.log("Delete", row.original.id)}
+            onClick={() => {
+              setSelectedCustomer(row.original.id);
+              setIsDeleteModel(true);
+            }}
           >
             <DeleteOutlineOutlinedIcon />
           </IconButton>
@@ -300,6 +305,34 @@ function SimpleSearchNew() {
           document.getElementById("portal-root")
         )}
       {/* xxxxxxxxxxxxxxxxxxxxx  Address Model END xxxxxxxxxxxxxxxxxxxxxx*/}
+
+      {/* ----------------- Delete Model START -----------------> */}
+      {isDeleteModel &&
+        ReactDOM.createPortal(
+          <div
+            style={{
+              width: "100%",
+              height: "100vh",
+              position: "fixed",
+              top: "0",
+              left: "0",
+              zIndex: "1000",
+              background: "rgba(0,0,0,0.5)",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <DeleteCustomerModel
+              customerId={selectedCustomer}
+              setIsDeleteModel={setIsDeleteModel}
+              refetch={getAllUsers}
+            />
+          </div>,
+          document.getElementById("portal-root")
+        )}
+
+      {/* xxxxxxxxxxxxxxxxxxxxx  Delete Model END xxxxxxxxxxxxxxxxxxxxxx*/}
 
       <Grid container spacing={2}>
         <Grid item xs={12} md={12} lg={12}>
