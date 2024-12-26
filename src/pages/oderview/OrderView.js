@@ -12,11 +12,13 @@ import Header from "../../common/Header";
 // redux
 import { useDispatch } from "react-redux";
 import { commonActions } from "../../redux/reducers/Common";
+
 import AddCustomer from "../../compoments/AddCustomerModal/AddCustomer.modal";
 
 function OrderView() {
   const dispatch = useDispatch();
   const [isModelOpen, setIsModelOpen] = useState(false);
+  const [selectedCustomer, setSelectedCustomer] = useState({}); // this will always be empty
 
   useEffect(() => {
     dispatch(commonActions.setPageTitle("Order View"));
@@ -40,7 +42,11 @@ function OrderView() {
               alignItems: "center",
             }}
           >
-            <AddCustomer setIsModelOpen={setIsModelOpen} />
+            <AddCustomer
+              selectedCustomer={selectedCustomer}
+              setIsModelOpen={setIsModelOpen}
+              type="add"
+            />
           </div>,
           document.getElementById("portal-root")
         )}
