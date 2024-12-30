@@ -22,6 +22,7 @@ import { set } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { orderEntryActions } from "../../redux/reducers/OrderEntry";
 import { customerActions } from "../../redux/reducers/Customer";
+import { logInfo } from "../../utils/utils";
 
 function Index(props) {
 
@@ -142,7 +143,7 @@ function Index(props) {
         item_id: item.product_details.id,
         item_details: item.product_details.product_name,
         item_price:
-          SelectCustomer.ship_addr.ship_method === "fob"
+          SelectCustomer.ship_method === "fob"
             ? item.product_details.cost_price
             : item.product_details.cost_price,
         item_total_price: item.total,
@@ -152,7 +153,7 @@ function Index(props) {
         item_cat: item.product_details.category_string,
         item_uom: item.product_details.uom,
         item_farm: item.product_details.source,
-        item_company: SelectCustomer.company_name,
+        item_company: SelectCustomer.company,
       };
 
       tempItem.push(temp);
@@ -172,21 +173,17 @@ function Index(props) {
       items_details: tempItem,
       ship_date: props.DeliveryDate,
       order_address_details: {
-        ship_to: SelectCustomer.company_name,
-        address: `${SelectCustomer.ship_addr.ship_addr_1} ${SelectCustomer.ship_addr.ship_addr_2}`,
-        city: SelectCustomer.ship_addr.ship_city_name,
-        state: SelectCustomer.ship_addr.ship_state_name,
-        zipcode: SelectCustomer.ship_addr.ship_zip_code,
+        ship_to: SelectCustomer.company,
+        address: `${SelectCustomer.primary_ship_addr.address1} ${SelectCustomer.primary_ship_addr.address2}`,
+        country: SelectCustomer.primary_ship_addr.country,
+        state: SelectCustomer.primary_ship_addr.state,
+        city: SelectCustomer.primary_ship_addr.city,
+        zipcode: SelectCustomer.primary_ship_addr.zipcode,
       },
-
-      //// selear data ////
-      // sales_rep_id: userState.id,
-      // ship_method:SelectCustomer.ship_addr.ship_method === "fob"? "fob": "landed",
-      // payment_type: payment_type,
     };
     // ////////////////////////////////////////////
 
-    console.log("final paylaad ", new_payload);
+    logInfo(`final paylaad ${new_payload}`);
 
     // return;
 
@@ -202,7 +199,7 @@ function Index(props) {
 
     var responce = await fmiOrderSystemAppOrderAdd(new_payload);
 
-    console.log(responce.data);
+    logInfo(responce.data)
 
     if (responce.status) {
       // toast.success("Order Process Successfully");
@@ -276,7 +273,7 @@ function Index(props) {
 
     setLoader(true);
     var value = e.target.value;
-    var id = SelectCustomer.ship_addr.id;
+    var id = SelectCustomer.primary_ship_addr.id;
 
     var responce = await customerService.updateShipMethod({
       ship_method: value,
@@ -291,7 +288,6 @@ function Index(props) {
     setPaytemt_type_value(value);
   };
 
-  // console.log("SelectCustomer  ", SelectCustomer);
 
   // useEffect(() => {
   //     GetOrderItemList();
@@ -339,8 +335,6 @@ function Index(props) {
                               {item.product_details.product_name}
                             </td>
                             <td>
-                              {/* ${(SelectCustomer?.ship_addr.ship_method === "fob" ? item.product_details.fob_price : item.product_details.landed_price)} */}
-                              {/* ${item.product_details.real_price} */}
                               ${item.product_details.cost_price}
                             </td>
                             {/* <td>{item.quantity} ST</td> */}
@@ -481,68 +475,22 @@ function Index(props) {
                     </div>
                     <div className="col-lg-9">
                       <div className="bill-info">
-                        <h3>{SelectCustomer?.company_name}</h3>
+                        <h3>{SelectCustomer?.company}</h3>
                         <h4>
-                          {
-                            SelectCustomer?.ship_addr
-                              .ship_contact_name
-                          }
+                          {SelectCustomer?.primary_ship_addr?.name}
                         </h4>
                         <h4>
-                          {SelectCustomer?.ship_addr.ship_addr_1 && (
-                            <>
-                              {SelectCustomer?.ship_addr.ship_addr_1},
-                            </>
-                          )}
+                          <span>{SelectCustomer?.primary_ship_addr?.address1},</span>
 
-                          {SelectCustomer?.ship_addr.ship_addr_2 && (
-                            <>
-                              {SelectCustomer?.ship_addr.ship_addr_2},
-                            </>
-                          )}
+                          <span>{SelectCustomer?.primary_ship_addr?.address2},</span>
 
-                          {SelectCustomer?.ship_addr
-                            .ship_country_name && (
-                              <>
-                                {
-                                  SelectCustomer?.ship_addr
-                                    .ship_country_name
-                                }
-                                ,
-                              </>
-                            )}
+                          <span>{SelectCustomer?.primary_ship_addr?.country},</span>
 
-                          {SelectCustomer?.ship_addr
-                            .ship_state_name && (
-                              <>
-                                {
-                                  SelectCustomer?.ship_addr
-                                    .ship_state_name
-                                }
-                                ,
-                              </>
-                            )}
+                          <span>{SelectCustomer?.primary_ship_addr?.state},</span>
 
-                          {SelectCustomer?.ship_addr
-                            .ship_city_name && (
-                              <>
-                                {
-                                  SelectCustomer?.ship_addr
-                                    .ship_city_name
-                                }
-                                ,
-                              </>
-                            )}
+                          <span>{SelectCustomer?.primary_ship_addr?.city},</span>
 
-                          {SelectCustomer?.ship_addr
-                            .ship_zip_code && (
-                              <>
-                                {
-                                  SelectCustomer?.ship_addr
-                                    .ship_zip_code
-                                }
-                              </>
-                            )}
+                          <span>{SelectCustomer?.primary_ship_addr?.zipcode}</span>
                         </h4>
                       </div>
                     </div>
@@ -574,23 +522,13 @@ function Index(props) {
                       >
                         <option value="">select</option>
                         <option
-                          selected={
-                            SelectCustomer?.ship_addr.ship_method ===
-                              "fob"
-                              ? "selected"
-                              : ""
-                          }
+                          selected={SelectCustomer?.ship_method === "fob" && "selected"}
                           value={"fob"}
                         >
                           FOB
                         </option>
                         <option
-                          selected={
-                            SelectCustomer?.ship_addr.ship_method ===
-                              "fedex"
-                              ? "selected"
-                              : ""
-                          }
+                          selected={SelectCustomer?.ship_method === "fedex" && "selected"}
                           value={"fedex"}
                         >
                           FedEx Priority

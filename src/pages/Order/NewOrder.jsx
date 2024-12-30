@@ -141,9 +141,9 @@ function NewOrder() {
     setLoader(false);
   };
 
-  
 
-  
+
+
 
   const newOrderSaveAndContinueChk = async () => {
     // Swal.fire({
@@ -191,14 +191,9 @@ function NewOrder() {
       return;
     }
 
-    // console.log(
-    //   "SelectCustomer.ship_addr.ship_method ",
-    //   SelectCustomer.ship_addr
-    // );
-
     var payload = {
       search_text: ProductDataSearch.search_text.trim(),
-      shipping_model: SelectCustomer?.ship_addr?.ship_method === "fob" ? "fob" : "landed", // landed or fob
+      shipping_model: SelectCustomer?.ship_method === "fob" ? "fob" : "landed", // landed or fob
       page: ProductDataSearch.page,
       limit: ProductDataSearch.limit,
       shop_by_branch: ProductDataSearch.shop_by_branch ? '1' : '0',
@@ -404,7 +399,7 @@ function NewOrder() {
     // const indexToUpdate = ProductData.findIndex(item => item.id === 2);
 
     var price =
-      SelectCustomer.ship_addr.ship_method === "fob"
+      SelectCustomer.ship_method === "fob"
         ? fob_price
         : landed_price;
 
@@ -578,21 +573,22 @@ function NewOrder() {
             {/* ======= customer show ========= */}
             {SelectCustomer != null && (
               <>
+
+                {/* ||||||||||||||| Billing Address DEtails ||||||||||||||||| */}
                 <Col lg={4}>
                   <div className="bill-info">
                     <small>Bill to</small>
-                    <h3>{SelectCustomer?.company_name}</h3>
+                    <h3>{SelectCustomer?.company}</h3>
                     <h4>
-                      {SelectCustomer?.firstname}{" "}
-                      {SelectCustomer?.lastname}
+                      {SelectCustomer?.primary_bill_addr?.name}
                     </h4>
                     <span>
                       Customer#{" "}
-                      <strong>{SelectCustomer?.customer_no}</strong>
+                      <strong>{SelectCustomer?.user_customer_no}</strong>
                     </span>
                     <p>
-                      <a href={`mailto:${SelectCustomer?.email}`}>
-                        {SelectCustomer?.email}
+                      <a href={`mailto:${SelectCustomer?.primary_bill_addr?.email}`}>
+                        {SelectCustomer?.primary_bill_addr?.email}
                       </a>
                     </p>
                     <p
@@ -605,35 +601,25 @@ function NewOrder() {
                     </p>
                   </div>
                 </Col>
+
+                {/* ||||||||||||||||||| Shipping Address Details |||||||||||||||||||| */}
                 <Col lg={3}>
                   <div className="bill-info">
                     <small>Ship to</small>
-                    <h3>{SelectCustomer?.company_name}</h3>
-                    <h4>{SelectCustomer?.ship_addr.ship_contact_name}</h4>
+                    <h3>{SelectCustomer?.company}</h3>
+                    <h4>{SelectCustomer?.primary_ship_addr?.name}</h4>
                     <h4>
-                      {SelectCustomer.ship_addr.ship_addr_1 && (
-                        <>{SelectCustomer.ship_addr.ship_addr_1},</>
-                      )}
+                      <span>{SelectCustomer?.primary_ship_addr?.address1}</span>
 
-                      {SelectCustomer.ship_addr.ship_addr_2 && (
-                        <>{SelectCustomer.ship_addr.ship_addr_2},</>
-                      )}
+                      <span>{SelectCustomer?.primary_ship_addr?.address2}</span>
 
-                      {SelectCustomer.ship_addr.ship_country_name && (
-                        <>{SelectCustomer.ship_addr.ship_country_name},</>
-                      )}
+                      <span>{SelectCustomer?.primary_ship_addr?.country}</span>
 
-                      {SelectCustomer.ship_addr.ship_state_name && (
-                        <>{SelectCustomer.ship_addr.ship_state_name},</>
-                      )}
+                      <span>{SelectCustomer?.primary_ship_addr?.state}</span>
 
-                      {SelectCustomer.ship_addr.ship_city_name && (
-                        <>{SelectCustomer.ship_addr.ship_city_name},</>
-                      )}
+                      <span>{SelectCustomer?.primary_ship_addr?.city}</span>
 
-                      {SelectCustomer.ship_addr.ship_zip_code && (
-                        <>{SelectCustomer.ship_addr.ship_zip_code}</>
-                      )}
+                      <span>{SelectCustomer?.primary_ship_addr?.zipcode}</span>
                     </h4>
                     <p
                       className="green-link edit-shiping"
@@ -645,6 +631,7 @@ function NewOrder() {
                     </p>
                   </div>
                 </Col>
+
                 <Col lg={2}>
                   <div className="bill-info mt-2">
                     <Form.Label>Ship Method</Form.Label>
@@ -652,22 +639,13 @@ function NewOrder() {
                       <Form.Select onChange={shipMethodChange}>
                         <option value="">select</option>
                         <option
-                          selected={
-                            SelectCustomer?.ship_addr.ship_method === "fob"
-                              ? "selected"
-                              : ""
-                          }
+                          selected={SelectCustomer?.ship_method === "fob" && "selected"}
                           value={"fob"}
                         >
                           FOB
                         </option>
                         <option
-                          selected={
-                            SelectCustomer?.ship_addr.ship_method ===
-                              "fedex"
-                              ? "selected"
-                              : ""
-                          }
+                          selected={SelectCustomer?.ship_method ==="fedex" && "selected"}
                           value={"fedex"}
                         >
                           FedEx Priority
@@ -691,7 +669,7 @@ function NewOrder() {
                   </Button>
                 </div>
 
-                
+
 
                 <div className="order-info">
                   <p className="clearfix">
@@ -716,7 +694,7 @@ function NewOrder() {
         </div>
 
 
-        
+
 
         {SelectCustomer != null && (
           <div className="category-select">
@@ -893,14 +871,14 @@ function NewOrder() {
       </Container>
 
       {/* ====== Customer edit modal ======== */}
-      {SelectCustomer != null && (
+      {/* {SelectCustomer != null && (
         <CustomerEditModalForm
           id={SelectCustomer?.id}
           Step={Step}
           setEditModalChangeStatus={setEditModalChangeStatus}
           EditModalChangeStatus={EditModalChangeStatus}
         />
-      )}
+      )} */}
 
       {/* ============ CheckoutModal ======== */}
       <CheckoutModal

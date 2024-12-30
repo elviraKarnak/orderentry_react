@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { memo, useState } from 'react';
 import {
     Table,
     TableBody,
@@ -11,7 +11,7 @@ import {
     MenuItem,
     TextField,
 } from '@mui/material';
-import { disableStatus, FarmOrderItemStatusUpdateHook,FarmOrderItemUpdateHook } from '../hooks';
+import { disableStatus, FarmOrderItemStatusUpdateHook, FarmOrderItemUpdateHook } from '../hooks';
 
 const statusArray = [
     { label: "Pending", value: "pending", disabled: true },
@@ -36,12 +36,16 @@ function FarmOrderItemList({ row }) {
 
     const handleStatusChange = async (id, status) => {
 
+        // alert(1)
+
         const payload = {
             id: id,
             status: status
         }
 
-        await orderItemStatusUpdate(payload)
+        await orderItemStatusUpdate(payload);
+
+
     }
 
 
@@ -119,7 +123,7 @@ function FarmOrderItemList({ row }) {
                                     {row.status === "pending" ? (
                                         <TextField
                                             value={row.item_quantity}
-                                            onChange={(e)=>{
+                                            onChange={(e) => {
                                                 handleFieldChange(row.id, "item_quantity", e.target.value)
                                             }}
                                             onBlur={(e) =>
@@ -137,7 +141,7 @@ function FarmOrderItemList({ row }) {
                                     {row.status === "pending" ? (
                                         <TextField
                                             value={row.item_price}
-                                            onChange={(e)=>{
+                                            onChange={(e) => {
                                                 handleFieldChange(row.id, "item_price", e.target.value)
                                             }}
                                             onBlur={(e) =>
@@ -177,4 +181,4 @@ function FarmOrderItemList({ row }) {
     )
 }
 
-export default FarmOrderItemList
+export default memo(FarmOrderItemList);

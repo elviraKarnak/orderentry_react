@@ -62,7 +62,12 @@ function FarmOrderList() {
 
 
     /// query hook ///
-    const { data: FarmOrderListData = [] } = GetFarmOrderListHook(authUser.role_id, authUser.user_id);
+    const {
+        data: FarmOrderListData = [],
+        isFetching,
+        isLoading,
+        isError,
+    } = GetFarmOrderListHook(authUser.role_id, authUser.user_id);
 
     /// mutation hook ///
     const {
@@ -310,6 +315,9 @@ function FarmOrderList() {
             // rowSelection: rowSelection,
             // chooseStatus: chooseStatus,
             // allSelectCheckboxSelect: allSelectCheckboxSelect
+            isLoading: isLoading,
+            showAlertBanner: isError,
+            showProgressBars: isFetching,
         },
         renderDetailPanel: ({ row }) => (
             <FarmOrderItemList row={row} />

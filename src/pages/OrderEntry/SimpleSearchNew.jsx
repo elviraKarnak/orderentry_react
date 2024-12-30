@@ -32,6 +32,8 @@ import AddCustomer from "../../compoments/AddCustomerModal/AddCustomer.modal";
 import AddressModel from "../../compoments/CustomerAddressModel/Address.model";
 import { findAllCustomersApi } from "../../utils/fetch";
 import DeleteCustomerModel from "../../compoments/AddCustomerModal/DeleteCustomer.model";
+import { logInfo } from "../../utils/utils";
+import Swal from "sweetalert2";
 
 function SimpleSearchNew() {
   const [isModelOpen, setIsModelOpen] = useState(false);
@@ -47,18 +49,50 @@ function SimpleSearchNew() {
    *
    * @param {number} id
    */
-  const selectedSingleCustomerGet = async (id) => {
-    // alert(1)
+  const selectedSingleCustomerGet = async (data) => {
 
-    var responce = await customerService.findOne(id);
-    if (responce.data.status) {
-      // console.log(responce.data.data[0])
-      dispatch(customerActions.setSelectCustomer(responce.data.data[0]));
-      dispatch(orderEntryActions.order_data_reset());
-      navigate("/new-order");
-    } else {
-      toast.error(responce.data.msg);
+    // logInfo(data);
+
+    if (data.userAddress.bill_addr.length == 0) {
+      Swal.fire({
+        icon: "warning",
+        title: "Oops...",
+        text: "No billing address found for this customer!",
+      })
+      return;
     }
+
+    if(data.userAddress.ship_addr.length == 0) {
+      Swal.fire({
+        icon: "warning",
+        title: "Oops...",
+        text: "No shipping address found for this customer!",
+      })
+      return;
+    }
+
+    data.primary_bill_addr = {};
+    data.primary_ship_addr = {};
+    data.ship_method = "fedex";
+
+    data.userAddress.bill_addr.forEach((item) => {
+      if (item.primary_addr_status == "1") {
+        data.primary_bill_addr = item;
+      }
+    });
+
+    data.userAddress.ship_addr.forEach((item) => {
+      if (item.primary_addr_status == "1") {
+        data.primary_ship_addr = item;
+      }
+    });
+
+    logInfo(data);
+
+    dispatch(customerActions.setSelectCustomer(data));
+    dispatch(orderEntryActions.order_data_reset());
+    navigate("/new-order");
+
   };
 
   // call the GetCustomerList function //
@@ -138,11 +172,6 @@ function SimpleSearchNew() {
       {
         accessorKey: "sales_rep",
         header: "Sales Rep",
-        size: 100,
-      },
-      {
-        accessorKey: "order_entry",
-        header: "Order Entry",
         size: 100,
       },
     ],
@@ -231,11 +260,11 @@ function SimpleSearchNew() {
           </IconButton>
         </Tooltip>
 
-        {/* Delete Customer Icon */}
+        {/* Start New Order */}
         <Tooltip title="Start New Order">
           <IconButton
             color="secondary"
-            onClick={() => selectedSingleCustomerGet(row.original.id)}
+            onClick={() => selectedSingleCustomerGet(row.original)}
           >
             <PlayCircleOutlineOutlinedIcon />
           </IconButton>
